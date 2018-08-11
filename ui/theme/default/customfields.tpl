@@ -57,6 +57,18 @@
                                         {/if}
                                     </div>
 
+                                {elseif ($c['fieldtype']) eq 'date'}
+
+                                    <div class="col-lg-4">
+                                        <input type="text" id="cf{$c['id']}" name="cf{$c['id']}" class="form-control" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true">
+
+                                        
+
+                                        {if ($c['description']) neq ''}
+                                            <span class="help-block">{$c['description']}</span>
+                                        {/if}
+
+                                    </div>
                                 {else}
 
                                 {/if}

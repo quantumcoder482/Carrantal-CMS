@@ -20,7 +20,7 @@
                             <option value="password">{$_L['Password']}</option>
                             <option value="dropdown">{$_L['Drop Down']}</option>
                             <option value="textarea">{$_L['Text Area']}</option>
-
+                            <option value="date">{$_L['Date']}</option>
                         </select>
                     </div>
                     <div class="form-group">

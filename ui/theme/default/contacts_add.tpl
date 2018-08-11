@@ -171,7 +171,7 @@
 
                                     </div>
                                 </div>
-
+                                
                                 {*run foreach*}
 
                                 {foreach $fs as $f}
@@ -218,6 +218,14 @@
                                                 {/if}
                                             </div>
 
+                                        {elseif ($f['fieldtype']) eq 'date'}
+
+                                            <div class="col-lg-8">
+                                                <input type="text" id="cf{$f['id']}" name="cf{$f['id']}" class="form-control" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true">
+                                                {if ($f['description']) neq ''}
+                                                    <span class="help-block">{$f['description']}</span>
+                                                {/if}
+                                            </div>
                                         {else}
                                         {/if}
                                     </div>

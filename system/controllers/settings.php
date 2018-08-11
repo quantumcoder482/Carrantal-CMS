@@ -1086,11 +1086,6 @@ minHeight: 150 // pixels
             $e->method = $email_method;
         }
         $e->save();
-
-        update_option('mailgun_api_key',_post('mailgun_api_key'));
-        update_option('mailgun_domain',_post('mailgun_domain'));
-        update_option('sparkpost_api_key',_post('sparkpost_api_key'));
-
         r2(U.'settings/emls/','s',$_L['Settings Saved Successfully']);
 
 
@@ -1788,38 +1783,6 @@ $(".cdelete").click(function (e) {
         $e = ORM::for_table('sys_emailconfig')->find_one('1');
         $ui->assign('e',$e);
 
-        // check mailgun api key is exist in the database
-
-    if(isset($config['mailgun_api_key']))
-    {
-        $mailgun_api_key = $config['mailgun_api_key'];
-    }
-    else{
-        add_option('mailgun_api_key','');
-        $mailgun_api_key = '';
-    }
-
-        if(isset($config['mailgun_domain']))
-        {
-            $mailgun_domain = $config['mailgun_domain'];
-        }
-        else{
-            add_option('mailgun_domain','');
-            $mailgun_domain = '';
-        }
-
-        if(isset($config['sparkpost_api_key']))
-        {
-            $sparkpost_api_key = $config['sparkpost_api_key'];
-        }
-
-        else{
-        add_option('sparkpost_api_key','');
-        $sparkpost_api_key = '';
-        }
-
-    //
-
 
         $ui->assign('xjq', '
 
@@ -1839,11 +1802,7 @@ $( "#email_method" ).change(function() {
 });
  ');
 
-        view('emls',[
-            'mailgun_api_key' => $mailgun_api_key,
-            'mailgun_domain' => $mailgun_domain,
-            'sparkpost_api_key' => $sparkpost_api_key
-        ]);
+        view('emls');
 
         break;
 
@@ -2785,8 +2744,15 @@ else{
     case 'customfields':
 
         $ui->assign('content_inner',inner_contents($config['c_cache']));
-        $ui->assign('xheader', Asset::css(array('modal')));
-        $ui->assign('xfooter', Asset::js(array('modal')));
+        $ui->assign('xheader', Asset::css(array(
+            'modal',
+            'dp/dist/datepicker.min'
+        )));
+        $ui->assign('xfooter', Asset::js(array(
+            'modal',
+            'dp/dist/datepicker.min',
+        )));
+
         $cf = ORM::for_table('crm_customfields')->where('ctype','crm')->order_by_asc('id')->find_many();
 
         $ui->assign('cf',$cf);

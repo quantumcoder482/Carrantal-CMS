@@ -95,8 +95,19 @@ switch ($action) {
 //        $ui->assign('xheader', '
 //<link rel="stylesheet" type="text/css" href="ui/lib/s2/css/select2.min.css"/>
 //');
-        $ui->assign('xheader', Asset::css(array('modal','s2/css/select2.min')));
-        $ui->assign('xfooter', Asset::js(array('modal','s2/js/select2.min','s2/js/i18n/'.lan())));
+
+        $ui->assign('xheader', Asset::css(array(
+            'modal',
+            'dp/dist/datepicker.min',
+            's2/css/select2.min'
+        )));
+        $ui->assign('xfooter', Asset::js(array(
+            'modal',
+            's2/js/select2.min',
+            's2/js/i18n/'.lan(),
+            'dp/dist/datepicker.min'
+        )));
+
         $tags = Tags::get_all('Contacts');
         $ui->assign('tags',$tags);
 
@@ -182,6 +193,7 @@ _L[\'New Company\'] = \''.$_L['New Company'].'\';
             $ui->assign('css_class',$css_class);
             $ui->assign('d_amount',$d_amount);
 
+
            // $customer = $d;
 
             Event::trigger('contacts/summary_display/');
@@ -241,42 +253,6 @@ $i = ORM::for_table('sys_invoices')->where('userid',$cid)->find_many();
             $ui->assign('i',$i);
 
             view('ajax.contact-invoices',[
-                'total_invoice_amount' => $total_invoice_amount,
-                'total_paid_amount' => $total_paid_amount,
-                'total_unpaid_amount' => $total_unpaid_amount
-            ]);
-
-
-        }
-        else{
-
-        }
-
-
-        break;
-
-
-    case 'purchases':
-
-        Event::trigger('contacts/purchases/');
-
-        $cid = _post('cid');
-        $ui->assign('cid',$cid);
-        $d = ORM::for_table('crm_accounts')->find_one($cid);
-        if($d){
-            $i = ORM::for_table('sys_purchases')->where('userid',$cid)->find_many();
-
-            $total_invoice_amount = Purchase::where('userid',$cid)->sum('total');
-            $total_paid_amount = Purchase::where('userid',$cid)->paid()->sum('total');
-            $total_unpaid_amount = Purchase::where('userid',$cid)->unpaid()->sum('total');
-
-
-
-
-
-            $ui->assign('i',$i);
-
-            view('ajax.contact-purchases',[
                 'total_invoice_amount' => $total_invoice_amount,
                 'total_paid_amount' => $total_paid_amount,
                 'total_unpaid_amount' => $total_unpaid_amount
@@ -418,6 +394,13 @@ $i = ORM::for_table('sys_invoices')->where('userid',$cid)->find_many();
 
             $ui->assign('currencies',$currencies);
 
+/*            $ui->assign('xheader', Asset::css(array(
+                'dp/dist/datepicker.min',
+            )));
+            $ui->assign('xfooter', Asset::js(array(
+                'dp/dist/datepicker.min'
+            )));
+*/
             view('ajax.contact-edit');
 
 
@@ -481,47 +464,13 @@ $i = ORM::for_table('sys_invoices')->where('userid',$cid)->find_many();
 
         Event::trigger('contacts/view/');
 
-
-
         $id  = $routes['2'];
-
-
         $d = ORM::for_table('crm_accounts')->find_one($id);
-
-        // check self data only
-
-
-
-        $is_supplier = false;
-
-        $po_count = 0;
-
         if($d){
 
-            if(!has_access($user->roleid,'customers','all_data')){
-
-                if($d->o != $user->id)
-                {
-                    permissionDenied();
-                }
-
-            }
-
             if($d->type == 'Supplier'){
-
-                $is_supplier = true;
-
                 $ui->assign('_application_menu', 'suppliers');
-
-                $po_count = ORM::for_table('sys_purchases')->where('userid',$id)->count();
-
-                if($po_count == ''){
-                    $po_count = 0;
-                }
-
             }
-
-
 
             $extra_tab = '';
             $extra_jq = '';
@@ -565,13 +514,12 @@ $i = ORM::for_table('sys_invoices')->where('userid',$cid)->find_many();
 
 
 
-
-            $ui->assign('xheader', Asset::css(array('modal','s2/css/select2.min','imgcrop/assets/css/croppic')));
-
+            $ui->assign('xheader', Asset::css(array('modal','dp/dist/datepicker.min', 's2/css/select2.min','imgcrop/assets/css/croppic')));
 
 
 
-            $ui->assign('xfooter', Asset::js(array('modal','js/filtertable','js/redirect','tinymce/tinymce.min','js/editor','s2/js/select2.min','s2/js/i18n/'.lan(),'imgcrop/croppic','numeric'),$file_build));
+
+            $ui->assign('xfooter', Asset::js(array('modal','dp/dist/datepicker.min', 'js/filtertable','js/redirect','tinymce/tinymce.min','js/editor','s2/js/select2.min','s2/js/i18n/'.lan(),'imgcrop/croppic','numeric'),$file_build));
 
             $ui->assign('xjq', '
  var cid = $(\'#cid\').val();
@@ -592,10 +540,7 @@ $i = ORM::for_table('sys_invoices')->where('userid',$cid)->find_many();
 
             Event::trigger('contacts/view/_on_display');
 
-            view('account-profile-alt',[
-                'is_supplier' => $is_supplier,
-                'po_count' => $po_count
-            ]);
+            view('account-profile-alt');
 
         }
         else{
@@ -640,7 +585,6 @@ $i = ORM::for_table('sys_invoices')->where('userid',$cid)->find_many();
         $country = _post('country');
 
 
-
         if($company_id != ''){
 
             if($company_id != '0'){
@@ -673,6 +617,7 @@ $i = ORM::for_table('sys_invoices')->where('userid',$cid)->find_many();
             $c->state = $state;
             $c->zip = $zip;
             $c->country = $country;
+
 
             $c->save();
 
@@ -998,14 +943,15 @@ $i = ORM::for_table('sys_invoices')->where('userid',$cid)->find_many();
 
         $ui->assign('companies',db_find_array('sys_companies',array('id','company_name')));
 
-        $ui->assign('xheader',Asset::css(array('popover/popover','select/select.min','s2/css/select2.min','dt/dt','modal')));
+        $ui->assign('xheader',Asset::css(array('popover/popover','select/select.min','s2/css/select2.min','dt/dt','modal', 'dp/dist/datepicker.min')));
 
 
-        $ui->assign('xfooter',Asset::js(array('popover/popover','js/redirect','select/select.min','s2/js/select2.min','s2/js/i18n/'.lan(),'dt/dt','modal')));
+        $ui->assign('xfooter',Asset::js(array('popover/popover','js/redirect','select/select.min','s2/js/select2.min','s2/js/i18n/'.lan(),'dt/dt','modal', 'dp/dist/datepicker.min')));
 
         $ui->assign('jsvar', '
 _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
  ');
+
 
         view('contacts_list',[
             'type' => $type
@@ -1018,7 +964,6 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
     case 'edit-post':
 
         Event::trigger('contacts/edit-post/');
-
 
         $id = _post('fcid');
         $d = ORM::for_table('crm_accounts')->find_one($id);
@@ -1068,7 +1013,6 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
             $state = _post('state');
             $zip = _post('zip');
             $country = _post('country');
-
             $username = _post('username');
 
 
@@ -1168,7 +1112,6 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
                 $d->zip = $zip;
                 $d->state = $state;
                 $d->country = $country;
-
                 $d->username = $username;
 
                 // v 4.2
@@ -1183,12 +1126,6 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
                 //
 
                 $d->fax = _post('fax');
-
-                if($config['show_business_number'])
-                {
-                    $d->business_number = _post('business_number');
-                }
-
 
                 if($password != ''){
 

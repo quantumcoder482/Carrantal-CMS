@@ -48,21 +48,6 @@
     </div>
 
 
-    {if $config['show_business_number'] eq '1'}
-
-        <div class="form-group">
-
-            <label class="col-lg-2 control-label" for="business_number">{$config['label_business_number']}</label>
-
-            <div class="col-lg-10">
-
-                <input type="text" id="business_number" name="business_number" class="form-control" value="{$d['business_number']}">
-
-            </div>
-        </div>
-
-    {/if}
-
     {if $config['fax_field']}
 
         <div class="form-group"><label class="col-lg-2 control-label" for="phone">{$_L['Fax']}</label>
@@ -111,7 +96,6 @@
 
         </div>
     </div>
-
 
     <div class="form-group"><label class="col-lg-2 control-label" for="group">{$_L['Group']} </label>
 
@@ -229,6 +213,15 @@
                     {/if}
                 </div>
 
+            {elseif ($f['fieldtype']) eq 'date'}
+
+                <div class="col-lg-10">
+                    <input type="text" id="cf{$f['id']}" name="cf{$f['id']}" class="form-control" value="{if get_custom_field_value($f['id'],$d['id']) neq ''} {get_custom_field_value($f['id'],$d['id'])}{/if}" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true">
+                    {if ($f['description']) neq ''}
+                        <span class="help-block">{$f['description']}</span>
+                    {/if}
+                </div>
+
             {else}
             {/if}
         </div>
@@ -255,3 +248,4 @@
     </div>
     <input type="hidden" name="fcid" id="fcid" value="{$d['id']}">
 </form>
+<script type="text/javascript" src="ui/lib/dp/dist/datepicker.min.js?ver=19"></script>

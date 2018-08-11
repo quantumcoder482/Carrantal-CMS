@@ -20,7 +20,7 @@
                         <option value="password" {if ($d['fieldtype']) eq 'password'}selected=""{/if}>{$_L['Password']}</option>
                         <option value="dropdown" {if ($d['fieldtype']) eq 'dropdown'}selected=""{/if}>{$_L['Drop Down']}</option>
                         <option value="textarea" {if ($d['fieldtype']) eq 'textarea'}selected=""{/if}>{$_L['Text Area']}</option>
-
+                        <option value="date" {if ($d['fieldtype']) eq 'date'}selected=""{/if}>{$_L['Date']}</option>
                     </select>
                 </div>
                 <div class="form-group">
