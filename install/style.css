@@ -1,0 +1,79 @@
+body {
+    background-color: #FBFBFB;
+    font-size: 14px;
+
+}
+
+img {
+    border-width: 0;
+}
+
+#main-container {
+    width: 90%;
+    max-width: 940px;
+    margin: 20px auto;
+
+    background-color: #fff;
+
+    padding: 20px;
+
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+    -moz-box-shadow: 0px 5px 15px #bbb;
+    -webkit-box-shadow: 0px 5px 15px #bbb;
+    box-shadow: 0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);
+    overflow: hidden;
+}
+
+.wrapper {
+    width: 100%;
+    max-width: 940px;
+    margin: 0 auto;
+}
+
+.header {
+    height: 50px;
+    position: relative;
+
+}
+
+.header-box {
+    height: 50px;
+    position: relative;
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
+.hd-logo {
+    float: left;
+    margin: 0px 0px 0 0;
+    font-size: 13px;
+    line-height: 16px;
+    text-decoration: none;
+}
+
+.footer {
+    text-align: center;
+    font-size: 12px;
+
+}
+
+.box {
+    width: 500px;
+    height: 400px;
+    padding: 10px;
+    border: 1px solid black;
+    float: left;
+    margin: 0 20px 0 0;
+}
+
+.box-two {
+    overflow: auto;
+}
+
+.form-control {
+    border-radius: 0;
+
+}
+

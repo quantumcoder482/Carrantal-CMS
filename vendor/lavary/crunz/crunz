@@ -1,0 +1,49 @@
+#!/usr/bin/env php
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| Crunz
+|--------------------------------------------------------------------------
+|
+| This file is part of Crunz library.
+| (c) Reza M. Lavaryan <mrl.8081@gmail.com>
+| For the full copyright and license information, please view the LICENSE
+| file that was distributed with this source code.
+|
+*/
+
+$autoloadSrc = \implode(
+    DIRECTORY_SEPARATOR,
+    [
+        __DIR__,
+        'vendor',
+        'autoload.php'
+    ]
+);
+
+$autoloadBin = \implode(
+    DIRECTORY_SEPARATOR,
+    [
+        __DIR__,
+        '..',
+        '..',
+        'autoload.php'
+    ]
+);
+
+$hasBinAutoloader = \file_exists($autoloadBin);
+
+if ($hasBinAutoloader) {
+    require_once $autoloadBin;
+} else {
+    require_once $autoloadSrc;
+}
+
+define('CRUNZ_ROOT', __DIR__);
+
+// Setting the base directory as an environment variable
+setbase(getroot($hasBinAutoloader ? $autoloadBin : $autoloadSrc));
+
+$application = new Crunz\Application('Crunz Command Line Interface', 'v1.7.3');
+$application->run();
