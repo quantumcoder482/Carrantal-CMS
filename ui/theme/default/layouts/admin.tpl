@@ -97,6 +97,8 @@
                         </div>
                     </li>
 
+
+
                     {$admin_extra_nav[0]}
 
                     {if has_access($user->roleid,'reports')}
@@ -110,6 +112,7 @@
 
                     {/if}
 
+ 
                     {$admin_extra_nav[1]}
 
                     {if has_access($user->roleid,'customers')}
@@ -142,13 +145,35 @@
                     {/if}
 
 
-
-
-
-
-
-
                     {$admin_extra_nav[2]}
+
+                    {if has_access($user->roleid,'vehicles')}
+
+                        <li class="{if $_application_menu eq 'ps'}active{/if}">
+                            <a href="#">
+                                <i class="fa fa-car"></i>
+                                <span class="nav-label">{$_L['Vehicles']}</span>
+                                <span class="fa arrow"></span>
+                            </a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="{$_url}vehicle/add-vehicle/">{$_L['Add Vehicle']}</a>
+                                </li>
+                                <li>
+                                    <a href="{$_url}vehicle/list-vehicle/">{$_L['List Vehicle']}</a>
+                                </li>
+                                <li>
+                                    <a href="{$_url}vehicle/m-k/">{$_L['Make s Model']}</a>
+                                </li>
+                            </ul>
+                        </li>
+                    
+                    {/if}
+
+
+
+                    {$admin_extra_nav[3]}
+
                     {if has_access($user->roleid,'transactions')}
                         {if $config['accounting'] eq '1'}
                             <li class="{if $_application_menu eq 'transactions'}active{/if}">
@@ -170,7 +195,7 @@
                     {/if}
 
 
-                    {$admin_extra_nav[3]}
+                    {$admin_extra_nav[4]}
 
 
                     {if has_access($user->roleid,'sales')}
@@ -239,6 +264,7 @@
                         </li>
 
                     {/if}
+
 
 
 
@@ -347,10 +373,6 @@
                     {/if}
 
 
-
-
-
-
                     {if has_access($user->roleid,'orders') && ($config['orders'])}
 
                         {if ($config['orders'] eq '1')}
@@ -417,7 +439,7 @@
                     {/if}
 
 
-                    {$admin_extra_nav[4]}
+                    {$admin_extra_nav[5]}
 
                     {if has_access($user->roleid,'bank_n_cash')}
                         {if $config['accounting'] eq '1'}
@@ -436,7 +458,8 @@
                     {/if}
 
 
-                    {$admin_extra_nav[5]}
+                    {$admin_extra_nav[6]}
+
 
                     {if has_access($user->roleid,'products_n_services')}
 
@@ -459,10 +482,9 @@
 
                     {/if}
 
+                    
 
-
-
-                    {$admin_extra_nav[6]}
+                    {$admin_extra_nav[7]}
 
                     {if has_access($user->roleid,'reports')}
 

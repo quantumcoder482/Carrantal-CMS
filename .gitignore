@@ -25,3 +25,9 @@ build/Release
 
 # vscode 
 .vscode
+
+# Compiled tpl files
+storage/Compiled
+
+# gitignore
+.gitignore

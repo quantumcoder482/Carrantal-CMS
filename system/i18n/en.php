@@ -1064,9 +1064,31 @@ $_L = [
     'Daily' => 'Daily',
     'Weeks_3' => '3 Weeks',
     'Weeks_4' => '4 Weeks',
-
+    'Vehicles' => 'Vehicles',
+    'Add Vehicle' => 'Add Vehicle',
+    'List Vehicle' => 'List Vehicle',
+    'Make s Model' => 'Make/Model',
+    'New Make s Model' => 'New Make/Model',
+    'Select Make s Model' => 'Select Make/Model',
+    'Vehicle No' => 'Vehicle No.',
+    'Purchase Price' => 'Purchase Price',
+    'PARF Cost' => 'PARF Cost',
+    'Purchase Date' => 'Purchase Date',
+    'Expiry Status' => 'Expiry Status',
+    'Description' =>'Description',
+    'Vehicle Image' => 'Vehicle Image',
+    'Vehicle Ownership Certificate' => 'Vehicle Ownership Certificate',
+    'List Vehicles' => 'List Vehicles',
+    'Custom Field' => 'Custom Field',
+    'Custom Vehicle Fields' => 'Custom Vehicle Fields',
+    'Add New Make s Model' => 'Add New Make/Model',
+    'Edit Make s Modal' => 'Edit Make s Modal',
+    'Add Make s Modal' => 'Add Make s Modal',
+    'Engin Capacity' => 'Engin Capacity',
+    'Transmission' => 'Transmission',
+    'Fuel Type' => 'Fuel Type',
+    'Make' => 'Make',
+    'Model' => 'Model',
+    'vehicle comment' => 'Select how many days alert before expiry date',
+    
 ];
-
-
-
-
