@@ -1822,8 +1822,6 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
         $id = route(2);
 
 
-
-
         $company = false;
 
         if($id != ''){

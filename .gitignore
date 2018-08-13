@@ -27,7 +27,8 @@ build/Release
 .vscode
 
 # Compiled tpl files
-storage/Compiled
+storage/compiled
+storage
 
 # gitignore
 .gitignore

@@ -2,9 +2,9 @@
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
     <h3>
         {if $f_type eq 'edit'} 
-            {$_L['Add Make s Modal']} 
-        {else} 
             {$_L['Edit Make s Modal']} 
+        {else} 
+            {$_L['Add Make s Modal']} 
         {/if}
     </h3>
 </div>
@@ -15,86 +15,23 @@
 
 
         <div class="row">
-            <div class="col-md-6">
-
-
+            <div class="col-md-12">
 
                 <div class="form-group">
-                    <label class="col-md-12" for="company_name">{$_L['Company Name']}
-                        <small class="red">*</small>
-                    </label>
+                    <label class="col-md-12" for="make">{$_L['Make']}</label>
 
                     <div class="col-md-12">
-                        <input type="text" id="company_name" name="company_name" class="form-control" value="{$val['company_name']}">
-
+                        <input type="text" id="make" name="make" class="form-control" value="{$val['make']}">
                     </div>
 
 
                 </div>
 
-
-                {if $config['show_business_number'] eq '1'}
-
-
                 <div class="form-group">
-                    <label class="col-md-12" for="business_number">{$config['label_business_number']}</label>
+                    <label class="col-md-12" for="model">{$_L['Model']}</label>
 
                     <div class="col-md-12">
-                        <input type="text" id="business_number" name="business_number" class="form-control" value="{$val['business_number']}">
-
-                    </div>
-
-
-                </div>
-
-
-                {/if}
-
-
-                <div class="form-group">
-                    <label class="col-md-12" for="url">{$_L['URL']}</label>
-
-                    <div class="col-md-12">
-                        <input type="text" id="url" name="url" class="form-control" value="{$val['url']}">
-
-                    </div>
-
-
-                </div>
-
-
-                <div class="form-group">
-                    <label class="col-md-12" for="email">{$_L['Email']}</label>
-
-                    <div class="col-md-12">
-                        <input type="text" id="email" name="email" class="form-control" value="{$val['email']}">
-
-                    </div>
-
-
-                </div>
-
-
-                <div class="form-group">
-                    <label class="col-md-12" for="phone">{$_L['Phone']}</label>
-
-                    <div class="col-md-12">
-                        <input type="text" id="phone" name="phone" class="form-control" value="{$val['phone']}">
-
-                    </div>
-
-
-                </div>
-
-
-                {if $config['fax_field'] eq '1'}
-
-
-                <div class="form-group">
-                    <label class="col-md-12" for="fax">{$_L['Fax']}</label>
-
-                    <div class="col-md-12">
-                        <input type="text" id="fax" name="fax" class="form-control" value="{$val['fax']}">
+                        <input type="text" id="model" name="model" class="form-control" value="{$val['model']}">
 
                     </div>
 
@@ -103,14 +40,11 @@
 
 
 
-                {/if}
-
-
                 <div class="form-group">
-                    <label class="col-md-12" for="logo_url">{$_L['Logo URL']}</label>
+                    <label class="col-md-12" for="engine_capacity">{$_L['Engine Capacity']}</label>
 
                     <div class="col-md-12">
-                        <input type="text" id="logo_url" name="logo_url" class="form-control" value="{$val['logo_url']}">
+                        <input type="text" id="engine_capacity" name="engine_capacity" class="form-control" value="{$val['engine_capacity']}">
 
                     </div>
 
@@ -118,64 +52,13 @@
                 </div>
 
 
-
-
-
-
-            </div>
-
-            <div class="col-md-6">
-
                 <div class="form-group">
-                    <label class="col-md-12" for="c_address1">{$_L['Address']}</label>
-
-                    <div class="col-lg-12">
-                        <input type="text" id="c_address1" name="address1" class="form-control" value="{$val['address1']}">
-
-                    </div>
-
-
-                </div>
-
-                <div class="form-group">
-                    <label class="col-md-12" for="c_city">{$_L['City']}</label>
+                    <label class="col-md-12" for="transmission">{$_L['Transmission']}</label>
 
                     <div class="col-md-12">
-                        <input type="text" id="c_city" name="city" class="form-control" value="{$val['city']}">
-
-                    </div>
-
-
-                </div>
-
-                <div class="form-group">
-                    <label class="col-md-12" for="c_state">{$_L['State Region']}</label>
-
-
-                    <div class="col-md-12">
-                        <input type="text" id="c_state" name="state" class="form-control" value="{$val['state']}">
-                    </div>
-
-
-                </div>
-
-                <div class="form-group">
-                    <label class="col-md-12" for="c_zip">{$_L['ZIP Postal Code']}</label>
-
-                    <div class="col-md-12">
-                        <input type="text" id="c_zip" name="zip" class="form-control" value="{$val['zip']}">
-                    </div>
-
-
-                </div>
-
-                <div class="form-group">
-                    <label class="col-md-12" for="c_country">{$_L['Country']}</label>
-
-                    <div class="col-md-12">
-                        <select name="country" id="c_country" class="form-control country">
-                            <option value="">{$_L['Select Country']}</option>
-                            {$countries}
+                        <select name="transmission" id="transmission" class="form-control country">
+                            <option value="A">{$_L['Auto A']}</option>
+                            <option value="M">{$_L['Manual M']}</option>
                         </select>
                     </div>
 
@@ -183,6 +66,21 @@
                 </div>
 
 
+                <div class="form-group">
+                    <label class="col-md-12" for="fuel_type">{$_L['Fuel Type']}</label>
+                
+                    <div class="col-md-12">
+                        <select name="fuel_type" id="fuel_type" class="form-control country">
+                            <option value="{$_L['Petrol']}">{$_L['Petrol']}</option>
+                            <option value="{$_L['Diesel']}">{$_L['Diesel']}</option>
+                            <option value="{$_L['Petrol Electric']}">{$_L['Petrol Electric']}</option>
+                            <option value="{$_L['Diesel Electric']}">{$_L['Diesel Electric']}</option>
+                            <option value="{$_L['Electric']}">{$_L['Electric']}</option>
+                        </select>
+                    </div>
+                
+                
+                </div>
 
             </div>
         </div>
@@ -190,7 +88,7 @@
 
 
         <input type="hidden" name="f_type" id="f_type" value="{$f_type}">
-        <input type="hidden" name="cid" id="cid" value="{$val['cid']}">
+        <input type="hidden" name="v_t_id" id="v_t_id" value="{$val['v_t_id']}">
     </form>
 
 </div>

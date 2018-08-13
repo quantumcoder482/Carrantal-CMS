@@ -1,5 +1,6 @@
 {extends file="$layouts_admin"}
 
+
 {block name="content"}
     <div class="row">
 
@@ -7,8 +8,7 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5>
-                        {$_L['Add Vehicle']}
-                        
+                        {$_L['Add Vehicle']} 
                     </h5>
                 </div>
                 <div class="ibox-content" id="ibox_form">
@@ -18,25 +18,25 @@
 
                     <form class="form-horizontal" id="rform">
 
-                        <div class="form-group"><label class="col-lg-2 control-label" for="vehicleno">{$_L['Vehicle No']}</label>
+                        <div class="form-group"><label class="col-lg-2 control-label" for="vehicle_num">{$_L['Vehicle No']}</label>
 
-                            <div class="col-lg-10"><input type="text" id="vehicleno" name="vehicleno" class="form-control" autocomplete="off">
+                            <div class="col-lg-10"><input type="text" id="vehicle_num" name="vehicle_num" class="form-control" autocomplete="off">
 
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-lg-2 control-label" for="make_model">{$_L['Make s Model']}</label>
+                            <label class="col-lg-2 control-label" for="vehicle_type">{$_L['Make s Model']}</label>
                         
                             <div class="col-lg-10">
                         
-                                <select id="make_model" name="make_model" class="form-control">
+                                <select id="vehicle_type" name="vehicle_type" class="form-control">
                                     <option value="0">{$_L['Select Make s Model']}</option>
-                                    {foreach $make_models as $make_model}
-                                     <option value="{$make_model['id']}" >{$make_model['name']}</option>
+                                    {foreach $vehicle_types as $vehicle_type}
+                                     <option value="{$vehicle_type['id']}" >{$vehicle_type['make']}</option>
                                     {/foreach}
                                 </select>
-                                <span class="help-block"><a href="#" class="add_company"><i class="fa fa-plus"></i> {$_L['New Make s Model']}</a>
+                                <span class="help-block"><a href="#" class="add_make_model"><i class="fa fa-plus"></i> {$_L['New Make s Model']}</a>
                                 </span>
                         
                             </div>
@@ -60,15 +60,15 @@
 
                         <div class="form-group">
                             <label for="date" class="col-lg-2 control-label">{$_L['Purchase Date']}</label>
-                            <div class="col-lg-10">
-                                <input type="text" class="form-control" value="{$pdate}" name="pdate" id="pdate" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true">
+                            <div class="col-lg-10"> 
+                                <input type="text" class="form-control" value=" " name="pdate" id="pdate" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="date" class="col-lg-2 control-label">{$_L['Expiry Date']}</label>
                             <div class="col-lg-10">
-                                <input type="text" class="form-control" value="{$edate}" name="edate" id="edate" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true">
+                                <input type="text" class="form-control" value=" " name="edate" id="edate" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true">
                             </div>
                         </div>
 
@@ -78,10 +78,10 @@
                             <div class="col-lg-10">
 
                                 <select class="form-control" id="expiry_status" name="expiry_status">
-                                    <option value="">...</option>
-                                    {foreach $expiry_statuss as $expiry_status}
-                                    <option value="{$expiry_status['value']}">{$expiry_status['value']}</option>
-                                    {/foreach}
+                                    <option value=""></option>
+                                    {for $expiry_status=1 to 20}
+                                    <option value="{$expiry_status}">{$expiry_status}</option>
+                                    {/for}
                                 </select>
                            
                                 <span class="help-block"> {$_L['vehicle comment']}</span>
@@ -93,14 +93,14 @@
 
                         <div class="form-group"><label class="col-lg-2 control-label" for="description">{$_L['Description']}</label>
 
-                            <div class="col-lg-10"><textarea id="description" class="form-control" rows="3"></textarea>
+                            <div class="col-lg-10"><textarea id="description" name="description" class="form-control" rows="3"></textarea>
 
                             </div>
                         </div>
 
 
-                        {if $customfield }
-
+                        {* if isset($customfield) *}
+<!-- 
                             <div class="form-group"><label class="col-lg-2 control-label" for="inventory">{$_L['Inventory To Add Subtract']}</label>
 
                                 <div class="col-lg-10"><input type="text" id="inventory" name="inventory" class="form-control" autocomplete="off">
@@ -115,13 +115,13 @@
                                     <input type="text" id="inventory" name="inventory" class="form-control" autocomplete="off">
 
                                 </div>
-                            </div>
+                            </div> -->
 
-                        {/if}
+                        {*/if*}
 
-
-                        <input type="hidden" id="type" name="type" value="{$type}">
-                        <input type="hidden" name="file_link" id="file_link" value="">
+                        
+                        <input type="hidden" name="vehicle_file" id="vehicle_file" value="">
+                        <input type="hidden" name="cert_file" id="cert_file" value="">
 
 
 
@@ -144,7 +144,7 @@
                 </div>
                 <div class="ibox-content" id="ibox_form">
 
-                    <form action="" class="dropzone" id="upload_container">
+                    <form action="" class="dropzone" id="upload_container1">
 
                         <div class="dz-message">
                             <h3> <i class="fa fa-cloud-upload"></i>  {$_L['Drop File Here']}</h3>
@@ -163,7 +163,7 @@
                 </div>
                 <div class="ibox-content" id="ibox_form">
         
-                    <form action="" class="dropzone" id="upload_container">
+                    <form action="" class="dropzone" id="upload_container2">
         
                         <div class="dz-message">
                             <h3>

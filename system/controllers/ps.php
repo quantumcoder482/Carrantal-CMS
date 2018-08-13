@@ -187,16 +187,9 @@ function filterPS() {
         }
 
 
-
-
-
-
-
         if($name == ''){
             $msg .= 'Item Name is required <br>';
         }
-
-
 
 
         $sales_price = Finance::amount_fix($sales_price);

@@ -149,7 +149,7 @@
 
                     {if has_access($user->roleid,'vehicles')}
 
-                        <li class="{if $_application_menu eq 'ps'}active{/if}">
+                        <li class="{if $_application_menu eq 'vehicles'}active{/if}">
                             <a href="#">
                                 <i class="fa fa-car"></i>
                                 <span class="nav-label">{$_L['Vehicles']}</span>
