@@ -93,10 +93,13 @@
 
 </div>
 <div class="modal-footer">
-
-
-
-    <button type="button" data-dismiss="modal" class="btn btn-danger">{$_L['Cancel']}</button>
+    
+    <button type="button" data-dismiss="modal" class="btn btn-danger">
+         {if $f_type eq 'edit'} {$_L['Close']} {else} {$_L['Cancel']} {/if}
+    </button>
     <button class="btn btn-primary modal_submit" type="submit" id="modal_submit">
-        <i class="fa fa-check"></i> {$_L['Save']}</button>
+        <i class="fa fa-check"></i>
+     {if $f_type eq 'edit'} {$_L['Update']} {else} {$_L['Save']} {/if}
+    </button>
+
 </div>

@@ -8,7 +8,7 @@
         <div class="panel panel-default">
             <div class="panel-body">
 
-                <a href="#" class="btn btn-primary add_company waves-effect waves-light" id="add_company">
+                <a href="#" class="btn btn-primary add_make_model waves-effect waves-light" id="add_company">
                     <i class="fa fa-plus"></i> {$_L['Add New Make s Model']}</a>
 
 
@@ -25,7 +25,7 @@
             </div>
             <div class="ibox-content">
 
-                {*if $view_type == 'filter'*}
+                {if $view_type == 'filter'}
                 <form class="form-horizontal" method="post" action="">
                     <div class="form-group">
                         <div class="col-md-12">
@@ -39,13 +39,14 @@
                         </div>
 
                     </div>
+                    <input type="hidden" name="sure_msg" id="sure_msg" value="{$_L['are_you_sure']}">
                 </form>
-                {*/if*}
+                {/if}
 
                 <table class="table table-bordered table-hover sys_table footable" {if $view_type=='filter' } data-filter="#foo_filter" data-page-size="50"
                     {/if}>
                     <thead>
-                        <tr>
+                        <tr></tr>
                             <th>{$_L['Make']}</th>
                             <th>{$_L['Model']}</th>
                             <th>{$_L['Engine Capacity']}</th>
@@ -57,38 +58,21 @@
                     <tbody>
 
                         {foreach $d as $ds}
-                        <tr>
-                            <td data-value="{$ds['id']}">
-                                <a href="{$_url}invoices/view/{$ds['id']}/">{$ds['invoicenum']}{if $ds['cn'] neq ''} {$ds['cn']} {else} {$ds['id']} {/if}</a>
+                        <tr style="text-align: center">
+                            <td data-value="{$ds['make']}">
+                                <a href="#" class='edit_make_model' id="{$ds['id']}">{$ds['make']}</a>
                             </td>
-                            <td>
-                                <a href="{$_url}contacts/view/{$ds['userid']}/">{$ds['account']}</a>
-                            </td>
-                            <td class="amount" data-a-sign="{if $ds['currency_symbol'] eq ''} {$config['currency_code']} {else} {$ds['currency_symbol']}{/if} ">{$ds['total']}</td>
-                            <td data-value="{strtotime($ds['date'])}">{date( $config['df'], strtotime($ds['date']))}</td>
-                            <td data-value="{strtotime($ds['duedate'])}">{date( $config['df'], strtotime($ds['duedate']))}</td>
+                            <td data-value="{$ds['model']}">{$ds['model']}</td>
+                            <td data-value="{$ds['engine_capacity']}">{$ds['engine_capacity']}</td>
+                            <td data-value="{$ds['transmission']}">{$ds['transmission']}</td>
+                            <td data-value="{$ds['fuel_type']}">{$ds['fuel_type']}</td>
                             <td class="text-right">
-                                {*
-                                <a href="{$_url}invoices/view/{$ds['id']}/" class="btn btn-primary btn-xs">
-                                    <i class="fa fa-check"></i> {$_L['View']}</a>*} {*
-                                <a href="{$_url}invoices/edit/{$ds['id']}/" class="btn btn-info btn-xs">
-                                    <i class="fa fa-pencil"></i> {$_L['Edit']}</a>*} {*
-                                <a href="#" class="btn btn-danger btn-xs cdelete" id="iid{$ds['id']}">
-                                    <i class="fa fa-trash"></i> {$_L['Delete']}</a>*}
-
-                                <a href="{$_url}invoices/view/{$ds['id']}/" class="btn btn-primary btn-xs" data-toggle="tooltip" data-placement="top" title="{$_L['View']}">
-                                    <i class="fa fa-file-text-o"></i>
-                                </a>
-                                <a href="{$_url}invoices/clone/{$ds['id']}/" class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="top" title="{$_L['Clone']}">
-                                    <i class="fa fa-files-o"></i>
-                                </a>
-                                <a href="{$_url}invoices/edit/{$ds['id']}/" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" title="{$_L['Edit']}">
+                                <a href="#" class="btn btn-info btn-xs edit_make_model" id="{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['Edit']}">
                                     <i class="fa fa-pencil"></i>
                                 </a>
-                                <a href="#" class="btn btn-danger btn-xs cdelete" id="iid{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['Delete']}">
+                                <a href="#" class="btn btn-danger btn-xs cdelete" id="{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['Delete']}">
                                     <i class="fa fa-trash"></i>
                                 </a>
-
 
                             </td>
                         </tr>
@@ -99,7 +83,7 @@
                     {if $view_type == 'filter'}
                     <tfoot>
                         <tr>
-                            <td colspan="8">
+                            <td style="text-align: left;" colspan="8">
                                 <ul class="pagination">
                                 </ul>
                             </td>

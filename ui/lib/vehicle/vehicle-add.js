@@ -9,7 +9,11 @@ $(document).ready(function () {
             minHeight: 200 // pixels
         }
     );
+    var $vehicle_type = $('#vehicle_type');
 
+    $vehicle_type.select2({
+        theme: "bootstrap"
+    });
 
     var _url = $("#_url").val();
     var ib_submit = $("#submit");
@@ -126,14 +130,14 @@ $(document).ready(function () {
         });
     });
 
-
+    
     $modal.on('click', '.modal_submit', function (e) {
 
         e.preventDefault();
 
         $modal.modal('loading');
 
-        $.post(_url + "vehicle/add_mk_post/", $("#ib_modal_form").serialize())
+        $.post(_url + "vehicle/update_mk_post/", $("#ib_modal_form").serialize())
             .done(function (data) {
 
                 if ($.isNumeric(data)) {

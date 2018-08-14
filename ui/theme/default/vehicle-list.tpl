@@ -25,6 +25,7 @@
                         </div>
 
                     </div>
+                    <input type="hidden" id="sure_msg" value="{$_L['are_you_sure']}" />
                 </form>
                 {/if}
 
@@ -43,60 +44,50 @@
                     </thead>
                     <tbody>
 
-                        {foreach $vehicles as $vehicle}
+                        {foreach $d as $ds}
                         <tr>
-                            <td data-value="{$ds['id']}">
-                                <a href="{$_url}invoices/view/{$ds['id']}/">{$ds['invoicenum']}{if $ds['cn'] neq ''} {$ds['cn']} {else} {$ds['id']} {/if}</a>
+                            <td data-value="{$ds['v_i']}" alt="{$ds['v_i']}">
+                                {if {$ds['v_i']} eq ''}
+                                   <img src="{$baseUrl}/ui/lib/imgs/item_placeholder.png" width="150px" height="80px" />
+                                {else}    
+                                    <img src="{$baseUrl}/storage/items/thumb{$ds['v_i']}" width="150px" height="80px" />
+                                {/if}
+                            </td>
+
+                            <td class="edit_vehicle" data-value="{$ds['vehicle_num']}" id="{$ds['id']}">
+                                <a href="#">{$ds['vehicle_num']}</a>
+                            </td>
+                            <td data-value="{$ds['vehicle_type']}">
+                                {$ds['vehicle_type']}
+                            </td>
+                            <td class="amount" data-value="{$ds['purchase_price']}" data-a-sign="{if $ds['currency_symbol'] eq ''} {$config['currency_code']} {else} {$ds['currency_symbol']}{/if} ">{$ds['purchase_price']}</td>
+                            <td data-value="{strtotime($ds['purchase_date'])}">
+                                {date( $config['df'], strtotime($ds['purchase_date']))}
+                            </td>
+                            <td data-value="{strtotime($ds['expiry_date'])}">
+                                {date( $config['df'], strtotime($ds['expiry_date']))}
                             </td>
                             <td>
-                                <a href="{$_url}contacts/view/{$ds['userid']}/">{$ds['account']}</a>
-                            </td>
-                            <td class="amount" data-a-sign="{if $ds['currency_symbol'] eq ''} {$config['currency_code']} {else} {$ds['currency_symbol']}{/if} ">{$ds['total']}</td>
-                            <td data-value="{strtotime($ds['date'])}">{date( $config['df'], strtotime($ds['date']))}</td>
-                            <td data-value="{strtotime($ds['duedate'])}">{date( $config['df'], strtotime($ds['duedate']))}</td>
-                            <td>
-
-                                {if $ds['status'] eq 'Unpaid'}
-                                <span class="label label-danger">{ib_lan_get_line($ds['status'])}</span>
-                                {elseif $ds['status'] eq 'Paid'}
-                                <span class="label label-success">{ib_lan_get_line($ds['status'])}</span>
-                                {elseif $ds['status'] eq 'Partially Paid'}
-                                <span class="label label-info">{ib_lan_get_line($ds['status'])}</span>
-                                {elseif $ds['status'] eq 'Cancelled'}
-                                <span class="label">{ib_lan_get_line($ds['status'])}</span>
-                                {else} {ib_lan_get_line($ds['status'])} {/if}
-
-
-
-                            </td>
-                            <td>
-                                {if $ds['r'] eq '0'}
-                                <span class="label label-default">
-                                    <i class="fa fa-dot-circle-o"></i> {$_L['Onetime']}</span>
+                                {if $ex_status[$ds['id']] eq 'Active'}
+                                <span class="label label-success">
+                                     {$ex_status[$ds['id']]}</span>
+                                {elseif $ex_status[$ds['id']] eq 'Expired'}
+                                <span class="label label-danger">
+                                     {$ex_status[$ds['id']]}</span>
                                 {else}
-                                <span class="label label-default">
-                                    <i class="fa fa-repeat"></i> {$_L['Recurring']}</span>
+                                <span class="label label-info">
+                                     {$ex_status[$ds['id']]}</span>
                                 {/if}
                             </td>
                             <td class="text-right">
-                                {*
-                                <a href="{$_url}invoices/view/{$ds['id']}/" class="btn btn-primary btn-xs">
-                                    <i class="fa fa-check"></i> {$_L['View']}</a>*} {*
-                                <a href="{$_url}invoices/edit/{$ds['id']}/" class="btn btn-info btn-xs">
-                                    <i class="fa fa-pencil"></i> {$_L['Edit']}</a>*} {*
-                                <a href="#" class="btn btn-danger btn-xs cdelete" id="iid{$ds['id']}">
-                                    <i class="fa fa-trash"></i> {$_L['Delete']}</a>*}
-
-                                <a href="{$_url}invoices/view/{$ds['id']}/" class="btn btn-primary btn-xs" data-toggle="tooltip" data-placement="top" title="{$_L['View']}">
+                            
+                                <a href="#" class="btn btn-primary btn-xs view_cert_img" id="{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['View']}">
                                     <i class="fa fa-file-text-o"></i>
                                 </a>
-                                <a href="{$_url}invoices/clone/{$ds['id']}/" class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="top" title="{$_L['Clone']}">
-                                    <i class="fa fa-files-o"></i>
-                                </a>
-                                <a href="{$_url}invoices/edit/{$ds['id']}/" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" title="{$_L['Edit']}">
+                                <a href="#" class="btn btn-info btn-xs edit_vehicle" id="{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['Edit']}">
                                     <i class="fa fa-pencil"></i>
                                 </a>
-                                <a href="#" class="btn btn-danger btn-xs cdelete" id="iid{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['Delete']}">
+                                <a href="#" class="btn btn-danger btn-xs cdelete" id="{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['Delete']}">
                                     <i class="fa fa-trash"></i>
                                 </a>
 
@@ -110,7 +101,7 @@
                     {if $view_type == 'filter'}
                     <tfoot>
                         <tr>
-                            <td colspan="8">
+                            <td style="text-align: left;" colspan="8">
                                 <ul class="pagination">
                                 </ul>
                             </td>
@@ -125,62 +116,3 @@
     </div>
 </div>
 {/block}
-
-
-<!-- <td data-value="{$ds['id']}">
-    <a href="{$_url}invoices/view/{$ds['id']}/">{$ds['invoicenum']}{if $ds['cn'] neq ''} {$ds['cn']} {else} {$ds['id']} {/if}</a>
-</td>
-<td>
-    <a href="{$_url}contacts/view/{$ds['userid']}/">{$ds['account']}</a>
-</td>
-<td class="amount" data-a-sign="{if $ds['currency_symbol'] eq ''} {$config['currency_code']} {else} {$ds['currency_symbol']}{/if} ">{$ds['total']}</td>
-<td data-value="{strtotime($ds['date'])}">{date( $config['df'], strtotime($ds['date']))}</td>
-<td data-value="{strtotime($ds['duedate'])}">{date( $config['df'], strtotime($ds['duedate']))}</td>
-<td>
-
-    {if $ds['status'] eq 'Unpaid'}
-    <span class="label label-danger">{ib_lan_get_line($ds['status'])}</span>
-    {elseif $ds['status'] eq 'Paid'}
-    <span class="label label-success">{ib_lan_get_line($ds['status'])}</span>
-    {elseif $ds['status'] eq 'Partially Paid'}
-    <span class="label label-info">{ib_lan_get_line($ds['status'])}</span>
-    {elseif $ds['status'] eq 'Cancelled'}
-    <span class="label">{ib_lan_get_line($ds['status'])}</span>
-    {else} {ib_lan_get_line($ds['status'])} {/if}
-
-
-
-</td>
-<td>
-    {if $ds['r'] eq '0'}
-    <span class="label label-default">
-        <i class="fa fa-dot-circle-o"></i> {$_L['Onetime']}</span>
-    {else}
-    <span class="label label-default">
-        <i class="fa fa-repeat"></i> {$_L['Recurring']}</span>
-    {/if}
-</td>
-<td class="text-right">
-    {*
-    <a href="{$_url}invoices/view/{$ds['id']}/" class="btn btn-primary btn-xs">
-        <i class="fa fa-check"></i> {$_L['View']}</a>*} {*
-    <a href="{$_url}invoices/edit/{$ds['id']}/" class="btn btn-info btn-xs">
-        <i class="fa fa-pencil"></i> {$_L['Edit']}</a>*} {*
-    <a href="#" class="btn btn-danger btn-xs cdelete" id="iid{$ds['id']}">
-        <i class="fa fa-trash"></i> {$_L['Delete']}</a>*}
-
-    <a href="{$_url}invoices/view/{$ds['id']}/" class="btn btn-primary btn-xs" data-toggle="tooltip" data-placement="top" title="{$_L['View']}">
-        <i class="fa fa-file-text-o"></i>
-    </a>
-    <a href="{$_url}invoices/clone/{$ds['id']}/" class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="top" title="{$_L['Clone']}">
-        <i class="fa fa-files-o"></i>
-    </a>
-    <a href="{$_url}invoices/edit/{$ds['id']}/" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" title="{$_L['Edit']}">
-        <i class="fa fa-pencil"></i>
-    </a>
-    <a href="#" class="btn btn-danger btn-xs cdelete" id="iid{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['Delete']}">
-        <i class="fa fa-trash"></i>
-    </a>
-
-
-</td> -->

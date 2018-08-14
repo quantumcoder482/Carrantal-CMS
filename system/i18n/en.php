@@ -590,6 +590,7 @@ $_L = [
     'Choose the Traget Account' => 'Please choose the Traget Account',
     'See All Activity' => 'See All Activity',
     'Item Added Successfully' => 'Item Added Successfully',
+    'Item Updated Successfully' => 'Item Updated Successfully',
     'Password changed successfully' => 'Password changed successfully, Please login again',
     'Data Updated' => 'Data Updated!',
     'Transaction Added Successfully' => 'Transaction Added Successfully',
@@ -1097,4 +1098,7 @@ $_L = [
     'Petrol Electric' => 'Petrol Electric',
     'Diesel Electric' => 'Diesel Electric',
     'Electric' => 'Electric',
+    'Vehicle_type_delete_successful'=> 'Vehicle type deleted successful',
+    'Vehicle Delete Successful' => 'Vehicle Delete Successful',
+    
 ];

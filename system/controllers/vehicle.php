@@ -18,7 +18,15 @@ switch ($action) {
        
         $vehicle_types=ORM::for_table('sys_vehicle_type')->order_by_asc('id')->find_array();
 
+        $v_types=array();
+
+        foreach ($vehicle_types as $v) {
+            array_push($v_types,$v['make']." ".$v['model']." ".$v['engine_capacity']." (".$v['transmission'].")");
+        }
+
+
         $ui->assign('vehicle_types',$vehicle_types);
+        $ui->assign('v_types',$v_types);
         $ui->assign('xheader', Asset::css(array('modal','dp/dist/datepicker.min','dropzone/dropzone','redactor/redactor','s2/css/select2.min')));
         $ui->assign('xfooter', Asset::js(array('modal','dp/dist/datepicker.min','dropzone/dropzone','redactor/redactor.min','numeric','s2/js/select2.min',
             's2/js/i18n/'.lan(), 'vehicle/vehicle-add')));
@@ -37,22 +45,107 @@ switch ($action) {
     case 'list-vehicle':
 
 
-        $vehicles=ORM::for_table('sys_vehicles')->order_by_asc('id')->find_array();
-        $ui->assign('vehicles',$vehicles);
-        //$ui->assign('type','Service');
-        $ui->assign('xheader', Asset::css(array('modal','dropzone/dropzone','redactor/redactor','s2/css/select2.min')));
-        $ui->assign('xfooter', Asset::js(array('modal','dropzone/dropzone','redactor/redactor.min','numeric','s2/js/select2.min',
-            's2/js/i18n/'.lan(),'jslib/add-ps')));
+        if(has_access($user->roleid,'sales','all_data')){
+
+            $all_data = true;
+
+        }
+        else{
+            $all_data = false;
+        }
+
+        $paginator = array();
+        $mode_css = '';
+        $mode_js = '';
+        $view_type = 'default';
+        $view_type = 'filter';
+        $mode_css = Asset::css(array('modal','dropzone/dropzone','dp/dist/datepicker.min','footable/css/footable.core.min','redactor/redactor','s2/css/select2.min','vehicle/vehicle'));
+        $mode_js = Asset::js(array('modal','dropzone/dropzone','dp/dist/datepicker.min','footable/js/footable.all.min','contacts/mode_search','redactor/redactor.min','numeric','s2/js/select2.min',
+            's2/js/i18n/'.lan(), 'vehicle/vehicle-list'
+        ));
+        
+        $baseUrl=APP_URL;
 
 
+        $total_vehicles = ORM::for_table('sys_vehicles');
+
+        if(!$all_data)
+        {
+            $total_vehicles->where('aid',$user->id);
+        }
+
+        $total_vehicles = $total_vehicles->count();
+        
+        $f = ORM::for_table('sys_vehicles');
+        $d = $f->order_by_desc('id')->find_many();
+
+
+        
+        // Expiry Status 
+        
+        $ex_status=array();
+
+        foreach($d as $data){
+
+            $expiry_id=$data['id'];
+
+            $expiry_status=$data['expiry_status'];
+            
+            $expiry_date=$data['expiry_date'];
+            
+            $today = date("Y-m-d");
+
+            $date1 = date_create($today);
+
+            $date2 = date_create($expiry_date);
+           
+            $rest= date_diff($date1,$date2); 
+
+            $rest= intval($rest->format("%a"));   
+            
+            if($date2<$date1){
+            
+                $ex_status[$expiry_id]="Expired";
+             
+
+            }elseif($rest>=$expiry_status){
+             
+                $ex_status[$expiry_id]="Active";
+            
+            }else {
+           
+                $ex_status[$expiry_id]=$rest."-Day to Expiry"; 
+            };
+            
+        }
+
+
+        $paginator['contents'] = '';
+
+        $ui->assign('total_vehicles', $total_vehicles);
+        $ui->assign('xheader', $mode_css);
+        $ui->assign('xfooter', $mode_js);
+        $ui->assign('view_type', $view_type);
+        $ui->assign('d', $d);
+        $ui->assign('ex_status',$ex_status);
+        $ui->assign('baseUrl',$baseUrl);
+        $ui->assign('paginator', $paginator);
         $ui->assign('xjq', '
- $(\'.amount\').autoNumeric(\'init\');
- ');
+            $(\'.amount\').autoNumeric(\'init\', {
+            dGroup: ' . $config['thousand_separator_placement'] . ',
+            aPad: ' . $config['currency_decimal_digits'] . ',
+            pSign: \'' . $config['currency_symbol_position'] . '\',
+            aDec: \'' . $config['dec_point'] . '\',
+            aSep: \'' . $config['thousands_sep'] . '\',
+            vMax: \'9999999999999999.00\',
+                        vMin: \'-9999999999999999.00\'
 
-        $max = ORM::for_table('sys_items')->max('id');
-        $nxt = $max+1;
-        $ui->assign('nxt',$nxt);
-        $ui->assign('view_type',"filter");       
+            });
+            $(\'[data-toggle="tooltip"]\').tooltip();
+
+        ');
+
+
         view('vehicle-list');
 
         break;
@@ -60,21 +153,65 @@ switch ($action) {
 
     case 'm-k':
         
-        $vehicle_types=ORM::for_table('sys_vehicles_type')->order_by_asc('id')->find_array();
-        $ui->assign('vehicles_types',$vehicles_types);
-        
-        //$ui->assign('type','Service');
-        
-        $ui->assign('xheader', Asset::css(array('modal','dropzone/dropzone','redactor/redactor')));
-        $ui->assign('xfooter', Asset::js(array('modal','dropzone/dropzone','redactor/redactor.min','numeric','jslib/add-ps')));
+       
+        if(has_access($user->roleid,'sales','all_data')){
 
-        $ui->assign('xjq', '$(\'.amount\').autoNumeric(\'init\');');
+            $all_data = true;
 
-        $max = ORM::for_table('sys_items')->max('id');
-        $nxt = $max+1;
-        $ui->assign('nxt',$nxt);
+        }
+        else{
+
+            $all_data = false;
+
+        }
+
+        $paginator = array();
+        $mode_css = '';
+        $mode_js = '';
+        $view_type = 'default';
+        $view_type = 'filter';
+        $mode_css = Asset::css(array('modal','footable/css/footable.core.min','redactor/redactor','s2/css/select2.min','vehicle/vehicle'));
+        $mode_js = Asset::js(array('modal','numeric','footable/js/footable.all.min','contacts/mode_search','redactor/redactor.min','numeric','s2/js/select2.min',
+            's2/js/i18n/'.lan(), 'vehicle/vehicle-edit'
+        ));
+
+
+        $total_invoice = ORM::for_table('sys_vehicle_type');
+
+        if(!$all_data)
+        {
+            $total_invoice->where('aid',$user->id);
+        }
+
+        $total_invoice = $total_invoice->count();
+
+
+
+        $ui->assign('total_invoice', $total_invoice);
+        $f = ORM::for_table('sys_vehicle_type');
         
-        //$ui->assign('vie',"filter");       
+        if(!$all_data)
+        {
+            $f->where('aid',$user->id);
+        }
+
+        $d = $f->order_by_desc('id')->find_many();
+        $paginator['contents'] = '';
+        $ui->assign('_st', $_L['Invoices'] . '<div class="btn-group pull-right" style="padding-right: 10px;">
+  <a class="btn btn-success btn-xs" href="' . U . 'invoices/add/' . '" style="box-shadow: none;"><i class="fa fa-plus"></i></a>
+  <a class="btn btn-primary btn-xs" href="' . U . 'invoices/add/' . '" style="box-shadow: none;"><i class="fa fa-repeat"></i></a>
+  <a class="btn btn-success btn-xs" href="' . U . 'invoices/export_csv/' . '" style="box-shadow: none;"><i class="fa fa-download"></i></a>
+</div>');
+        $ui->assign('xheader', $mode_css);
+        $ui->assign('xfooter', $mode_js);
+        $ui->assign('view_type', $view_type);
+        $ui->assign('d', $d);
+        $ui->assign('paginator', $paginator);
+        $ui->assign('xjq', '
+         $(\'.amount\').autoNumeric(\'init\'),
+         $(\'[data-toggle="tooltip"]\').tooltip();
+
+        ');
 
         view('vehicle-mk');
 
@@ -85,7 +222,8 @@ switch ($action) {
 
     case 'post-vehicle':
 
-        // Ajax post datas
+        // Ajax post Data
+        $id=_post('vid');
         $vehicle_num = _post('vehicle_num');
         $vehicle_type = _post('vehicle_type');
         
@@ -104,8 +242,14 @@ switch ($action) {
 
 
         
-        // Check validate post datas 
+        // Check validate post data
+
         $msg='';
+
+        $check= ORM::for_table('sys_vehicles')->find_one($vehicle_num);
+        if($check){
+            $msg .= 'Vehicle Number duplicated';
+        }
 
         if($vehicle_num == ''){
            $msg .= 'You must input Vehicle number <br>';
@@ -129,8 +273,14 @@ switch ($action) {
 
         if($msg == ''){
 
-
-            $d = ORM::for_table('sys_vehicles')->create();
+            if($id == ''){
+                _msglog('s',$_L['Item Added Successfully']);
+                $d = ORM::for_table('sys_vehicles')->create();
+            } else{
+                _msglog('s',$_L['Item Updated Successfully']);
+                $d = ORM::for_table('sys_vehicles')->find_one($id);
+            }
+            
             $d->vehicle_num = $vehicle_num;
             $d->vehicle_type = $vehicle_type;
             $d->purchase_price = $purchase_price;
@@ -147,7 +297,7 @@ switch ($action) {
 
             $d->save();
 
-            _msglog('s',$_L['Item Added Successfully']);
+            
 
             echo $d->id();
         }
@@ -158,46 +308,74 @@ switch ($action) {
         break;
 
 
+    case 'edit-vehicle':
 
-    case 'modal_add_mk':
-
-        $id = route(2);
-
-        $company = false;
+        $id=$routes['2'];
 
         if($id != ''){
+            $vehicle=ORM::for_table('sys_vehicles')->find_one($id);
+        }
 
-            $id = str_replace('ae','',$id);
-            $id = str_replace('be','',$id);
-            $id = str_replace('me','',$id);
+        $val=array();
 
-            $company = M::factory('Models_Company')->find_one($id);
+        if($vehicle){
+            $val['id']=$id;
+            $val['vehicle_num']=$vehicle->vehicle_num;
+            $val['vehicle_type']=$vehicle->vehicle_type;
+            $val['parf_cost']=$vehicle->parf_cost;
+            $val['purchase_price']=$vehicle->purchase_price;
+            $val['purchase_date']=$vehicle->purchase_date;
+            $val['expiry_date']=$vehicle->expiry_date;
+            $val['expiry_status']=$vehicle->expiry_status;
+            $val['v_i']=$vehicle->v_i;
+            $val['v_o_c']=$vehicle->v_o_c;
+            $val['description']=$vehicle->description;
 
         }
 
+        $vehicle_types=ORM::for_table('sys_vehicle_type')->order_by_asc('id')->find_array();
+        
+        $v_types=array();
+
+        foreach ($vehicle_types as $v) {
+            array_push($v_types, $v['make']." ".$v['model']." ".$v['engine_capacity']." (".$v['transmission'].")");
+        }
+
+        $baseUrl=APP_URL;
+        $ui->assign('xheader', Asset::css(array('modal','dp/dist/datepicker.min','dropzone/dropzone','redactor/redactor','s2/css/select2.min')));
+        $ui->assign('xfooter', Asset::js(array('modal','dp/dist/datepicker.min','dropzone/dropzone','redactor/redactor.min','numeric','s2/js/select2.min',
+            's2/js/i18n/'.lan(),)));
+        $ui->assign('val',$val);
+        $ui->assign('v_types',$v_types);
+        $ui->assign('baseUrl',$baseUrl);
+
+        view('modal_edit_vehicle');
+
+        break;
+
+       
+    case 'modal_add_mk':
+
+        $id = $routes['2'];
+
+        $vehicle_type = false;
+
+        if($id != ' '){
+
+            $vehicle_type = ORM::for_table('sys_vehicle_type')->find_one($id);
+
+        }   
+
         $val = array();
 
-        if($company){
+        if($vehicle_type){
             $f_type = 'edit';
-            $val['company_name'] = $company->company_name;
-            $val['url'] = $company->url;
-            $val['email'] = $company->email;
-            $val['phone'] = $company->phone;
-            $val['logo_url'] = $company->logo_url;
-            $val['cid'] = $id;
-            $val['fax'] = $company->fax;
-            $val['business_number'] = $company->business_numner;
-
-            $val['address1'] = $company->address1;
-            $val['city'] = $company->city;
-            $val['zip'] = $company->zip;
-            $val['state'] = $company->state;
-            $val['country'] = $company->country;
-
-            $countries = Countries::all($company->country);
-
-
-//            $val[''] = $company->;
+            $val['make'] = $vehicle_type->make;
+            $val['model'] = $vehicle_type->model;
+            $val['engine_capacity'] = $vehicle_type->engine_capacity;
+            $val['transmission'] = $vehicle_type->transmission;
+            $val['fuel_type'] = $vehicle_type->fuel_type;
+            $val['v_t_id'] = $id;
         }
         else{
             $f_type = 'create';
@@ -206,9 +384,7 @@ switch ($action) {
             $val['engine_capacity'] = '';
             $val['transmission'] = '';
             $val['fuel_type'] = '';
-            $val['v_t_id'] = '';
-            $val['fax'] = '';
-          
+            $val['v_t_id']='';
         }
 
         $ui->assign('f_type',$f_type);
@@ -221,10 +397,10 @@ switch ($action) {
 
 
 
-    case 'add_mk_post':
+    case 'update_mk_post':
 
         // Ajax post datas
-
+        $id=_post('v_t_id');
         $make = _post('make');
         $model = _post('model');
         $engine_capacity=_post('engine_capacity');
@@ -232,34 +408,20 @@ switch ($action) {
         $fuel_type=_post('fuel_type');
         
         // Check validate post datas 
-        $msg='';
 
-        /*
-        if($vehicle_num == ''){
-           $msg .= 'You must input Vehicle number <br>';
-        }
-        if($vehicle_type == ''){
-           $msg .= 'You must select Vehicle type <br>';
-        }
-        if($purchase_price == ''){
-           $msg .= 'You must input Purchase_price <br>';
-        }
-        if($parf_cost == ''){
-           $msg .= 'You must input Purf_cost <br>';
-        }
-        if($expiry_date == ''){
-           $msg .= 'You must input Expiry_date <br>';
-        }
-        if($expiry_status == ''){
-           $msg .= 'You must select Expiry_status <br>';
-        }
-        */
+        $msg='';
+      
 
         if($msg == ''){
-
-
-            $d = ORM::for_table('sys_vehicle_type')->create();
-
+            if($id){
+                $d = ORM::for_table('sys_vehicle_type')->find_one($id);
+                _msglog('s',$_L['Item Added Successfully']);
+            }else {
+                $d = ORM::for_table('sys_vehicle_type')->create();
+                _msglog('s',$_L['Item Added Successfully']);
+            }
+            
+            
             $d->make=$make;
             $d->model=$model;
             $d->engine_capacity=$engine_capacity;
@@ -268,12 +430,69 @@ switch ($action) {
 
             $d->save();
 
-            _msglog('s',$_L['Item Added Successfully']);
+           
 
             echo $d->id();
         }
         else{
             echo $msg;
+        }
+
+        break;
+
+
+
+    case 'view-cert':
+
+        // Ajax post datas
+        $id=$routes['2'];
+
+        if($id){
+
+            $d=ORM::for_table('sys_vehicles')->find_one($id);
+
+        }
+
+        if($d){
+           
+            $cert_img_path=APP_URL."/storage/items/".$d['v_o_c'];
+
+        }
+
+        $ui->assign('cert_img_path',$cert_img_path);
+        view('modal_cert_vehicle');
+
+        break;
+
+
+    case 'del_mk':
+
+      
+        Event::trigger('vehicle/del_mk/');
+        $id = $routes['2'];
+        
+        $d = ORM::for_table('sys_vehicle_type')->find_one($id);
+
+        if ($d) {
+            $d->delete();
+            r2(U . 'vehicle/m-k', 's', $_L['Vehicle_type_delete_successful']);
+        }
+
+        break;
+
+
+
+    case 'del_vehicle':
+
+      
+        Event::trigger('vehicle/list-vehicle/');
+        $id = $routes['2'];
+        
+        $d = ORM::for_table('sys_vehicles')->find_one($id);
+
+        if ($d) {
+            $d->delete();
+            r2(U . 'vehicle/list-vehicle', 's', $_L['Vehicle Delete Successful']);
         }
 
         break;

@@ -837,7 +837,6 @@ switch ($action) {
 
 
 
-
         $ui->assign('total_invoice', $total_invoice);
         $f = ORM::for_table('sys_invoices');
         if (route(3) != '') {

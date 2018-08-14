@@ -32,8 +32,8 @@
                         
                                 <select id="vehicle_type" name="vehicle_type" class="form-control">
                                     <option value="0">{$_L['Select Make s Model']}</option>
-                                    {foreach $vehicle_types as $vehicle_type}
-                                     <option value="{$vehicle_type['id']}" >{$vehicle_type['make']}</option>
+                                    {foreach $v_types as $v_type}
+                                     <option value="{$v_type}" >{$v_type}</option>
                                     {/foreach}
                                 </select>
                                 <span class="help-block"><a href="#" class="add_make_model"><i class="fa fa-plus"></i> {$_L['New Make s Model']}</a>
@@ -128,7 +128,7 @@
                         <div class="form-group">
                             <div class="col-lg-offset-2 col-lg-10">
 
-                                <button class="btn btn-sm btn-primary" type="submit" id="submit">{$_L['Submit']}</button>
+                                <button class="btn btn-primary" type="submit" id="submit"><i class="fa fa-check"></i>{$_L['Submit']}</button>
                             </div>
                         </div>
                     </form>
