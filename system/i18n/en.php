@@ -1100,5 +1100,6 @@ $_L = [
     'Electric' => 'Electric',
     'Vehicle_type_delete_successful'=> 'Vehicle type deleted successful',
     'Vehicle Delete Successful' => 'Vehicle Delete Successful',
+    'Custom Vehicle Fields' => 'Custom Vehicle Fields',
     
 ];

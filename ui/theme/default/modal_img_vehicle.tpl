@@ -2,7 +2,7 @@
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
     <h3>
    
-            {$_L['Vehicle Ownership Certificate']} 
+            {$d['vehicle_num']} - {$d['vehicle_type']}
       
     </h3>
 </div>
@@ -14,7 +14,7 @@
         <div class="row">
             <div class="col-md-12">
 
-                <img src="{$cert_img_path}" width="100%" />
+                <img src="{$vehicle_img_path}" width="100%" />
 
             </div>
         </div>

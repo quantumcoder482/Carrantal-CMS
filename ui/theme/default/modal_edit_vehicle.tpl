@@ -84,9 +84,10 @@
     
                                 <select class="form-control" id="expiry_status" name="expiry_status">
                                     <option value="{$val['expiry_status']}" selected>{$val['expiry_status']}</option>
-                                    {for $expiry_status=1 to 20}
-                                    <option value="{$expiry_status}">{$expiry_status}</option>
-                                    {/for}
+                                    <option value="7">7</option>
+                                    <option value="14">14</option>
+                                    <option value="21">21</option>
+                                    <option value="28">28</option>
                                 </select>
     
                             </div>
@@ -106,23 +107,59 @@
     
     
                         {* if isset($customfield) *}
-                        <!-- 
-                                <div class="form-group"><label class="col-md-3 control-label" for="inventory">{$_L['Inventory To Add Subtract']}</label>
-    
-                                    <div class="col-md-9"><input type="text" id="inventory" name="inventory" class="form-control" autocomplete="off">
-    
-                                    </div>
+                                {foreach $fs as $f}
+                            
+                            <div class="form-group">
+                                <label class="col-lg-2 control-label" for="cf{$f['id']}">{$f['fieldname']}</label>
+                                {if ($f['fieldtype']) eq 'text'}
+                            
+                            
+                                <div class="col-lg-10">
+                                    <input type="text" id="cf{$f['id']}" name="cf{$f['id']}" class="form-control"> {if ($f['description']) neq ''}
+                                    <span class="help-block">{$f['description']}</span>
+                                    {/if}
+                            
                                 </div>
-                           
-                                <div class="form-group"><label class="col-md-3 control-label" for="inventory">{$_L['Weight']}</label>
-    
-                                    <div class="col-md-9">
-    
-                                        <input type="text" id="inventory" name="inventory" class="form-control" autocomplete="off">
-    
-                                    </div>
-                                </div> -->
-    
+                            
+                                {elseif ($f['fieldtype']) eq 'password'}
+                            
+                                <div class="col-lg-10">
+                                    <input type="password" id="cf{$f['id']}" name="cf{$f['id']}" class="form-control"> {if ($f['description']) neq ''}
+                                    <span class="help-block">{$f['description']}</span>
+                                    {/if}
+                                </div>
+                            
+                                {elseif ($f['fieldtype']) eq 'dropdown'}
+                                <div class="col-lg-10">
+                                    <select id="cf{$f['id']}" name="cf{$f['id']}" class="form-control">
+                                        {foreach explode(',',$f['fieldoptions']) as $fo}
+                                        <option value="{$fo}">{$fo}</option>
+                                        {/foreach}
+                                    </select>
+                                    {if ($f['description']) neq ''}
+                                    <span class="help-block">{$f['description']}</span>
+                                    {/if}
+                                </div>
+                            
+                            
+                                {elseif ($f['fieldtype']) eq 'textarea'}
+                            
+                                <div class="col-lg-10">
+                                    <textarea id="cf{$f['id']}" name="cf{$f['id']}" class="form-control" rows="3"></textarea> {if ($f['description']) neq ''}
+                                    <span class="help-block">{$f['description']}</span>
+                                    {/if}
+                                </div>
+                            
+                                {elseif ($f['fieldtype']) eq 'date'}
+                            
+                                <div class="col-lg-10">
+                                    <input type="text" id="cf{$f['id']}" name="cf{$f['id']}" class="form-control" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true"> {if ($f['description']) neq ''}
+                                    <span class="help-block">{$f['description']}</span>
+                                    {/if}
+                                </div>
+                                {else} {/if}
+                            </div>
+                            {/foreach}
                         {*/if*}
     
                         <input type="hidden" name="vid" id="vid" value="{$val['id']}">
@@ -158,9 +195,9 @@
     
             <div class="ibox float-e-margins">
 
-                <div class="ibox-content" id="ibox_form">
+                <div class="ibox-content" id="ibox_form" style="text-align: center">
         
-                    <img src="{$baseUrl}/storage/items/thumb{$val['v_i']}" width="250px" height="150px" >
+                    <img src="{$baseUrl}/storage/items/thumb{$val['v_i']}" width="100px"  >
         
                 </div>
             </div>
@@ -188,9 +225,9 @@
 
             <div class="ibox float-e-margins">
                
-                <div class="ibox-content" id="ibox_form">
+                <div class="ibox-content" id="ibox_form" style="text-align: center">
             
-                    <img src="{$baseUrl}/storage/items/thumb{$val['v_o_c']}" width="250px" height="150px">
+                    <img src="{$baseUrl}/storage/items/thumb{$val['v_o_c']}" width="100px" >
             
                 </div>
             </div>
@@ -245,7 +282,7 @@
         // Vehicle Image upload
         var ib_file1 = new Dropzone("#upload_container1",
             {
-                url: _url + "ps/upload/",
+                url: _url + "vehicle/upload/",
                 maxFiles: 1
             }
         );
@@ -276,7 +313,7 @@
         // Cert file upload
         var ib_file2 = new Dropzone("#upload_container2",
             {
-                url: _url + "ps/upload/",
+                url: _url + "vehicle/upload/",
                 maxFiles: 1
             }
         );

@@ -608,6 +608,7 @@
 
                                 <li><a href="{$_url}settings/emls/">{$_L['Email Settings']}</a></li>
                                 <li><a href="{$_url}settings/email-templates/">{$_L['Email Templates']}</a></li>
+                                <li><a href="{$_url}settings/custom-vehicle-fields/">{$_L['Custom Vehicle Fields']}</a></li>
                                 <li><a href="{$_url}settings/customfields/">{$_L['Custom Contact Fields']}</a></li>
                                 <li><a href="{$_url}settings/automation/">{$_L['Automation Settings']}</a></li>
                                 <li><a href="{$_url}settings/api/">{$_L['API Access']}</a></li>

@@ -21,7 +21,7 @@ $(document).ready(function () {
     // Vehicle Image upload
     var ib_file1 = new Dropzone("#upload_container1",
         {
-            url: _url + "ps/upload/",
+            url: _url + "vehicle/upload/",
             maxFiles: 1
         }
     );
@@ -52,7 +52,7 @@ $(document).ready(function () {
     // Cert file upload
     var ib_file2 = new Dropzone("#upload_container2",
         {
-            url: _url + "ps/upload/",
+            url: _url + "vehicle/upload/",
             maxFiles: 1
         }
     );

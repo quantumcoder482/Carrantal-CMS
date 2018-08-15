@@ -2735,10 +2735,27 @@ else{
         break;
 
 
+    case 'custom-vehicle-fields':
+        
+        $ui->assign('content_inner',inner_contents($config['c_cache']));
+       
+        $ui->assign('xheader', Asset::css(array(
+            'modal',
+            'dp/dist/datepicker.min'
+        )));
+     
+        $ui->assign('xfooter', Asset::js(array(
+            'modal',
+            'dp/dist/datepicker.min',
+        )));
 
+        $cf = ORM::for_table('crm_customfields')->where('ctype','cvm')->order_by_asc('id')->find_many();
 
+        $ui->assign('cf',$cf);
 
+        view('custom_vehicle_fields');
 
+        break;
 
 
     case 'customfields':
@@ -2797,6 +2814,44 @@ else{
 
         break;
 
+
+    case 'custom-vehicle-fields-post':
+
+        $fieldname = _post('fieldname');
+        $fieldtype = _post('fieldtype');
+        $description = _post('description');
+        $validation = _post('validation');
+        $options = _post('options');
+        $showinvoice = _post('showinvoice');
+        if($showinvoice != 'Yes'){
+            $showinvoice = 'No';
+        }
+        if($fieldname != ''){
+
+            $d = ORM::for_table('crm_customfields')->create();
+            $d->fieldname = $fieldname;
+            $d->fieldtype = $fieldtype;
+            $d->description = $description;
+            $d->regexpr = $validation;
+            $d->fieldoptions = $options;
+            $d->ctype = 'cvm';
+            $d->relid = 0;
+            $d->adminonly = '';
+            $d->required = '';
+            $d->showorder = '';
+            $d->showinvoice = $showinvoice;
+            $d->sorder = '0';
+            $d->save();
+
+            echo $d->id();
+        }
+        else{
+            echo 'Name is Required';
+        }
+
+        break;
+
+
     case 'customfields-ajax-add':
 
         $ui->assign('content_inner',inner_contents($config['c_cache']));
@@ -2814,6 +2869,50 @@ else{
         if($d){
             $ui->assign('d',$d);
             view('ajax-edit-custom-field');
+        }
+        else{
+            echo 'Not Found';
+        }
+
+
+        break;
+
+
+    case 'custom-vehicle-field-edit-post':
+
+        $id = _post('id');
+
+        $fieldname = _post('fieldname');
+
+        if($fieldname == ''){
+            ib_die('Name is Required');
+        }
+
+        $d = ORM::for_table('crm_customfields')->find_one($id);
+        if($d){
+
+            $fieldtype = _post('fieldtype');
+            $description = _post('description');
+            $validation = _post('validation');
+            $options = _post('options');
+            $showinvoice = _post('showinvoice');
+            if($showinvoice != 'Yes'){
+                $showinvoice = 'No';
+            }
+            $d->fieldname = $fieldname;
+            $d->fieldtype = $fieldtype;
+            $d->description = $description;
+            $d->regexpr = $validation;
+            $d->fieldoptions = $options;
+            $d->ctype = 'cvm';
+            $d->relid = '';
+            $d->adminonly = '';
+            $d->required = '';
+            $d->showorder = '';
+            $d->showinvoice = $showinvoice;
+            $d->sorder = '0';
+            $d->save();
+            echo $id;
         }
         else{
             echo 'Not Found';

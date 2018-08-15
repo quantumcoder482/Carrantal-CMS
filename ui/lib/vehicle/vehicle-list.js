@@ -45,6 +45,25 @@ $(document).ready(function () {
 
     });
     
+
+    $('.view_vehicle_img').on('click', function (e) {
+
+        var id = this.id;
+       
+        e.preventDefault();
+
+        $('body').modalmanager('loading');
+
+        $modal.load(_url + 'vehicle/view-vehicle/' + id, '', function () {
+
+            $modal.modal();
+
+        });
+
+    });
+
+
+
     $modal.on('click', '.modal_submit', function (e) {
 
         e.preventDefault();

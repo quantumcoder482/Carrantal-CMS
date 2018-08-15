@@ -23,7 +23,8 @@ switch ($action) {
         foreach ($vehicle_types as $v) {
             array_push($v_types,$v['make']." ".$v['model']." ".$v['engine_capacity']." (".$v['transmission'].")");
         }
-
+        $fs = ORM::for_table('crm_customfields')->where('ctype','cvm')->order_by_asc('id')->find_many();
+        $ui->assign('fs',$fs);
 
         $ui->assign('vehicle_types',$vehicle_types);
         $ui->assign('v_types',$v_types);
@@ -316,6 +317,9 @@ switch ($action) {
             $vehicle=ORM::for_table('sys_vehicles')->find_one($id);
         }
 
+        $fs = ORM::for_table('crm_customfields')->where('ctype','cvm')->order_by_asc('id')->find_many();
+        $ui->assign('fs',$fs);
+       
         $val=array();
 
         if($vehicle){
@@ -464,6 +468,28 @@ switch ($action) {
 
         break;
 
+    case 'view-vehicle':
+
+        // Ajax post datas
+        $id=$routes['2'];
+
+        if($id){
+
+            $d=ORM::for_table('sys_vehicles')->find_one($id);
+
+        }
+
+        if($d){
+           
+            $vehicle_img_path=APP_URL."/storage/items/".$d['v_i'];
+
+        }
+        $ui->assign('d',$d);
+        $ui->assign('vehicle_img_path',$vehicle_img_path);
+        view('modal_img_vehicle');
+
+        break;
+
 
     case 'del_mk':
 
@@ -497,6 +523,80 @@ switch ($action) {
 
         break;
 
+    case 'upload':
+
+        if(APP_STAGE == 'Demo'){
+            exit;
+        }
+
+        $uploader   =   new Uploader();
+        $uploader->setDir('storage/items/');
+        $uploader->sameName(false);
+        $uploader->setExtensions(array('jpg','jpeg','png','gif'));  //allowed extensions list//
+//        $uploader->allowAllFormats();  //allowed extensions list//
+        if($uploader->uploadFile('file')){   //txtFile is the filebrowse element name //
+            $uploaded  =   $uploader->getUploadName(); //get uploaded file name, renames on upload//
+
+            $file = $uploaded;
+            $msg = $_L['Uploaded Successfully'];
+            $success = 'Yes';
+
+            // create thumb
+
+            $image = new Img();
+
+            // indicate a source image (a GIF, PNG or JPEG file)
+            $image->source_path = 'storage/items/'.$file;
+
+            // indicate a target image
+            // note that there's no extra property to set in order to specify the target
+            // image's type -simply by writing '.jpg' as extension will instruct the script
+            // to create a 'jpg' file
+            $image->target_path = 'storage/items/thumb'.$file;
+
+            // since in this example we're going to have a jpeg file, let's set the output
+            // image's quality
+            $image->jpeg_quality = 100;
+
+            // some additional properties that can be set
+            // read about them in the documentation
+            $image->preserve_aspect_ratio = true;
+            $image->enlarge_smaller_images = true;
+            $image->preserve_time = true;
+
+            // resize the image to exactly 200x100 pixels by using the "crop from center" method
+            // (read more in the overview section or in the documentation)
+            //  and if there is an error, check what the error is about
+            if (!$image->resize(200, 100, ZEBRA_IMAGE_CROP_CENTER)) {
+
+
+
+                // if no errors
+            } else {
+
+                // echo 'Success!';
+
+            }
+
+            //
+
+
+        }else{//upload failed
+            $file = '';
+            $msg = $uploader->getMessage();
+            $success = 'No';
+        }
+
+        $a = array(
+            'success' => $success,
+            'msg' =>$msg,
+            'file' =>$file
+        );
+
+        header('Content-Type: application/json');
+        echo json_encode($a);
+        
+        break;
 
     default:
         echo 'action not defined';

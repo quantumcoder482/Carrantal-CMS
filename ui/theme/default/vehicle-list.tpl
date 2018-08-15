@@ -47,11 +47,13 @@
                         {foreach $d as $ds}
                         <tr>
                             <td data-value="{$ds['v_i']}" alt="{$ds['v_i']}">
-                                {if {$ds['v_i']} eq ''}
-                                   <img src="{$baseUrl}/ui/lib/imgs/item_placeholder.png" width="150px" height="80px" />
-                                {else}    
-                                    <img src="{$baseUrl}/storage/items/thumb{$ds['v_i']}" width="150px" height="80px" />
-                                {/if}
+                                <a href="#" class="view_vehicle_img" id="{$ds['id']}">
+                                    {if {$ds['v_i']} eq ''}
+                                        <img src="{$baseUrl}/ui/lib/imgs/item_placeholder.png" width="40px" />
+                                    {else}    
+                                        <img src="{$baseUrl}/storage/items/thumb{$ds['v_i']}" width="40px" />
+                                    {/if}
+                                </a>
                             </td>
 
                             <td class="edit_vehicle" data-value="{$ds['vehicle_num']}" id="{$ds['id']}">
@@ -72,18 +74,20 @@
                                 <span class="label label-success">
                                      {$ex_status[$ds['id']]}</span>
                                 {elseif $ex_status[$ds['id']] eq 'Expired'}
-                                <span class="label label-danger">
+                                <span class="label label-danger" style="color:#ff2222">
                                      {$ex_status[$ds['id']]}</span>
                                 {else}
-                                <span class="label label-info">
+                                <span class="label label-warning" style="color: #f7931e">
                                      {$ex_status[$ds['id']]}</span>
                                 {/if}
                             </td>
                             <td class="text-right">
-                            
-                                <a href="#" class="btn btn-primary btn-xs view_cert_img" id="{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['View']}">
-                                    <i class="fa fa-file-text-o"></i>
+                                {if {$ds['v_o_c']} neq ''}
+                                <a href="#" class="btn btn-primary btn-xs view_cert_img" style="background-color:#f7931e" id="{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['View']}">
+                                    <i class="fa fa-paperclip" ></i>
                                 </a>
+                                {/if}
+                                 
                                 <a href="#" class="btn btn-info btn-xs edit_vehicle" id="{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['Edit']}">
                                     <i class="fa fa-pencil"></i>
                                 </a>
