@@ -55,7 +55,7 @@ $(document).ready(function () {
 
                 if ($.isNumeric(data)) {
 
-                    window.location = base_url + 'vehicle/m-k/';
+                    window.location = base_url + 'vehicle/m_k/';
                     // window.location = base_url + 'vehicle/add-vehicle/{$contact_type}/' + $("#group").val() + '/' + data;
 
                 }

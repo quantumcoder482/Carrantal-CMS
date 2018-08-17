@@ -21,83 +21,99 @@ switch ($action) {
         $d = ORM::for_table('sys_items')->order_by_asc('name')->find_many();
 
         echo '
-
-
-<div class="modal-header">
-	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	<h3>'.$_L['Products n Services'].'</h3>
-</div>
-<div class="modal-body">
-<input type="text" id="myInput" onkeyup="filterPS()" placeholder="Search for Product Name..">
-<table class="table table-striped" id="items_table">
-      <thead>
-        <tr>
-          <th width="10%">#</th>
-          <th width="20%">'.$_L['Item Code'].'</th>
-          <th width="55%">'.$_L['Item Name'].'</th>
-
-          <th width="15%">'.$_L['Price'].'</th>
-        </tr>
-      </thead>
-      <tbody>
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3>'.$_L['Products n Services'].'</h3>
+        </div>
+        <div class="modal-body">
+        <input type="text" id="myInput" onkeyup="filterPS()" placeholder="Search for Product Name..">
+        <table class="table table-striped" id="items_table">
+            <thead>
+                <tr>
+                <th width="10%">#</th>
+                <th width="20%">'.$_L['Item Code'].'</th>
+                <th width="55%">'.$_L['Item Name'].'</th>
+                <th width="15%">'.$_L['Price'].'</th>
+                </tr>
+            </thead>
+            <tbody>
        ';
 
         foreach($d as $ds){
             $price = number_format($ds['sales_price'],2,$config['dec_point'],$config['thousands_sep']);
             echo ' <tr>
-          <td><input type="checkbox" class="si"></td>
-          <td>'.$ds['id'].'</td>
-          <td>'.$ds['name'].'</td>
-
-          <td class="price">'.$price.'</td>
-        </tr>';
+                        <td><input type="checkbox" class="si"></td>
+                        <td>'.$ds['id'].'</td>
+                        <td>'.$ds['name'].'</td>
+                        <td class="price">'.$price.'</td>
+                    </tr>';
         }
 
         echo '
+            </tbody>
+        </table>
+        </div>
+        <div class="modal-footer">
+            <button type="button" data-dismiss="modal" class="btn">'.$_L['Close'].'</button>
+            <button class="btn btn-primary update">'.$_L['Select'].'</button>
+        </div>
+        <style type="text/css">
+            #myInput {
+                width: 100%; /* Full-width */
+                font-size: 16px; /* Increase font-size */
+                padding: 12px 20px 12px 40px; /* Add some padding */
+                border: 1px solid #ddd; /* Add a grey border */
+                margin-bottom: 12px; /* Add some space below the input */
+            }
+        </style>
+        <script type="text/javascript">
+            function filterPS() {
+              // Declare variables 
+            var input, filter, table, tr, td, i;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("items_table");
+            tr = table.getElementsByTagName("tr");
 
-      </tbody>
-    </table>
-
-</div>
-<div class="modal-footer">
-
-	<button type="button" data-dismiss="modal" class="btn">'.$_L['Close'].'</button>
-	<button class="btn btn-primary update">'.$_L['Select'].'</button>
-</div>
-<style type="text/css">
-#myInput {
-    width: 100%; /* Full-width */
-    font-size: 16px; /* Increase font-size */
-    padding: 12px 20px 12px 40px; /* Add some padding */
-    border: 1px solid #ddd; /* Add a grey border */
-    margin-bottom: 12px; /* Add some space below the input */
-}
-</style>
-<script type="text/javascript">
-function filterPS() {
-  // Declare variables 
-  var input, filter, table, tr, td, i;
-  input = document.getElementById("myInput");
-  filter = input.value.toUpperCase();
-  table = document.getElementById("items_table");
-  tr = table.getElementsByTagName("tr");
-
-  // Loop through all table rows, and hide those who don\'t match the search query
-  for (i = 0; i < tr.length; i++) {
-    td = tr[i].getElementsByTagName("td")[2];
-    if (td) {
-      if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
-        tr[i].style.display = "";
-      } else {
-        tr[i].style.display = "none";
-      }
-    } 
-  }
-}
-</script>
-';
+            // Loop through all table rows, and hide those who don\'t match the search query
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[2];
+                if (td) {
+                if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+                } 
+            }
+            }
+            </script>
+        ';
 
         break;
+
+
+    case 'v-new':
+
+        $units = ORM::for_table('sys_units')->order_by_asc('sorder')->find_array();
+        $ui->assign('units',$units);
+
+        $ui->assign('type','Product');
+        $ui->assign('xheader', Asset::css(array('modal','dropzone/dropzone','redactor/redactor')));
+        $ui->assign('xfooter', Asset::js(array('modal','dropzone/dropzone','redactor/redactor.min','numeric','jslib/add-ps')));
+
+        $ui->assign('xjq', '$(\'.amount\').autoNumeric(\'init\');');
+
+        $max = ORM::for_table('sys_items')->max('id');
+        $nxt = $max+1;
+        $ui->assign('nxt',$nxt);
+
+        view('add-ps');
+
+
+
+        break;
+
 
 
     case 'p-new':
@@ -109,9 +125,7 @@ function filterPS() {
         $ui->assign('xheader', Asset::css(array('modal','dropzone/dropzone','redactor/redactor')));
         $ui->assign('xfooter', Asset::js(array('modal','dropzone/dropzone','redactor/redactor.min','numeric','jslib/add-ps')));
 
-        $ui->assign('xjq', '
- $(\'.amount\').autoNumeric(\'init\');
- ');
+        $ui->assign('xjq', '$(\'.amount\').autoNumeric(\'init\');');
 
         $max = ORM::for_table('sys_items')->max('id');
         $nxt = $max+1;
@@ -131,9 +145,7 @@ function filterPS() {
         $ui->assign('xheader', Asset::css(array('modal','dropzone/dropzone','redactor/redactor')));
         $ui->assign('xfooter', Asset::js(array('modal','dropzone/dropzone','redactor/redactor.min','numeric','jslib/add-ps')));
 
-        $ui->assign('xjq', '
- $(\'.amount\').autoNumeric(\'init\');
- ');
+        $ui->assign('xjq', '$(\'.amount\').autoNumeric(\'init\');');
 
         $max = ORM::for_table('sys_items')->max('id');
         $nxt = $max+1;
@@ -216,7 +228,8 @@ function filterPS() {
             $d->item_number = $item_number;
             $d->description = $description;
             $d->type = $type;
-//others
+            
+            //others
             $d->unit = $unit;
             $d->weight = $weight;
             $d->inventory = $inventory;
@@ -243,40 +256,53 @@ function filterPS() {
 
 
     case 'view':
-//        $id  = $routes['2'];
-//        $d = ORM::for_table('sys_items')->find_one($id);
-//        if($d){
-//
-//            //find all activity for this user
-//            $ac = ORM::for_table('sys_activity')->where('cid',$id)->limit(20)->order_by_desc('id')->find_many();
-//            $ui->assign('ac',$ac);
-//            $ui->assign('countries',Countries::all($d['country']));
-//
-//            $ui->assign('xheader', '
-//<link rel="stylesheet" type="text/css" href="' . $_theme . '/lib/select2/select2.css"/>
-//
-//');
-//            $ui->assign('xfooter', '
-//<script type="text/javascript" src="' . $_theme . '/lib/select2/select2.min.js"></script>
-//<script type="text/javascript" src="' . $_theme . '/lib/profile.js"></script>
-//
-//');
-//
-//            $ui->assign('xjq', '
-// $("#country").select2();
-//
-// ');
-//            $ui->assign('d',$d);
-//            $ui->display('ps-view.tpl');
-//
-//        }
-//        else{
-//         //   r2(U . 'customers/list', 'e', $_L['Account_Not_Found']);
-//
-//        }
+            //        $id  = $routes['2'];
+            //        $d = ORM::for_table('sys_items')->find_one($id);
+            //        if($d){
+            //
+            //            //find all activity for this user
+            //            $ac = ORM::for_table('sys_activity')->where('cid',$id)->limit(20)->order_by_desc('id')->find_many();
+            //            $ui->assign('ac',$ac);
+            //            $ui->assign('countries',Countries::all($d['country']));
+            //
+            //            $ui->assign('xheader', '
+            //<link rel="stylesheet" type="text/css" href="' . $_theme . '/lib/select2/select2.css"/>
+            //
+            //');
+            //            $ui->assign('xfooter', '
+            //<script type="text/javascript" src="' . $_theme . '/lib/select2/select2.min.js"></script>
+            //<script type="text/javascript" src="' . $_theme . '/lib/profile.js"></script>
+            //
+            //');
+            //
+            //            $ui->assign('xjq', '
+            // $("#country").select2();
+            //
+            // ');
+            //            $ui->assign('d',$d);
+            //            $ui->display('ps-view.tpl');
+            //
+            //        }
+            //        else{
+            //         //   r2(U . 'customers/list', 'e', $_L['Account_Not_Found']);
+            //
+            //        }
 
         break;
 
+  
+  
+    case 'v-list':
+        $paginator = Paginator::bootstrap('sys_items','type','Product');
+        $d = ORM::for_table('sys_items')->where('type','Product')->offset($paginator['startpoint'])->limit($paginator['limit'])->order_by_desc('id')->find_many();
+        $ui->assign('d',$d);
+        $ui->assign('type','Product');
+        $ui->assign('paginator',$paginator);
+        $ui->assign('xheader', Asset::css(array('modal','dropzone/dropzone','redactor/redactor')));
+        $ui->assign('xfooter', Asset::js(array('clipboard.min','modal','dropzone/dropzone','redactor/redactor.min','numeric','js/ps_list')));
+
+        view('ps-list');
+        break;
 
 
 
@@ -286,15 +312,15 @@ function filterPS() {
         $ui->assign('d',$d);
         $ui->assign('type','Product');
         $ui->assign('paginator',$paginator);
-//        $ui->assign('xheader', '
-//<link rel="stylesheet" type="text/css" href="' . $_theme . '/css/modal.css"/>
-//
-//');
-//        $ui->assign('xfooter', '
-//        <script type="text/javascript" src="' . $_theme . '/lib/modal.js"></script>
-//<script type="text/javascript" src="' . $_theme . '/lib/ps-list.js"></script>
-//
-//');
+        //        $ui->assign('xheader', '
+        //<link rel="stylesheet" type="text/css" href="' . $_theme . '/css/modal.css"/>
+        //
+        //');
+        //        $ui->assign('xfooter', '
+        //        <script type="text/javascript" src="' . $_theme . '/lib/modal.js"></script>
+        //<script type="text/javascript" src="' . $_theme . '/lib/ps-list.js"></script>
+        //
+        //');
 
         $ui->assign('xheader', Asset::css(array('modal','dropzone/dropzone','redactor/redactor')));
         $ui->assign('xfooter', Asset::js(array('clipboard.min','modal','dropzone/dropzone','redactor/redactor.min','numeric','js/ps_list')));

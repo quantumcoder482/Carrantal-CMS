@@ -22,7 +22,7 @@ $(document).ready(function () {
 
         $('body').modalmanager('loading');
 
-        $modal.load(_url + 'vehicle/edit-vehicle/'+id, '', function () {
+        $modal.load(_url + 'vehicle/edit_vehicle/'+id, '', function () {
 
             $modal.modal();
 
@@ -37,7 +37,7 @@ $(document).ready(function () {
 
         $('body').modalmanager('loading');
 
-        $modal.load(_url+'vehicle/view-cert/'+id, '', function(){
+        $modal.load(_url+'vehicle/view_cert/'+id, '', function(){
 
             $modal.modal();
 
@@ -54,7 +54,7 @@ $(document).ready(function () {
 
         $('body').modalmanager('loading');
 
-        $modal.load(_url + 'vehicle/view-vehicle/' + id, '', function () {
+        $modal.load(_url + 'vehicle/view_vehicle/' + id, '', function () {
 
             $modal.modal();
 
@@ -70,12 +70,12 @@ $(document).ready(function () {
 
         $modal.modal('loading');
 
-        $.post(_url + "vehicle/post-vehicle/", $("#rform").serialize())
+        $.post(_url + "vehicle/post_vehicle/", $("#rform").serialize())
             .done(function (data) {
 
                 if ($.isNumeric(data)) {
 
-                    window.location = base_url + 'vehicle/list-vehicle/';
+                    window.location = base_url + 'vehicle/list_vehicle/';
                    
                 }
 
@@ -95,7 +95,7 @@ $(document).ready(function () {
 
         $modal.modal('loading');
 
-        window.location = base_url + 'vehicle/list-vehicle/';
+        window.location = base_url + 'vehicle/list_vehicle/';
 
     });
 

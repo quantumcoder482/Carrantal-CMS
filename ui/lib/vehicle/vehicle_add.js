@@ -91,7 +91,7 @@ $(document).ready(function () {
         e.preventDefault();
         $('#ibox_form').block({ message: null });
 
-        $.post(_url + 'vehicle/post-vehicle/', $("#rform").serialize())
+        $.post(_url + 'vehicle/post_vehicle/', $("#rform").serialize())
             .done(function (data) {
 
                 if ($.isNumeric(data)) {
@@ -142,7 +142,7 @@ $(document).ready(function () {
 
                 if ($.isNumeric(data)) {
 
-                    window.location = base_url + 'vehicle/add-vehicle/';
+                    window.location = base_url + 'vehicle/add_vehicle/';
                     // window.location = base_url + 'vehicle/add-vehicle/{$contact_type}/' + $("#group").val() + '/' + data;
 
                 }

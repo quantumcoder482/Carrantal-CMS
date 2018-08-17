@@ -157,14 +157,30 @@
                             </a>
                             <ul class="nav nav-second-level">
                                 <li>
-                                    <a href="{$_url}vehicle/add-vehicle/">{$_L['Add Vehicle']}</a>
+                                    <a href="{$_url}vehicle/add_vehicle/">{$_L['Add Vehicle']}</a>
                                 </li>
                                 <li>
-                                    <a href="{$_url}vehicle/list-vehicle/">{$_L['List Vehicle']}</a>
+                                    <a href="{$_url}vehicle/list_vehicle/">{$_L['List Vehicle']}</a>
                                 </li>
                                 <li>
-                                    <a href="{$_url}vehicle/m-k/">{$_L['Make s Model']}</a>
+                                    <a href="{$_url}vehicle/m_k/">{$_L['Make s Model']}</a>
                                 </li>
+                                <li>
+                                    <a href="{$_url}vehicle/road_tax/">{$_L['Road Tax']}</a>
+                                </li>
+                                <li>
+                                    <a href="{$_url}vehicle/add_roadtax/">{$_L['Add Road Tax']}</a>
+                                </li>
+                                <li>
+                                    <a href="{$_url}vehicle/insurance/">{$_L['Insurance']}</a>
+                                </li>
+                                <li>
+                                    <a href="{$_url}vehicle/add_insurance/">{$_L['Add Insurance']}</a>
+                                </li>
+                                <li>
+                                    <a href="{$_url}vehicle/loans/">{$_L['Loans']}</a>
+                                </li>
+                                
                             </ul>
                         </li>
                     
@@ -470,6 +486,8 @@
                             {if $config['inventory'] eq '1'}
                                     {*<li><a href="{$_url}inventory/dashboard/">{$_L['Inventory']}</a></li>*}
                             {/if}
+                                    <li><a href="{$_url}ps/v-list/">{$_L['Vehicle']}</a></li>
+                                    <li><a href="{$_url}ps/v-new/">{$_L['New Vehicle']}</a></li>
                                     <li><a href="{$_url}ps/p-list/">{$_L['Products']}</a></li>
                                     <li><a href="{$_url}ps/p-new/">{$_L['New Product']}</a></li>
                                     <li><a href="{$_url}ps/s-list/">{$_L['Services']}</a></li>

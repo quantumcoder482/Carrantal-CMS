@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 3.1.32, created on 2018-08-14 12:03:19
+/* Smarty version 3.1.32, created on 2018-08-17 11:25:40
   from 'D:\xampp\htdocs\demo1\ui\theme\default\layouts\admin.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '3.1.32',
-  'unifunc' => 'content_5b72fd47c749a8_51382279',
+  'unifunc' => 'content_5b76e8f4e466a6_52077744',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '89457ee51cdeb7ce39785b2e9512e9d1e978f7fc' => 
     array (
       0 => 'D:\\xampp\\htdocs\\demo1\\ui\\theme\\default\\layouts\\admin.tpl',
-      1 => 1534262443,
+      1 => 1534518485,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_5b72fd47c749a8_51382279 (Smarty_Internal_Template $_smarty_tpl) {
+function content_5b76e8f4e466a6_52077744 (Smarty_Internal_Template $_smarty_tpl) {
 $_smarty_tpl->_loadInheritance();
 $_smarty_tpl->inheritance->init($_smarty_tpl, false);
 ?>
@@ -75,7 +75,7 @@ default/css/style-rtl.min.css" rel="stylesheet">
     <?php }?>
 
     <?php 
-$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_18989594495b72fd47bf2bf0_52433622', 'style');
+$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_20437631685b76e8f4dd9c90_41297016', 'style');
 ?>
 
 
@@ -236,19 +236,45 @@ $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
                             <ul class="nav nav-second-level">
                                 <li>
                                     <a href="<?php echo $_smarty_tpl->tpl_vars['_url']->value;?>
-vehicle/add-vehicle/"><?php echo $_smarty_tpl->tpl_vars['_L']->value['Add Vehicle'];?>
+vehicle/add_vehicle/"><?php echo $_smarty_tpl->tpl_vars['_L']->value['Add Vehicle'];?>
 </a>
                                 </li>
                                 <li>
                                     <a href="<?php echo $_smarty_tpl->tpl_vars['_url']->value;?>
-vehicle/list-vehicle/"><?php echo $_smarty_tpl->tpl_vars['_L']->value['List Vehicle'];?>
+vehicle/list_vehicle/"><?php echo $_smarty_tpl->tpl_vars['_L']->value['List Vehicle'];?>
 </a>
                                 </li>
                                 <li>
                                     <a href="<?php echo $_smarty_tpl->tpl_vars['_url']->value;?>
-vehicle/m-k/"><?php echo $_smarty_tpl->tpl_vars['_L']->value['Make s Model'];?>
+vehicle/m_k/"><?php echo $_smarty_tpl->tpl_vars['_L']->value['Make s Model'];?>
 </a>
                                 </li>
+                                <li>
+                                    <a href="<?php echo $_smarty_tpl->tpl_vars['_url']->value;?>
+vehicle/road_tax/"><?php echo $_smarty_tpl->tpl_vars['_L']->value['Road Tax'];?>
+</a>
+                                </li>
+                                <li>
+                                    <a href="<?php echo $_smarty_tpl->tpl_vars['_url']->value;?>
+vehicle/add_roadtax/"><?php echo $_smarty_tpl->tpl_vars['_L']->value['Add Road Tax'];?>
+</a>
+                                </li>
+                                <li>
+                                    <a href="<?php echo $_smarty_tpl->tpl_vars['_url']->value;?>
+vehicle/insurance/"><?php echo $_smarty_tpl->tpl_vars['_L']->value['Insurance'];?>
+</a>
+                                </li>
+                                <li>
+                                    <a href="<?php echo $_smarty_tpl->tpl_vars['_url']->value;?>
+vehicle/add_insurance/"><?php echo $_smarty_tpl->tpl_vars['_L']->value['Add Insurance'];?>
+</a>
+                                </li>
+                                <li>
+                                    <a href="<?php echo $_smarty_tpl->tpl_vars['_url']->value;?>
+vehicle/loans/"><?php echo $_smarty_tpl->tpl_vars['_L']->value['Loans'];?>
+</a>
+                                </li>
+                                
                             </ul>
                         </li>
                     
@@ -617,6 +643,12 @@ accounts/balances/"><?php echo $_smarty_tpl->tpl_vars['_L']->value['Account_Bala
                                 <ul class="nav nav-second-level">
                             <?php if ($_smarty_tpl->tpl_vars['config']->value['inventory'] == '1') {?>
                                                                 <?php }?>
+                                    <li><a href="<?php echo $_smarty_tpl->tpl_vars['_url']->value;?>
+ps/v-list/"><?php echo $_smarty_tpl->tpl_vars['_L']->value['Vehicle'];?>
+</a></li>
+                                    <li><a href="<?php echo $_smarty_tpl->tpl_vars['_url']->value;?>
+ps/v-new/"><?php echo $_smarty_tpl->tpl_vars['_L']->value['New Vehicle'];?>
+</a></li>
                                     <li><a href="<?php echo $_smarty_tpl->tpl_vars['_url']->value;?>
 ps/p-list/"><?php echo $_smarty_tpl->tpl_vars['_L']->value['Products'];?>
 </a></li>
@@ -1057,7 +1089,7 @@ echo $_smarty_tpl->tpl_vars['notify']->value;
 
 
                 <?php 
-$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_1251330385b72fd47c66b60_92581246', "content");
+$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_18950904205b76e8f4e374b0_01150685', "content");
 ?>
 
 
@@ -1303,7 +1335,7 @@ ui/assets/js/app.js?v=<?php echo $_smarty_tpl->tpl_vars['file_build']->value;?>
 <?php }?>
 
 <?php 
-$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_18741017015b72fd47c71929_25319845', 'script');
+$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_5924260415b76e8f4e42be3_51588609', 'script');
 ?>
 
 
@@ -1346,12 +1378,12 @@ $_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_18741017015b72fd47
 </html>
 <?php }
 /* {block 'style'} */
-class Block_18989594495b72fd47bf2bf0_52433622 extends Smarty_Internal_Block
+class Block_20437631685b76e8f4dd9c90_41297016 extends Smarty_Internal_Block
 {
 public $subBlocks = array (
   'style' => 
   array (
-    0 => 'Block_18989594495b72fd47bf2bf0_52433622',
+    0 => 'Block_20437631685b76e8f4dd9c90_41297016',
   ),
 );
 public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
@@ -1359,12 +1391,12 @@ public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
 }
 /* {/block 'style'} */
 /* {block "content"} */
-class Block_1251330385b72fd47c66b60_92581246 extends Smarty_Internal_Block
+class Block_18950904205b76e8f4e374b0_01150685 extends Smarty_Internal_Block
 {
 public $subBlocks = array (
   'content' => 
   array (
-    0 => 'Block_1251330385b72fd47c66b60_92581246',
+    0 => 'Block_18950904205b76e8f4e374b0_01150685',
   ),
 );
 public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
@@ -1372,12 +1404,12 @@ public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
 }
 /* {/block "content"} */
 /* {block 'script'} */
-class Block_18741017015b72fd47c71929_25319845 extends Smarty_Internal_Block
+class Block_5924260415b76e8f4e42be3_51588609 extends Smarty_Internal_Block
 {
 public $subBlocks = array (
   'script' => 
   array (
-    0 => 'Block_18741017015b72fd47c71929_25319845',
+    0 => 'Block_5924260415b76e8f4e42be3_51588609',
   ),
 );
 public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
