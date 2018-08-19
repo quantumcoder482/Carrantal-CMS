@@ -120,10 +120,9 @@ $(document).ready(function () {
         var _url = $("#_url").val();
         $.post(_url + 'transactions/expense-post/', {
 
-
             account: $('#account').val(),
+            vehicle_num: $('#vehicle_num').val(),
             date: $('#date').val(),
-
             amount: $('#amount').val(),
             sub_type: $('#sub_type').val(),
             cats: $('#cats').val(),

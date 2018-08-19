@@ -275,7 +275,7 @@ switch ($action) {
                 $pay_status_string[$expiry_id]="Paid";
 
 
-            }elseif($date1>=$date2){
+            }elseif($date1>=$date2 || $rest>$expiry_todate){
 
                 $pay_status_string[$expiry_id]="unPaid";
 
@@ -403,7 +403,7 @@ switch ($action) {
                 $pay_status_string[$expiry_id]="Paid";
 
 
-            }elseif($date1>=$date2){
+            }elseif($date1>=$date2  || $rest>$expiry_todate){
 
                 $pay_status_string[$expiry_id]="unPaid";
 
@@ -511,10 +511,11 @@ switch ($action) {
         $d = $f->order_by_desc('id')->find_many();
 
 
+
         // Expiry Status
 
         $pay_status_string=array();
-
+        $next_duedate=array();
         foreach($d as $data){
 
             // Expiry status calculation
@@ -522,22 +523,31 @@ switch ($action) {
             $expiry_todate=$data['expiry_todate'];
             $expire_date=$data['expire_date'];
             $pay_status=$data['pay_status'];
+            $loan_duration=$data['loan_duration'];
+
+            $interval = new DateInterval('P'.($pay_status+1).'M');
+            
+            $next_duedate[$expiry_id]=date_create($data['loan_date'])->add($interval);
+            $next_duedate[$expiry_id]=$next_duedate[$expiry_id]->format('Y-m-d');
+            
             $today = date("Y-m-d");
             $date1 = date_create($today);
-            $date2 = date_create($expire_date);
-            $rest= date_diff($date1,$date2);
+            $date2 = date_create($next_duedate[$expiry_id]);
+            $date3 = date_create($expire_date);
+            $rest= date_diff($date1,$date3);
             $rest= intval($rest->format("%a"));
 
-            if($pay_status){
+            if($pay_status && $date1<$date2 && $rest>$expiry_todate){
 
                 $pay_status_string[$expiry_id]="Paid";
 
-
-            }elseif($date1>=$date2){
+            }
+            if(!$pay_status || $date1>$date2){
 
                 $pay_status_string[$expiry_id]="unPaid";
 
-            }else {
+            }
+            if($rest<$expiry_todate && $loan_duration>$pay_status) {
 
                 $pay_status_string[$expiry_id]=$rest." - Day Due";
 
@@ -580,6 +590,128 @@ switch ($action) {
 
 
         view('vehicle_loan_list');
+
+        break;
+
+    case 'loan_view': 
+
+
+        $id=$routes['2'];
+
+        if(has_access($user->roleid,'sales','all_data')){
+
+            $all_data = true;
+
+        }
+        else{
+            $all_data = false;
+        }
+
+        $paginator = array();
+        $mode_css = '';
+        $mode_js = '';
+        $mode_css = Asset::css(array('modal','dropzone/dropzone','dp/dist/datepicker.min','footable/css/footable.core.min','redactor/redactor','s2/css/select2.min','vehicle/vehicle'));
+        $mode_js = Asset::js(array('modal','dropzone/dropzone','dp/dist/datepicker.min','footable/js/footable.all.min','contacts/mode_search','redactor/redactor.min','numeric','s2/js/select2.min',
+            's2/js/i18n/'.lan(), 'vehicle/vehicle_loan_view'
+        ));
+
+        $baseUrl=APP_URL;
+
+
+        $loan = ORM::for_table('sys_vehicle_loan')->where('id',$id)->find_one();
+        $val=array();
+        $val['id']=$id;
+        $val['vehicle_num']=$loan['vehicle_num'];
+        $val['date']=$loan['loan_date'];
+        $val['duration']=$loan['loan_duration'];
+        
+        // Expire Date
+        
+        $interval = new DateInterval('P'.$val['duration'].'M');
+        $val['expire_date']=date_create($loan['loan_date'])->add($interval);
+        $val['expire_date']=$val['expire_date']->format('Y-m-d');
+        
+        $val['repayment']=$loan['repay_cycle_type'];
+        $val['amount']=$loan['principal_amount'];
+        $val['rate']=$loan['interest_rate'];
+        $val['interest']=($val['amount']*$val['rate']*$val['duration'])/100;
+        $val['total_due']=$val['amount']+$val['interest'];
+        
+        $next_duedate=array();
+        for($i=1;$i<=$val['duration'];$i++){
+            $interval=new DateInterval('P'.$i.'M');
+            $next_duedate[$i]=date_create($loan['loan_date'])->add($interval);
+            $next_duedate[$i]=$next_duedate[$i]->format('Y-m-d');
+        }
+
+        $val['loan_amount']=$val['amount']/$val['duration'];
+        $val['interest_amount']=$val['interest']/$val['duration'];
+        $val['due_amount']=$val['loan_amount']+$val['interest_amount'];
+
+        $loan_balance=array();
+        $loan_balance[0]=$val['amount'];
+
+        for($i=1;$i<=$val['duration'];$i++){
+            $loan_balance[$i]=$loan_balance[$i-1]-$val['loan_amount'];
+        }
+
+        $loan_log=ORM::for_table('sys_vehicle_loanlog')->where('loan_id',$val['id'])->find_array();
+        if($loan_log){
+            $loan_log_count=count($loan_log);
+        }else{
+            $loan_log_count=0;
+        }
+
+
+               
+        $val['expiry_todate']=$loan['expiry_todate'];
+        $pay_status_string=array();   
+        
+        // Expiry Status
+
+        for($i=1;$i<=$val['duration'];$i++){
+
+            if($loan_log_count != 0){
+                
+                $pay_status_string[$i]="Paid";
+                $loan_log_count--;    
+
+            }else{
+
+                $today = date("Y-m-d");
+                $date1 = date_create($today);
+                $date2 = date_create($next_duedate[$i]);
+                $rest= date_diff($date1,$date2);
+                $rest= intval($rest->format("%a"));
+
+                if($date1>=$date2 || $rest>$val['expiry_todate']){
+                 
+                    $pay_status_string[$i]="unPaid";
+                
+                }else{
+                      
+                    $pay_status_string[$i]=$rest." - Day Due";
+
+                }
+
+            }
+
+        }
+
+        $paginator['contents'] = '';
+
+        // $ui->assign('total_items', $total_items);
+        $ui->assign('xheader', $mode_css);
+        $ui->assign('xfooter', $mode_js);
+        $ui->assign('val', $val);
+        $ui->assign('next_duedate',$next_duedate);
+        $ui->assign('loan_balance',$loan_balance);
+        $ui->assign('pay_status_string',$pay_status_string);
+        $ui->assign('baseUrl',$baseUrl);
+        $ui->assign('paginator', $paginator);
+        
+
+        view('vehicle_loan_view');
 
         break;
 
@@ -761,6 +893,283 @@ switch ($action) {
         break;
     
 
+    case 'modal_roadtax_expense':
+        
+        $id=$routes['2'];
+        $roadtax=false;
+        if($id != ''){
+            $roadtax=ORM::for_table('sys_vehicle_roadtax')->find_one($id);
+        }
+
+
+        $baseUrl=APP_URL;
+        $val=array();
+        if($roadtax){
+            $val['id']=$id;
+            $val['vehicle_num']=$roadtax->vehicle_num;
+            $val['amount']=$roadtax->roadtax_amount;
+            $val['category']="Road Tax";
+        }else{
+            $val['id']="";
+            $val['vehicle_num']="";
+            $val['amount']="";
+            $val['category']="";
+        }
+        $ui->assign('val',$val);
+        $vehicles=ORM::for_table('sys_vehicles')->order_by_asc('id')->find_array();
+        $ui->assign('vehicles',$vehicles);  
+        $ui->assign('baseUrl',$baseUrl);
+        //Transactions Controller
+        
+        $currencies = Currency::all();
+        $ui->assign('currencies', $currencies);
+        $d = ORM::for_table('sys_accounts')->find_many();
+        $p = ORM::for_table('crm_accounts')->find_many();
+        $ui->assign('p', $p);
+        $ui->assign('d', $d);
+        $tags = Tags::get_all('Expense');
+        $ui->assign('tags', $tags);
+        $cats = ORM::for_table('sys_cats')->where('type', 'Expense')->order_by_asc('sorder')->find_many();
+        $ui->assign('cats', $cats);
+        $pms = ORM::for_table('sys_pmethods')->find_many();
+        $ui->assign('pms', $pms);
+        $mdate = date('Y-m-d');
+        $ui->assign('mdate', $mdate);
+       
+        // $ui->assign('xheader', Asset::css(array(
+        //     'dropzone/dropzone',
+        //     'modal',
+        //     's2/css/select2.min',
+        //     'dp/dist/datepicker.min'
+        // )));
+        // $ui->assign('xfooter', Asset::js(array(
+        //     'modal',
+        //     'dropzone/dropzone',
+        //     's2/js/select2.min',
+        //     's2/js/i18n/' . lan() ,
+        //     'dp/dist/datepicker.min',
+        //     'dp/i18n/' . $config['language'],
+        //     'numeric',
+        //     'expense'
+        // )));
+       
+        $x = ORM::for_table('sys_transactions')->where('type', 'Expense');
+        if (!has_access($user->roleid, 'transactions', 'all_data')) {
+            $x->where('aid', $user->id);
+        }
+
+        $x->order_by_desc('id')->limit(20);
+        $tr = $x->find_array();
+        $ui->assign('tr', $tr);
+
+        //
+
+        $currency_rate = 1;
+        if ($config['edition'] == 'iqm') {
+            $c_find = Currency::where('iso_code', 'IQD')->first();
+            $currency_rate = $c_find->rate;
+        }
+
+        // view('transactions_expense', [
+        //     'currency_rate' => $currency_rate,
+        //     'expense_types' => ExpenseType::orderBy('sorder')->get()
+        // ]);
+       
+        view('modal_vehicle_expense', [
+            'currency_rate' => $currency_rate,
+            'expense_types' => ExpenseType::orderBy('sorder')->get()
+        ]);
+
+
+        break;
+    
+    
+    case 'modal_insurance_expense':
+        
+        $id=$routes['2'];
+        $insurance=false;
+        if($id != ''){
+            $insurance=ORM::for_table('sys_vehicle_insurance')->find_one($id);
+        }
+
+
+        $baseUrl=APP_URL;
+        $val=array();
+        if($insurance){
+            $val['id']=$id;
+            $val['vehicle_num']=$insurance->vehicle_num;
+            $val['amount']=$insurance->insurance_amount;
+            $val['category']="Insurance";
+        }else{
+            $val['id']="";
+            $val['vehicle_num']="";
+            $val['amount']="";
+            $val['category']="";
+        }
+        $ui->assign('val',$val);
+        $vehicles=ORM::for_table('sys_vehicles')->order_by_asc('id')->find_array();
+        $ui->assign('vehicles',$vehicles);  
+        $ui->assign('baseUrl',$baseUrl);
+        //Transactions Controller
+        
+        $currencies = Currency::all();
+        $ui->assign('currencies', $currencies);
+        $d = ORM::for_table('sys_accounts')->find_many();
+        $p = ORM::for_table('crm_accounts')->find_many();
+        $ui->assign('p', $p);
+        $ui->assign('d', $d);
+        $tags = Tags::get_all('Expense');
+        $ui->assign('tags', $tags);
+        $cats = ORM::for_table('sys_cats')->where('type', 'Expense')->order_by_asc('sorder')->find_many();
+        $ui->assign('cats', $cats);
+        $pms = ORM::for_table('sys_pmethods')->find_many();
+        $ui->assign('pms', $pms);
+        $mdate = date('Y-m-d');
+        $ui->assign('mdate', $mdate);
+       
+        // $ui->assign('xheader', Asset::css(array(
+        //     'dropzone/dropzone',
+        //     'modal',
+        //     's2/css/select2.min',
+        //     'dp/dist/datepicker.min'
+        // )));
+        // $ui->assign('xfooter', Asset::js(array(
+        //     'modal',
+        //     'dropzone/dropzone',
+        //     's2/js/select2.min',
+        //     's2/js/i18n/' . lan() ,
+        //     'dp/dist/datepicker.min',
+        //     'dp/i18n/' . $config['language'],
+        //     'numeric',
+        //     'expense'
+        // )));
+       
+        $x = ORM::for_table('sys_transactions')->where('type', 'Expense');
+        if (!has_access($user->roleid, 'transactions', 'all_data')) {
+            $x->where('aid', $user->id);
+        }
+
+        $x->order_by_desc('id')->limit(20);
+        $tr = $x->find_array();
+        $ui->assign('tr', $tr);
+
+        //
+
+        $currency_rate = 1;
+        if ($config['edition'] == 'iqm') {
+            $c_find = Currency::where('iso_code', 'IQD')->first();
+            $currency_rate = $c_find->rate;
+        }
+
+        // view('transactions_expense', [
+        //     'currency_rate' => $currency_rate,
+        //     'expense_types' => ExpenseType::orderBy('sorder')->get()
+        // ]);
+       
+        view('modal_vehicle_expense', [
+            'currency_rate' => $currency_rate,
+            'expense_types' => ExpenseType::orderBy('sorder')->get()
+        ]);
+
+
+        break;
+
+    case 'modal_loan_expense':
+        
+        $id=$routes['2'];
+        $loan=false;
+        if($id != ''){
+            $loan=ORM::for_table('sys_vehicle_loan')->find_one($id);
+        }
+
+
+        $baseUrl=APP_URL;
+        $val=array();
+        if($loan){
+            $val['id']=$id;
+            $val['vehicle_num']=$loan->vehicle_num;
+            $principal_amount=$loan->principal_amount;
+            $interest_rate=$loan->interest_rate;
+            $loan_duration=$loan->loan_duration;
+
+            $val['amount']=$principal_amount/$loan_duration+$principal_amount*$interest_rate;
+            $val['category']="Vehicle Loan";
+        }else{
+            $val['id']="";
+            $val['vehicle_num']="";
+            $val['amount']="";
+            $val['category']="";
+        }
+        $ui->assign('val',$val);
+        $vehicles=ORM::for_table('sys_vehicles')->order_by_asc('id')->find_array();
+        $ui->assign('vehicles',$vehicles);  
+        $ui->assign('baseUrl',$baseUrl);
+        //Transactions Controller
+        
+        $currencies = Currency::all();
+        $ui->assign('currencies', $currencies);
+        $d = ORM::for_table('sys_accounts')->find_many();
+        $p = ORM::for_table('crm_accounts')->find_many();
+        $ui->assign('p', $p);
+        $ui->assign('d', $d);
+        $tags = Tags::get_all('Expense');
+        $ui->assign('tags', $tags);
+        $cats = ORM::for_table('sys_cats')->where('type', 'Expense')->order_by_asc('sorder')->find_many();
+        $ui->assign('cats', $cats);
+        $pms = ORM::for_table('sys_pmethods')->find_many();
+        $ui->assign('pms', $pms);
+        $mdate = date('Y-m-d');
+        $ui->assign('mdate', $mdate);
+       
+        // $ui->assign('xheader', Asset::css(array(
+        //     'dropzone/dropzone',
+        //     'modal',
+        //     's2/css/select2.min',
+        //     'dp/dist/datepicker.min'
+        // )));
+        // $ui->assign('xfooter', Asset::js(array(
+        //     'modal',
+        //     'dropzone/dropzone',
+        //     's2/js/select2.min',
+        //     's2/js/i18n/' . lan() ,
+        //     'dp/dist/datepicker.min',
+        //     'dp/i18n/' . $config['language'],
+        //     'numeric',
+        //     'expense'
+        // )));
+       
+        $x = ORM::for_table('sys_transactions')->where('type', 'Expense');
+        if (!has_access($user->roleid, 'transactions', 'all_data')) {
+            $x->where('aid', $user->id);
+        }
+
+        $x->order_by_desc('id')->limit(20);
+        $tr = $x->find_array();
+        $ui->assign('tr', $tr);
+
+        //
+
+        $currency_rate = 1;
+        if ($config['edition'] == 'iqm') {
+            $c_find = Currency::where('iso_code', 'IQD')->first();
+            $currency_rate = $c_find->rate;
+        }
+
+        // view('transactions_expense', [
+        //     'currency_rate' => $currency_rate,
+        //     'expense_types' => ExpenseType::orderBy('sorder')->get()
+        // ]);
+       
+        view('modal_vehicle_expense', [
+            'currency_rate' => $currency_rate,
+            'expense_types' => ExpenseType::orderBy('sorder')->get()
+        ]);
+
+
+        break;
+
+
+
     case 'post_roadtax':
       
         $id=_post('rid');
@@ -927,7 +1336,10 @@ switch ($action) {
         $repay_cycle_type=_post('repay_cycle_type');
         
         $loan_date=_post('loan_date');
-        $expire_date=_post('expire_date');
+        $interval = new DateInterval('P'.$loan_duration.'M');
+        $expire_date=date_create($loan_date)->add($interval);
+        $expire_date=$expire_date->format('Y-m-d');
+
         $expiry_todate=_post('expiry_todate');
         $description=_post('description');
         $ref_img=_post('ref_img');

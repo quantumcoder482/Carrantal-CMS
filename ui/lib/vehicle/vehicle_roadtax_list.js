@@ -47,12 +47,12 @@ $(document).ready(function () {
     $('.add_expense').on('click',function(e){
         
         var id=this.id;
-        
+       
         e.preventDefault();
 
         $('body').modalmanager('loading');
 
-        $modal.load(_url+'vehicle/add_expense/'+id, '', function(){
+        $modal.load(_url +'vehicle/modal_roadtax_expense/'+id, '', function(){
 
             $modal.modal();
 
@@ -92,6 +92,31 @@ $(document).ready(function () {
 
                     window.location = base_url + 'vehicle/road_tax/';
                    
+                }
+
+                else {
+                    $modal.modal('loading');
+                    toastr.error(data);
+                }
+
+            });
+
+    });
+
+
+    $modal.on('click', '.expense_submit', function (e) {
+
+        e.preventDefault();
+
+        $modal.modal('loading');
+
+        $.post(_url + "transactions/expense-post/", $("#eform").serialize())
+            .done(function (data) {
+
+                if ($.isNumeric(data)) {
+
+                    window.location = base_url + 'vehicle/road_tax/';
+
                 }
 
                 else {

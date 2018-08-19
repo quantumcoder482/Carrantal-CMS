@@ -21,11 +21,26 @@
                                     {foreach $d as $ds}
                                         <option value="{$ds['account']}">{$ds['account']}</option>
                                     {/foreach}
-
-
                                 </select>
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="vehicle_num">{$_L['Vehicle No']}</label>
+
+                            <div class="col-sm-9">
+
+                                <select id="vehicle_num" name="vehicle_num" class="form-control">
+                                    <option value="" selected>{$_L['All']}</option>
+                                    {foreach $vehicles as $vehicle}
+                                    <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']}</option>
+                                    {/foreach}
+                                </select>
+
+
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label for="date" class="col-sm-3 control-label">{$_L['Date']}</label>
                             <div class="col-sm-9">
@@ -37,7 +52,7 @@
                             <label for="description" class="col-sm-3 control-label">{$_L['Description']}</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="description" name="description">
-                                <div class="help-block"><a data-toggle="modal" href="#modal_add_item"><i class="fa fa-paperclip"></i> {$_L['Attach File']}</a> </div>
+                                {*<div class="help-block"><a data-toggle="modal" href="#modal_add_item"><i class="fa fa-paperclip"></i> {$_L['Attach File']}</a> </div>*}
                             </div>
                         </div>
 
@@ -207,6 +222,7 @@
                         <thead>
                         <tr>
                             <th>{$_L['Description']}</th>
+                            <th>{$_L['Category']}</th>
                             <th>{$_L['Amount']}</th>
 
                         </tr>
@@ -221,6 +237,7 @@
                                         {/if}
                                         {$trs['description']}
                                     </a> </td>
+                                <td>{$trs['category']}</td>
                                 <td class="amount">{$trs['amount']}</td>
                             </tr>
                         {/foreach}

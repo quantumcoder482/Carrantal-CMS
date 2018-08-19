@@ -294,6 +294,8 @@ switch ($action) {
         $pms = ORM::for_table('sys_pmethods')->find_many();
         $ui->assign('pms', $pms);
         $ui->assign('mdate', $mdate);
+        $vehicles=ORM::for_table('sys_vehicles')->order_by_asc('id')->find_array();
+        $ui->assign('vehicles',$vehicles);  
         $ui->assign('xheader', Asset::css(array(
             'dropzone/dropzone',
             'modal',
@@ -340,12 +342,16 @@ switch ($action) {
         $msg = '';
 
         Event::trigger('transactions/expense-post/');
+        
+        $eid=_post('eid');
+
         $account = _post('account');
+        $vehicle_num=_post('vehicle_num');
         $date = _post('date');
         $amount = _post('amount');
         $amount = Finance::amount_fix($amount);
         $payee = _post('payee');
-
+        $vehicle_num=_post('vehicle_num');
         $ref = _post('ref');
 
         if($ref != ''){
@@ -363,10 +369,9 @@ switch ($action) {
         // New
 
 
-
         $sub_type = _post('sub_type');
         $cat = _post('cats');
-        $tags = $_POST['tags'];
+        $tags = _post('tags');
         $attachments = _post('attachments');
         if (!is_numeric($payee)) {
             $payee = '0';
@@ -488,6 +493,7 @@ switch ($action) {
 
             $d = ORM::for_table('sys_transactions')->create();
             $d->account = $account;
+            $d->vehicle_num=$vehicle_num;
             $d->type = 'Expense';
             $d->payeeid = $payee;
             $d->tags = Arr::arr_to_str($tags);
@@ -529,6 +535,41 @@ switch ($action) {
             _msglog('s', $_L['Transaction Added Successfully']);
 
 
+            //Vehicle Transaction Injection
+            
+            if($eid){
+                switch ($cat) {
+                    case 'Road Tax':
+                        $vehicle_roadtax=ORM::for_table('sys_vehicle_roadtax')->where('id', $eid)->find_one();
+                        $vehicle_roadtax->pay_status=$tid-1;
+                        $vehicle_roadtax->save();
+                        break;
+                    
+                    case 'Insurance':
+                        $vehicle_insurance=ORM::for_table('sys_vehicle_insurance')->where('id', $eid)->find_one();
+                        $vehicle_insurance->pay_status=$tid-1;
+                        $vehicle_insurance->save();
+                        break;
+                    
+                    case 'Vehicle Loan':
+                        $vehicle_loan=ORM::for_table('sys_vehicle_loan')->where('id', $eid)->find_one();
+                        $vehicle_loan->pay_status+=1;
+                        $vehicle_loan->save();
+                       
+                        $vehicle_loanlog=ORM::for_table('sys_vehicle_loanlog')->create();
+                        $vehicle_loanlog->loan_id=$eid;
+                        $vehicle_loanlog->transaction_date=$date;
+                        $vehicle_loanlog->transaction_amount=$amount;
+                        $vehicle_loanlog->save();
+                        break;
+                        
+                    default:
+                        break;
+                }
+
+            }
+            
+
             echo $tid;
         }
         else {
@@ -561,20 +602,20 @@ switch ($action) {
         )));
         $ui->assign('xjq', '
 
- $(\'.amount\').autoNumeric(\'init\', {
+        $(\'.amount\').autoNumeric(\'init\', {
 
-    aSign: \'' . $config['currency_code'] . ' \',
-    dGroup: ' . $config['thousand_separator_placement'] . ',
-    aPad: ' . $config['currency_decimal_digits'] . ',
-    pSign: \'' . $config['currency_symbol_position'] . '\',
-    aDec: \'' . $config['dec_point'] . '\',
-    aSep: \'' . $config['thousands_sep'] . '\',
-    vMax: \'9999999999999999.00\',
-                vMin: \'-9999999999999999.00\'
+            aSign: \'' . $config['currency_code'] . ' \',
+            dGroup: ' . $config['thousand_separator_placement'] . ',
+            aPad: ' . $config['currency_decimal_digits'] . ',
+            pSign: \'' . $config['currency_symbol_position'] . '\',
+            aDec: \'' . $config['dec_point'] . '\',
+            aSep: \'' . $config['thousands_sep'] . '\',
+            vMax: \'9999999999999999.00\',
+                        vMin: \'-9999999999999999.00\'
 
-    });
+            });
 
- ');
+        ');
         $x = ORM::for_table('sys_transactions')->where('type', 'Transfer');
         if (!has_access($user->roleid, 'transactions', 'all_data')) {
             $x->where('aid', $user->id);
@@ -820,6 +861,8 @@ switch ($action) {
         $ui->assign('c', $c);
         $a = ORM::for_table('sys_accounts')->find_array();
         $ui->assign('a', $a);
+        $vehicles=ORM::for_table('sys_vehicles')->find_array();
+        $ui->assign('vehicles',$vehicles);
         $ui->assign('xheader', Asset::css(array(
             's2/css/select2.min',
             'dt/dt',
@@ -834,7 +877,8 @@ switch ($action) {
         )));
         view('transactions_list', [
             'tr_type' => $tr_type,
-            'expense_types' => ExpenseType::orderBy('sorder')->get()
+            'expense_categories' => ORM::for_table('sys_cats')->where('type','expense')->order_by_asc('sorder')->find_array()
+
         ]);
         break;
 
@@ -872,7 +916,7 @@ switch ($action) {
         $ui->assign('xjq', '
 
 
- ');
+        ');
         view('tra');
         break;
 
@@ -1009,16 +1053,16 @@ switch ($action) {
 
          $(\'.amount\').autoNumeric(\'init\', {
 
-    aSign: \'' . $config['currency_code'] . ' \',
-    dGroup: ' . $config['thousand_separator_placement'] . ',
-    aPad: ' . $config['currency_decimal_digits'] . ',
-    pSign: \'' . $config['currency_symbol_position'] . '\',
-    aDec: \'' . $config['dec_point'] . '\',
-    aSep: \'' . $config['thousands_sep'] . '\',
-    vMax: \'9999999999999999.00\',
-                vMin: \'-9999999999999999.00\'
+            aSign: \'' . $config['currency_code'] . ' \',
+            dGroup: ' . $config['thousand_separator_placement'] . ',
+            aPad: ' . $config['currency_decimal_digits'] . ',
+            pSign: \'' . $config['currency_symbol_position'] . '\',
+            aDec: \'' . $config['dec_point'] . '\',
+            aSep: \'' . $config['thousands_sep'] . '\',
+            vMax: \'9999999999999999.00\',
+                        vMin: \'-9999999999999999.00\'
 
-    });
+            });
 
         ');
         $ui->assign('paginator', $paginator);
@@ -1035,16 +1079,16 @@ switch ($action) {
 
          $(\'.amount\').autoNumeric(\'init\', {
 
-    aSign: \'' . $config['currency_code'] . ' \',
-    dGroup: ' . $config['thousand_separator_placement'] . ',
-    aPad: ' . $config['currency_decimal_digits'] . ',
-    pSign: \'' . $config['currency_symbol_position'] . '\',
-    aDec: \'' . $config['dec_point'] . '\',
-    aSep: \'' . $config['thousands_sep'] . '\',
-    vMax: \'9999999999999999.00\',
-                vMin: \'-9999999999999999.00\'
+            aSign: \'' . $config['currency_code'] . ' \',
+            dGroup: ' . $config['thousand_separator_placement'] . ',
+            aPad: ' . $config['currency_decimal_digits'] . ',
+            pSign: \'' . $config['currency_symbol_position'] . '\',
+            aDec: \'' . $config['dec_point'] . '\',
+            aSep: \'' . $config['thousands_sep'] . '\',
+            vMax: \'9999999999999999.00\',
+                        vMin: \'-9999999999999999.00\'
 
-    });
+            });
 
         ');
         $ui->assign('paginator', $paginator);
@@ -1222,15 +1266,15 @@ switch ($action) {
         header('Content-Description: File Transfer');
         header("Content-type: text/csv");
         header("Content-Disposition: attachment; filename={$fileName
-}
+        }
 
-");
+        ");
         header("Expires: 0");
         header("Pragma: public");
         $fh = @fopen('php://output', 'w');
         $headerDisplayed = false;
 
-// $results = ORM::for_table('crm_Accounts')->find_array();
+        // $results = ORM::for_table('crm_Accounts')->find_array();
 
         $results = db_find_array('sys_transactions');
 
@@ -1251,244 +1295,258 @@ switch ($action) {
             fputcsv($fh, $data);
         }
 
-// Close the file
+        // Close the file
 
-        fclose($fh);
-        break;
+                fclose($fh);
+                break;
 
-    case 'handle_attachment':
-        $uploader = new Uploader();
-        $uploader->setDir('storage/transactions/');
-        $uploader->sameName(false);
-        $uploader->setExtensions(array(
-            'jpg',
-            'jpeg',
-            'png',
-            'gif',
-            'pdf'
-        )); //allowed extensions list//
-        if ($uploader->uploadFile('file')) { //txtFile is the filebrowse element name //
-            $uploaded = $uploader->getUploadName(); //get uploaded file name, renames on upload//
-            $file = $uploaded;
-            $msg = 'Uploaded Successfully';
-            $success = 'Yes';
-        }
-        else { //upload failed
-            $file = '';
-            $msg = $uploader->getMessage();
-            $success = 'No';
-        }
+            case 'handle_attachment':
+                $uploader = new Uploader();
+                $uploader->setDir('storage/transactions/');
+                $uploader->sameName(false);
+                $uploader->setExtensions(array(
+                    'jpg',
+                    'jpeg',
+                    'png',
+                    'gif',
+                    'pdf'
+                )); //allowed extensions list//
+                if ($uploader->uploadFile('file')) { //txtFile is the filebrowse element name //
+                    $uploaded = $uploader->getUploadName(); //get uploaded file name, renames on upload//
+                    $file = $uploaded;
+                    $msg = 'Uploaded Successfully';
+                    $success = 'Yes';
+                }
+                else { //upload failed
+                    $file = '';
+                    $msg = $uploader->getMessage();
+                    $success = 'No';
+                }
 
-        $a = array(
-            'success' => $success,
-            'msg' => $msg,
-            'file' => $file
-        );
-        header('Content-Type: application/json');
-        echo json_encode($a);
-        break;
+                $a = array(
+                    'success' => $success,
+                    'msg' => $msg,
+                    'file' => $file
+                );
+                header('Content-Type: application/json');
+                echo json_encode($a);
+                break;
 
-    case 'tr_list':
+            case 'tr_list':
 
-        //  sleep(5);
+                //  sleep(5);
 
-        $columns = array();
-        $columns[] = 'id';
-        $columns[] = 'date';
-        $columns[] = 'account';
-        $columns[] = 'type';
-        $columns[] = 'amount';
-        $columns[] = 'description';
-        $columns[] = 'dr';
-        $columns[] = 'cr';
-        $columns[] = 'bal';
-        $columns[] = 'manage';
-        $order_by = $_POST['order'];
-        $o_c_id = $order_by[0]['column'];
-        $o_type = $order_by[0]['dir'];
-        $a_order_by = $columns[$o_c_id];
-        $d = ORM::for_table('sys_transactions');
-        $d->select('id');
-        $d->select('account');
-        $d->select('type');
-        $d->select('date');
-        $d->select('amount');
-        $d->select('description');
-        $d->select('dr');
-        $d->select('cr');
-        $d->select('bal');
-        $tr_type = _post('tr_type');
-        if ($tr_type != '') {
-            $d->where('type', $tr_type);
-        }
+                $columns = array();
+                $columns[] = 'id';
+                $columns[] = 'date';
+                $columns[] = 'account';
+                $columns[] = 'type';
+                $columns[] = 'amount';
+                $columns[] = 'category';
+                $columns[] = 'description';
+                $columns[] = 'dr';
+                $columns[] = 'cr';
+                $columns[] = 'bal';
+                $columns[] = 'manage';
+                $order_by = $_POST['order'];
+                $o_c_id = $order_by[0]['column'];
+                $o_type = $order_by[0]['dir'];
+                $a_order_by = $columns[$o_c_id];
+                $d = ORM::for_table('sys_transactions');
+                $d->select('id');
+                $d->select('account');
+                $d->select('type');
+                $d->select('date');
+                $d->select('amount');
+                $d->select('category');
+                $d->select('description');
+                $d->select('dr');
+                $d->select('cr');
+                $d->select('bal');
 
-        $account = _post('account');
-        if ($account != '') {
-            $d->where('account', $account);
-        }
+                $tr_type = _post('tr_type');
+                if ($tr_type != '') {
+                    $d->where('type', $tr_type);
+                }
+                
+                $ex_category=_post('ex_category');
+                if($ex_category != ''){
+                    $d->where('category',$ex_category);
+                }
+            
+                $account = _post('account');
+                if ($account != '') {
+                    $d->where('account', $account);
+                }
 
-        $cid = _post('cid');
-        if ($cid != '') {
-            $d->where_any_is(array(
-                array(
-                    'payerid' => $cid
-                ) ,
-                array(
-                    'payeeid' => $cid
-                )
-            ));
-        }
+                $cid = _post('cid');
+                if ($cid != '') {
+                    $d->where_any_is(array(
+                        array(
+                            'payerid' => $cid
+                        ) ,
+                        array(
+                            'payeeid' => $cid
+                        )
+                    ));
+                }
+                
+                $vehicle_num=_post('vehicle_num');
+                if($vehicle_num != ''){
+                    $d->where('vehicle_num',$vehicle_num);
+                }
 
-        // 11/04/2016 - 12/03/2016
+                // 11/04/2016 - 12/03/2016
 
-        $reportrange = _post('reportrange');
-        if ($reportrange != '') {
-            $reportrange = explode('-', $reportrange);
-            $from_date = trim($reportrange[0]);
-            $to_date = trim($reportrange[1]);
-            $d->where_gte('date', $from_date);
-            $d->where_lte('date', $to_date);
-        }
+                $reportrange = _post('reportrange');
+                if ($reportrange != '') {
+                    $reportrange = explode('-', $reportrange);
+                    $from_date = trim($reportrange[0]);
+                    $to_date = trim($reportrange[1]);
+                    $d->where_gte('date', $from_date);
+                    $d->where_lte('date', $to_date);
+                }
 
-        if (!has_access($user->roleid, 'transactions', 'all_data')) {
-            $d->where('aid', $user->id);
-        }
+                if (!has_access($user->roleid, 'transactions', 'all_data')) {
+                    $d->where('aid', $user->id);
+                }
 
-        $x = $d->find_array();
-        $iTotalRecords = $d->count();
+                $x = $d->find_array();
+                $iTotalRecords = $d->count();
 
-        //        $ret = array();
-        //
-        //       $i = 0;
-        //
-        //        foreach ($d as $ds){
-        //
-        //            $ret[$i]['account'] = $ds['account'];
-        //            $ret[$i]['type'] = $ds['type'];
-        //            $ret[$i]['date'] = $ds['date'];
-        //            $ret[$i]['amount'] = $ds['amount'];
-        //            $ret[$i]['description'] = $ds['description'];
-        //            $ret[$i]['dr'] = $ds['dr'];
-        //            $ret[$i]['cr'] = $ds['cr'];
-        //            $ret[$i]['bal'] = $ds['bal'];
-        //            $ret[$i]['id'] = $ds['id'];
-        //
-        //            $i++;
-        //
-        //        }
-        //
-        //        $data = array();
-        //        $data['data'] = $ret;
+                //        $ret = array();
+                //
+                //       $i = 0;
+                //
+                //        foreach ($d as $ds){
+                //
+                //            $ret[$i]['account'] = $ds['account'];
+                //            $ret[$i]['type'] = $ds['type'];
+                //            $ret[$i]['date'] = $ds['date'];
+                //            $ret[$i]['amount'] = $ds['amount'];
+                //            $ret[$i]['description'] = $ds['description'];
+                //            $ret[$i]['dr'] = $ds['dr'];
+                //            $ret[$i]['cr'] = $ds['cr'];
+                //            $ret[$i]['bal'] = $ds['bal'];
+                //            $ret[$i]['id'] = $ds['id'];
+                //
+                //            $i++;
+                //
+                //        }
+                //
+                //        $data = array();
+                //        $data['data'] = $ret;
 
-        $iDisplayLength = intval($_REQUEST['length']);
-        $iDisplayLength = $iDisplayLength < 0 ? $iTotalRecords : $iDisplayLength;
-        $iDisplayStart = intval($_REQUEST['start']);
-        $sEcho = intval($_REQUEST['draw']);
-        $records = array();
-        $records["data"] = array();
-        $end = $iDisplayStart + $iDisplayLength;
-        $end = $end > $iTotalRecords ? $iTotalRecords : $end;
-        if ($o_type == 'desc') {
-            $d->order_by_desc($a_order_by);
-        }
-        else {
-            $d->order_by_asc($a_order_by);
-        }
+                $iDisplayLength = intval($_REQUEST['length']);
+                $iDisplayLength = $iDisplayLength < 0 ? $iTotalRecords : $iDisplayLength;
+                $iDisplayStart = intval($_REQUEST['start']);
+                $sEcho = intval($_REQUEST['draw']);
+                $records = array();
+                $records["data"] = array();
+                $end = $iDisplayStart + $iDisplayLength;
+                $end = $end > $iTotalRecords ? $iTotalRecords : $end;
+                if ($o_type == 'desc') {
+                    $d->order_by_desc($a_order_by);
+                }
+                else {
+                    $d->order_by_asc($a_order_by);
+                }
 
-        $d->limit($end);
-        $d->offset($iDisplayStart);
-        $x = $d->find_array();
-        $i = $iDisplayStart;
-        foreach($x as $xs) {
-            $records["data"][] = array(
-                '<a href="' . U . 'transactions/manage/' . $xs['id'] . '">' . $xs['id'] . '</a>',
-                $xs['date'],
-                htmlentities($xs['account']),
-                htmlentities($xs['type']),
-                $xs['amount'],
-                htmlentities($xs['description']),
-                $xs['dr'],
-                $xs['cr'],
-                $xs['bal'],
-                '<a href="' . U . 'transactions/manage/' . $xs['id'] . '" class="btn btn-primary btn-xs"><i class="fa fa-file-text-o"></i></a>',
-            );
-        }
+                $d->limit($end);
+                $d->offset($iDisplayStart);
+                $x = $d->find_array();
+                $i = $iDisplayStart;
+                foreach($x as $xs) {
+                    $records["data"][] = array(
+                        '<a href="' . U . 'transactions/manage/' . $xs['id'] . '">' . $xs['id'] . '</a>',
+                        $xs['date'],
+                        htmlentities($xs['account']),
+                        htmlentities($xs['type']),
+                        $xs['amount'], 
+                        $xs['category'],
+                        htmlentities($xs['description']),
+                        $xs['dr'],
+                        $xs['cr'],
+                        $xs['bal'],
+                        '<a href="' . U . 'transactions/manage/' . $xs['id'] . '" class="btn btn-primary btn-xs"><i class="fa fa-file-text-o"></i></a>',
+                    );
+                }
 
-        $records["draw"] = $sEcho;
-        $records["recordsTotal"] = $iTotalRecords;
-        $records["recordsFiltered"] = $iTotalRecords;
-        api_response($records);
+                $records["draw"] = $sEcho;
+                $records["recordsTotal"] = $iTotalRecords;
+                $records["recordsFiltered"] = $iTotalRecords;
+                api_response($records);
 
-        break;
+                break;
 
-    case 'exchange':
-        $d = ORM::for_table('sys_accounts')->find_many();
-        $p = ORM::for_table('crm_accounts')->find_many();
-        $ui->assign('p', $p);
-        $ui->assign('d', $d);
-        $pms = ORM::for_table('sys_pmethods')->find_many();
-        $ui->assign('pms', $pms);
-        $ui->assign('mdate', $mdate);
-        $ui->assign('xheader', Asset::css(array(
-            'dropzone/dropzone',
-            'modal',
-            's2/css/select2.min',
-            'dp/dist/datepicker.min'
-        )));
-        $ui->assign('xfooter', Asset::js(array(
-            'modal',
-            'dropzone/dropzone',
-            's2/js/select2.min',
-            's2/js/i18n/' . lan() ,
-            'dp/dist/datepicker.min',
-            'dp/i18n/' . $config['language'],
-            'numeric'
-        )));
-        $ui->assign('xjq', '
- $(\'.amount\').autoNumeric(\'init\', {
+            case 'exchange':
+                $d = ORM::for_table('sys_accounts')->find_many();
+                $p = ORM::for_table('crm_accounts')->find_many();
+                $ui->assign('p', $p);
+                $ui->assign('d', $d);
+                $pms = ORM::for_table('sys_pmethods')->find_many();
+                $ui->assign('pms', $pms);
+                $ui->assign('mdate', $mdate);
+                $ui->assign('xheader', Asset::css(array(
+                    'dropzone/dropzone',
+                    'modal',
+                    's2/css/select2.min',
+                    'dp/dist/datepicker.min'
+                )));
+                $ui->assign('xfooter', Asset::js(array(
+                    'modal',
+                    'dropzone/dropzone',
+                    's2/js/select2.min',
+                    's2/js/i18n/' . lan() ,
+                    'dp/dist/datepicker.min',
+                    'dp/i18n/' . $config['language'],
+                    'numeric'
+                )));
+                $ui->assign('xjq', '
+        $(\'.amount\').autoNumeric(\'init\', {
 
-    aSign: \'' . $config['currency_code'] . ' \',
-    dGroup: ' . $config['thousand_separator_placement'] . ',
-    aPad: ' . $config['currency_decimal_digits'] . ',
-    pSign: \'' . $config['currency_symbol_position'] . '\',
-    aDec: \'' . $config['dec_point'] . '\',
-    aSep: \'' . $config['thousands_sep'] . '\',
-    vMax: \'9999999999999999.00\',
-                vMin: \'-9999999999999999.00\'
+            aSign: \'' . $config['currency_code'] . ' \',
+            dGroup: ' . $config['thousand_separator_placement'] . ',
+            aPad: ' . $config['currency_decimal_digits'] . ',
+            pSign: \'' . $config['currency_symbol_position'] . '\',
+            aDec: \'' . $config['dec_point'] . '\',
+            aSep: \'' . $config['thousands_sep'] . '\',
+            vMax: \'9999999999999999.00\',
+                        vMin: \'-9999999999999999.00\'
 
-    });
+            });
 
- ');
+        ');
 
-        // find all currency
+                // find all currency
 
-        $currencies = ORM::for_table('sys_currencies')->find_array();
-        $ui->assign('currencies', $currencies);
+                $currencies = ORM::for_table('sys_currencies')->find_array();
+                $ui->assign('currencies', $currencies);
 
-        if($config['edition'] == 'iqm'){
-            $c1_currency = Currency::where('iso_code','USD')->first();
-            $c2_currency = Currency::where('iso_code','IQD')->first();
-        }
+                if($config['edition'] == 'iqm'){
+                    $c1_currency = Currency::where('iso_code','USD')->first();
+                    $c2_currency = Currency::where('iso_code','IQD')->first();
+                }
 
-        else{
-            $c1_currency = false;
-            $c2_currency = false;
-        }
+                else{
+                    $c1_currency = false;
+                    $c2_currency = false;
+                }
 
-        view('transactions_exchange',[
-            'c1_currency' => $c1_currency,
-            'c2_currency' => $c2_currency
-        ]);
-
-
-        break;
-
-    case 'exchange-post':
+                view('transactions_exchange',[
+                    'c1_currency' => $c1_currency,
+                    'c2_currency' => $c2_currency
+                ]);
 
 
+                break;
 
-        //  var_dump($_POST);
-// exit;
+            case 'exchange-post':
+
+
+
+                //  var_dump($_POST);
+        // exit;
         $account = _post('account');
         $date = _post('date');
 

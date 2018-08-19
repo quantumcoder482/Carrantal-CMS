@@ -89,13 +89,13 @@
                                 {/if}
                             </td>
                             <td class="text-right">
-                                {if {$ds['pay_status']} eq 1}
+                                {if {$ds['pay_status']} neq 0}
                                 <a href="#" class="btn btn-xs" id="{$ds['id']}" style="background-color:#A9A9A9; border-color:#A9A9A9; color:#eeeeee" disabled
                                     data-toggle="tooltip" data-placement="top" title="{$_L['View']}">
                                     {$_L['Add Expense']}
                                 </a>
                                 {else}
-                                <a href="#" class="btn btn-warning btn-xs" id="{$ds['id']}" style="background-color:#FFA500; border-color:#FFA500; color:#eeeeee"
+                                <a href="#" class="btn btn-warning btn-xs add_expense" id="{$ds['id']}" style="background-color:#FFA500; border-color:#FFA500; color:#eeeeee"
                                     data-toggle="tooltip" data-placement="top" title="{$_L['View']}">
                                     {$_L['Add Expense']}
                                 </a>

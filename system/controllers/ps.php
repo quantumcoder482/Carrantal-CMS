@@ -335,39 +335,39 @@ switch ($action) {
         $ui->assign('d',$d);
         $ui->assign('type','Service');
         $ui->assign('paginator',$paginator);
-//        $ui->assign('xheader', '
-//<link rel="stylesheet" type="text/css" href="' . $_theme . '/css/modal.css"/>
-//
-//');
-//        $ui->assign('xfooter', '
-//                <script type="text/javascript" src="' . $_theme . '/lib/modal.js"></script>
-//<script type="text/javascript" src="' . $_theme . '/lib/ps-list.js"></script>
-//');
+        //        $ui->assign('xheader', '
+        //<link rel="stylesheet" type="text/css" href="' . $_theme . '/css/modal.css"/>
+        //
+        //');
+        //        $ui->assign('xfooter', '
+        //                <script type="text/javascript" src="' . $_theme . '/lib/modal.js"></script>
+        //<script type="text/javascript" src="' . $_theme . '/lib/ps-list.js"></script>
+        //');
 
-        $ui->assign('xheader', Asset::css(array('modal','dropzone/dropzone','redactor/redactor')));
-        $ui->assign('xfooter', Asset::js(array('clipboard.min','modal','dropzone/dropzone','redactor/redactor.min','numeric','js/ps_list')));
-
-
-        view('ps-list');
+                $ui->assign('xheader', Asset::css(array('modal','dropzone/dropzone','redactor/redactor')));
+                $ui->assign('xfooter', Asset::js(array('clipboard.min','modal','dropzone/dropzone','redactor/redactor.min','numeric','js/ps_list')));
 
 
-        break;
+                view('ps-list');
 
 
-    case 'edit-post':
-        $msg = '';
-        $id = _post('id');
-//        $price = _post('price');
-//        $price = Finance::amount_fix($price);
-//        $name = _post('name');
-//        $item_number = _post('item_number');
-//        $description = _post('description');
-//        if($name == ''){
-//            $msg .= 'Name is Required <br>';
-//        }
-//        if(!is_numeric($price)){
-//            $msg .= 'Invalid Sales Price <br>';
-//        }
+                break;
+
+
+            case 'edit-post':
+                $msg = '';
+                $id = _post('id');
+        //        $price = _post('price');
+        //        $price = Finance::amount_fix($price);
+        //        $name = _post('name');
+        //        $item_number = _post('item_number');
+        //        $description = _post('description');
+        //        if($name == ''){
+        //            $msg .= 'Name is Required <br>';
+        //        }
+        //        if(!is_numeric($price)){
+        //            $msg .= 'Invalid Sales Price <br>';
+        //        }
 
 
 
@@ -495,137 +495,137 @@ switch ($action) {
             $has_img = '';
             if($d->image != ''){
                 $has_img = '<hr>
-<img src="'.APP_URL.'/storage/items/'.$d->image.'" class="img-responsive">
-';
+                    <img src="'.APP_URL.'/storage/items/'.$d->image.'" class="img-responsive">
+                ';
             }
 
             echo '
-<div class="modal-header">
-	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	<h3>'.$_L['Edit'].'</h3>
-</div>
-<div class="modal-body">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3>'.$_L['Edit'].'</h3>
+                </div>
+                <div class="modal-body">
 
-<div class="row">
-<div class="col-md-8">
-<form class="form-horizontal" role="form" id="edit_form" method="post">
-  <div class="form-group">
-    <label for="name" class="col-sm-2 control-label">'.$_L['Name'].'</label>
-    <div class="col-sm-10">
-      <input type="text" class="form-control" value="'.$d['name'].'" name="name" id="name">
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="rate" class="col-sm-2 control-label">'.$_L['Item Number'].'</label>
-    <div class="col-sm-8">
-      <input type="text" class="form-control" name="item_number" value="'.$d['item_number'].'" id="item_number">
-      
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="rate" class="col-sm-2 control-label">'.$_L['Sales Price'].'</label>
-    <div class="col-sm-8">
-      <input type="text" id="sales_price" name="sales_price" class="form-control amount" autocomplete="off" data-a-sign="'.$config['currency_code'].' "  data-a-dec="'.$config['dec_point'].'" data-a-sep="'.$config['thousands_sep'].'" data-d-group="2" value="'.$d['sales_price'].'">
-    </div>
-  </div>
-  
-    <div class="form-group">
-    <label for="cost_price" class="col-sm-2 control-label">'.$_L['Cost Price'].'</label>
-    <div class="col-sm-8">
-      <input type="text" id="cost_price" name="cost_price" class="form-control amount" autocomplete="off" data-a-sign="'.$config['currency_code'].' "  data-a-dec="'.$config['dec_point'].'" data-a-sep="'.$config['thousands_sep'].'" data-d-group="2" value="'.$d['cost_price'].'">
-    </div>
-  </div>
-  
-    <div class="form-group">
-    <label for="description" class="col-sm-2 control-label">'.$_L['Description'].'</label>
-    <div class="col-sm-10">
-      <textarea id="description" name="description" class="form-control" rows="3">'.$d['description'].'</textarea>
-    </div>
-  </div>
-  
-  <div class="form-group">
-    <label for="inventory" class="col-sm-2 control-label">'.$_L['Inventory'].'</label>
-    <div class="col-sm-10">
-      <input type="text" id="inventory" name="inventory" class="form-control amount" autocomplete="off" data-a-sign=""  data-a-dec="'.$config['dec_point'].'" data-a-sep="'.$config['thousands_sep'].'" data-d-group="2" value="'.$d['inventory'].'">
-    </div>
-  </div>
-  
-  <hr>
-  
-  <h4>Customer Group</h4>
-  
-  <select class="form-control dual_select" multiple>
-                                    <option value="United States">Test Customer Group</option>
-                                    <option value="United Kingdom">Organizational</option>
-                                    <option value="Australia">Test Group 3</option>
-                                    <option selected value="Internet Users">Internet Users</option>
-                                    
-                                </select>
-
-<script>
- $(\'.dual_select\').bootstrapDualListbox({
-                selectorMinimalHeight: 160,
-                showFilterInputs: false,
-                infoText: false
-            });
-
-</script>
-  
-
-  
-  <input type="hidden" name="id" value="'.$d['id'].'">
-  <input type="hidden" name="file_link" id="file_link" value="'.$d['image'].'">
-</form>
-</div>
-<div class="col-md-4">
-<form action="" class="dropzone" id="upload_container">
-
-                        <div class="dz-message">
-                            <h3> <i class="fa fa-cloud-upload"></i>  '.$_L['Drop File Here'].'</h3>
-                            <br />
-                            <span class="note">'.$_L['Click to Upload'].'</span>
-                        </div>
-                        
-                        <hr>
-                        
-                        
-
-                    </form>
-                 
-                    '.$has_img.'
+                <div class="row">
+                <div class="col-md-8">
+                <form class="form-horizontal" role="form" id="edit_form" method="post">
+                <div class="form-group">
+                    <label for="name" class="col-sm-2 control-label">'.$_L['Name'].'</label>
+                    <div class="col-sm-10">
+                    <input type="text" class="form-control" value="'.$d['name'].'" name="name" id="name">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="rate" class="col-sm-2 control-label">'.$_L['Item Number'].'</label>
+                    <div class="col-sm-8">
+                    <input type="text" class="form-control" name="item_number" value="'.$d['item_number'].'" id="item_number">
                     
-</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="rate" class="col-sm-2 control-label">'.$_L['Sales Price'].'</label>
+                    <div class="col-sm-8">
+                    <input type="text" id="sales_price" name="sales_price" class="form-control amount" autocomplete="off" data-a-sign="'.$config['currency_code'].' "  data-a-dec="'.$config['dec_point'].'" data-a-sep="'.$config['thousands_sep'].'" data-d-group="2" value="'.$d['sales_price'].'">
+                    </div>
+                </div>
+                
+                    <div class="form-group">
+                    <label for="cost_price" class="col-sm-2 control-label">'.$_L['Cost Price'].'</label>
+                    <div class="col-sm-8">
+                    <input type="text" id="cost_price" name="cost_price" class="form-control amount" autocomplete="off" data-a-sign="'.$config['currency_code'].' "  data-a-dec="'.$config['dec_point'].'" data-a-sep="'.$config['thousands_sep'].'" data-d-group="2" value="'.$d['cost_price'].'">
+                    </div>
+                </div>
+                
+                    <div class="form-group">
+                    <label for="description" class="col-sm-2 control-label">'.$_L['Description'].'</label>
+                    <div class="col-sm-10">
+                    <textarea id="description" name="description" class="form-control" rows="3">'.$d['description'].'</textarea>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="inventory" class="col-sm-2 control-label">'.$_L['Inventory'].'</label>
+                    <div class="col-sm-10">
+                    <input type="text" id="inventory" name="inventory" class="form-control amount" autocomplete="off" data-a-sign=""  data-a-dec="'.$config['dec_point'].'" data-a-sep="'.$config['thousands_sep'].'" data-d-group="2" value="'.$d['inventory'].'">
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <h4>Customer Group</h4>
+                
+                <select class="form-control dual_select" multiple>
+                                                    <option value="United States">Test Customer Group</option>
+                                                    <option value="United Kingdom">Organizational</option>
+                                                    <option value="Australia">Test Group 3</option>
+                                                    <option selected value="Internet Users">Internet Users</option>
+                                                    
+                                                </select>
 
-</div>
-<div class="row">
-<div class="col-md-12">
-<hr>
+                <script>
+                $(\'.dual_select\').bootstrapDualListbox({
+                                selectorMinimalHeight: 160,
+                                showFilterInputs: false,
+                                infoText: false
+                            });
 
-  <div class="form-group">
-    <div class="input-group">
-      <div class="input-group-addon">'.$_L['URL'].'</div>
-      <input type="text" class="form-control" value="'.U.'item/'.$d['id'].'/"  onClick="this.setSelectionRange(0, this.value.length)" id="item_url" readonly>
-      <div class="input-group-addon"><a href="javascript:void(0)" class="ib_btn_copy" data-clipboard-target="#item_url"><i class="fa fa-clipboard"></i> '.$_L['Copy'].'</a></div>
-    </div>
-  </div>
-  
-    <div class="form-group">
-    <div class="input-group">
-      <div class="input-group-addon">'.$_L['URL'].' : '.$_L['Add to Cart'].'</div>
-      <input type="text" class="form-control" value="'.U.'cart/add/'.$d['id'].'/"  onClick="this.setSelectionRange(0, this.value.length)" id="add_to_cart_url" readonly>
-      <div class="input-group-addon"><a href="javascript:void(0)" class="ib_btn_copy" data-clipboard-target="#add_to_cart_url"><i class="fa fa-clipboard"></i> '.$_L['Copy'].'</a></div>
-    </div>
-  </div>
+                </script>
+                
 
-</div>
-</div>
+                
+                <input type="hidden" name="id" value="'.$d['id'].'">
+                <input type="hidden" name="file_link" id="file_link" value="'.$d['image'].'">
+                </form>
+                </div>
+                <div class="col-md-4">
+                <form action="" class="dropzone" id="upload_container">
 
-</div>
-<div class="modal-footer">
+                                        <div class="dz-message">
+                                            <h3> <i class="fa fa-cloud-upload"></i>  '.$_L['Drop File Here'].'</h3>
+                                            <br />
+                                            <span class="note">'.$_L['Click to Upload'].'</span>
+                                        </div>
+                                        
+                                        <hr>
+                                        
+                                        
 
-	<button type="button" data-dismiss="modal" class="btn">'.$_L['Close'].'</button>
-	<button id="update" class="btn btn-primary">'.$_L['Update'].'</button>
-</div>';
+                                    </form>
+                                
+                                    '.$has_img.'
+                                    
+                </div>
+
+                </div>
+                <div class="row">
+                <div class="col-md-12">
+                <hr>
+
+                <div class="form-group">
+                    <div class="input-group">
+                    <div class="input-group-addon">'.$_L['URL'].'</div>
+                    <input type="text" class="form-control" value="'.U.'item/'.$d['id'].'/"  onClick="this.setSelectionRange(0, this.value.length)" id="item_url" readonly>
+                    <div class="input-group-addon"><a href="javascript:void(0)" class="ib_btn_copy" data-clipboard-target="#item_url"><i class="fa fa-clipboard"></i> '.$_L['Copy'].'</a></div>
+                    </div>
+                </div>
+                
+                    <div class="form-group">
+                    <div class="input-group">
+                    <div class="input-group-addon">'.$_L['URL'].' : '.$_L['Add to Cart'].'</div>
+                    <input type="text" class="form-control" value="'.U.'cart/add/'.$d['id'].'/"  onClick="this.setSelectionRange(0, this.value.length)" id="add_to_cart_url" readonly>
+                    <div class="input-group-addon"><a href="javascript:void(0)" class="ib_btn_copy" data-clipboard-target="#add_to_cart_url"><i class="fa fa-clipboard"></i> '.$_L['Copy'].'</a></div>
+                    </div>
+                </div>
+
+                </div>
+                </div>
+
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" data-dismiss="modal" class="btn">'.$_L['Close'].'</button>
+                    <button id="update" class="btn btn-primary">'.$_L['Update'].'</button>
+                </div>';
         }
         else{
             echo 'not found';
@@ -676,7 +676,7 @@ switch ($action) {
         $uploader->setDir('storage/items/');
         $uploader->sameName(false);
         $uploader->setExtensions(array('jpg','jpeg','png','gif'));  //allowed extensions list//
-//        $uploader->allowAllFormats();  //allowed extensions list//
+        //$uploader->allowAllFormats();  //allowed extensions list//
         if($uploader->uploadFile('file')){   //txtFile is the filebrowse element name //
             $uploaded  =   $uploader->getUploadName(); //get uploaded file name, renames on upload//
 

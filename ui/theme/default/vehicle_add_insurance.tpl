@@ -19,7 +19,7 @@
                     <form class="form-horizontal" id="rform">
 
                         <div class="form-group">
-                            <label class="col-md-2 control-label" for="vehicle_type">{$_L['Vehicle No']}</label>
+                            <label class="col-md-2 control-label" for="vehicle_num">{$_L['Vehicle No']}</label>
     
                             <div class="col-md-10">
     
@@ -34,10 +34,10 @@
                             </div>
                         </div>  
                         <div class="form-group">
-                            <label class="col-md-2 control-label" for="rebate_amount">{$_L['Road Tax Amount']}</label>
+                            <label class="col-md-2 control-label" for="insurance_amount">{$_L['Insurance Amount']}</label>
 
                             <div class="col-md-10">
-                                <input type="text" id="roadtax_amount" name="roadtax_amount" class="form-control amount" autocomplete="off" data-a-sign="{$config['currency_code']} "
+                                <input type="text" id="insurance_amount" name="insurance_amount" class="form-control amount" autocomplete="off" data-a-sign="{$config['currency_code']} "
                                     data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}" data-d-group="2" value="">
 
                             </div>
@@ -54,19 +54,19 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-2 control-label" for="roadtax_total">{$_L['Road Tax Total']}</label>
+                            <label class="col-md-2 control-label" for="insurance_total">{$_L['Insurance Total']}</label>
                         
                             <div class="col-md-10">
-                                <input type="text" id="roadtax_total" name="roadtax_total" class="form-control amount" autocomplete="off" data-a-sign="{$config['currency_code']} "
+                                <input type="text" id="insurance_total" name="insurance_total" class="form-control amount" autocomplete="off" data-a-sign="{$config['currency_code']} "
                                     data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}" data-d-group="2" value="">
                         
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="date" class="col-md-2 control-label">{$_L['Road Tax Date']}</label>
+                            <label for="date" class="col-md-2 control-label">{$_L['Insurance Date']}</label>
                             <div class="col-md-10">
-                                <input type="text" class="form-control" value="" name="roadtax_date" id="roadtax_date" datepicker data-date-format="yyyy-mm-dd"
+                                <input type="text" class="form-control" value="" name="insurance_date" id="insurance_date" datepicker data-date-format="yyyy-mm-dd"
                                     data-auto-close="true">
                             </div>
                         </div>
@@ -127,7 +127,7 @@
         <div class="col-md-4">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    {$_L['Road Tax Reference']}
+                    {$_L['Insurance Reference']}
                 </div>
                 <div class="ibox-content" id="ibox_form">
     

@@ -94,7 +94,7 @@
                                 {/if}
                             </td>
                             <td class="text-right">
-                                <a href="#" class="btn btn-primary btn-xs view" id="{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['View']}">
+                                <a href="#" class="btn btn-primary btn-xs loan_view" id="{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['View']}">
                                    <i class="fa fa-file-text-o"></i>
                                 </a>
                                 <a href="#" class="btn btn-info btn-xs edit_loan" id="{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['Edit']}">

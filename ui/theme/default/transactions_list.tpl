@@ -8,9 +8,8 @@
                 <div class="panel-body">
 
 
-
                     <div class="row">
-                        <div class="col-md-3 col-sm-6">
+                        <div class="col-md-2 col-sm-6">
 
                             <form>
                                 <div class="form-group">
@@ -19,7 +18,17 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="tr_type">Transaction {$_L['Type']}</label>
+                                    <label class="control-label" for="vehicle_num">{$_L['Vehicle No']}</label>
+                                        <select id="vehicle_num" name="vehicle_num" class="form-control">
+                                            <option value="" selected>{$_L['All']}</option>
+                                            {foreach $vehicles as $vehicle}
+                                            <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']}</option>
+                                            {/foreach}
+                                        </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="tr_type">{$_L['Transaction Type']}</label>
                                     <select id="tr_type" name="tr_type" class="form-control">
                                         <option value="">{$_L['All']}</option>
                                         <option value="Income" {if $tr_type eq 'Income'}selected{/if}>{$_L['Income']}</option>
@@ -27,13 +36,13 @@
                                         <option value="Transfer" {if $tr_type eq 'Transfer'}selected{/if}>{$_L['Transfer']}</option>
                                     </select>
                                 </div>
-
+                                
                                 <div class="form-group" id="block_expense_type">
-                                    <label for="tr_type">Expense {$_L['Type']}</label>
-                                    <select id="tr_type" name="tr_type" class="form-control">
+                                    <label for="ex_category"> {$_L['Expense Category']}</label>
+                                    <select id="ex_category" name="ex_category" class="form-control">
                                         <option value="">{$_L['All']}</option>
-                                        {foreach $expense_types as $expense_type}
-                                            <option value="{$expense_type->name}">{$expense_type->name}</option>
+                                        {foreach $expense_categories as $expense_category}
+                                            <option value="{$expense_category['name']}">{$expense_category['name']}</option>
                                         {/foreach}
                                     </select>
                                 </div>
@@ -61,11 +70,6 @@
                                 </div>
 
 
-
-
-
-
-
                                 <button type="submit" id="ib_filter" class="btn btn-primary">Filter</button>
 
                                 <br>
@@ -73,7 +77,7 @@
 
 
                         </div>
-                        <div class="col-md-9 col-sm-6 ib_right_panel">
+                        <div class="col-md-10 col-sm-6 ib_right_panel">
 
 
                             <div class="table-responsive" id="ib_data_panel">
@@ -86,9 +90,8 @@
                                         <th>{$_L['Date']}</th>
                                         <th>{$_L['Account']}</th>
                                         <th>{$_L['Type']}</th>
-
                                         <th class="text-right">{$_L['Amount']}</th>
-
+                                        <th>{$_L['Category']}</th>
                                         <th>{$_L['Description']}</th>
                                         <th class="text-right">{$_L['Dr']}</th>
                                         <th class="text-right">{$_L['Cr']}</th>

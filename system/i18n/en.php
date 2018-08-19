@@ -1138,10 +1138,20 @@ $_L = [
     'Edit Loan' => 'Edit Loan',
     'Add Loan' => 'Add Loan',
     'Principal Amount' => 'Principal Amount',
+    'Interest' => 'Interest',
     'Interest Rate' => 'Interest Rate',
     'Loan Duration' => 'Loan Duration',
+    'Repayment' => 'Repayment',
     'Repayment Cycle' => 'Repayment Cycle',
     'Loan Reference' => 'Loan Reference',
+    'Transaction Type' => 'Transaction Type',
+    'Expense Category' => 'Expense Category',
+    'Expense Reference' => 'Expense Reference',
+    'Total Due' => 'Total Due',
+    'Loan Amount' => 'Loan Amount',
+    'Interest Amount' => 'Interest Amount',
+    'Due Amount' => 'Due Amount',
+    'Loan Balance' => 'Loan Balance', 
 
 
     

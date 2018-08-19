@@ -64,7 +64,7 @@
                                 {$ds['id']}
                             </td>
 
-                            <td class="edit_vehicle" data-value="{$ds['vehicle_num']}" id="{$ds['id']}">
+                            <td class="edit_roadtax" data-value="{$ds['vehicle_num']}" id="{$ds['id']}">
                                 <a href="#">{$ds['vehicle_num']}</a>
                             </td>
                             <td class="amount" data-value="{$ds['roadtax_amount']}"  data-a-sign="{if $ds['currency_symbol'] eq ''} {$config['currency_code']} {else} {$ds['currency_symbol']}{/if} ">{$ds['roadtax_amount']}({$ds['rebate_amount']})</td>
@@ -88,7 +88,7 @@
                                 {/if}
                             </td>
                             <td class="text-right">
-                                {if {$ds['pay_status']} eq 1}
+                                {if {$ds['pay_status']} neq 0}
                                 <a href="#" class="btn btn-xs" id="{$ds['id']}" style="background-color:#A9A9A9; border-color:#A9A9A9; color:#eeeeee" disabled data-toggle="tooltip" data-placement="top" title="{$_L['View']}">
                                     {$_L['Add Expense']}
                                 </a>

@@ -8,6 +8,8 @@ $(document).ready(function() {
 
     var $account = $("#account");
 
+    var $vehicle_num=$("#vehicle_num");
+    
     $cid.select2({
         theme: "bootstrap"
     });
@@ -16,6 +18,9 @@ $(document).ready(function() {
         theme: "bootstrap"
     });
 
+    $vehicle_num.select2({
+        theme:"bootstrap"
+    });
 
     var start = moment().subtract(29, 'days');
     var end = moment();
@@ -57,6 +62,8 @@ $(document).ready(function() {
             "data": function ( d ) {
 
                  d.tr_type = $('#tr_type').val();
+                 d.ex_category=$('#ex_category').val();
+                 d.vehicle_num=$('#vehicle_num').val();
                  d.reportrange = $reportrange.val();
                  d.cid = $cid.val();
                  d.account = $account.val();
@@ -113,7 +120,7 @@ $(document).ready(function() {
             }
         ],
         "columnDefs": [
-            { "orderable": false, "targets": 9 }
+            { "orderable": false, "targets":10 }
         ],
         "order": [[ 0, 'desc' ]],
         "scrollX": true,

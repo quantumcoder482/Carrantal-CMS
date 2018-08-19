@@ -60,6 +60,16 @@ $(document).ready(function () {
 
     });
 
+    $('.loan_view').on('click', function (e) {
+
+        var id = this.id;
+
+        e.preventDefault();
+
+        window.location.href = _url + "vehicle/loan_view/" + id;
+
+    });
+
 
     $(".cdelete").click(function (e) {
 
