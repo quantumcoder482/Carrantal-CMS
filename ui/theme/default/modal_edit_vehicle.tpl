@@ -45,9 +45,7 @@
                             <label class="col-md-3 control-label" for="purchase_price">{$_L['Purchase Price']}</label>
     
                             <div class="col-md-9">
-                                <input type="text" id="purchase_price" name="purchase_price" class="form-control amount" autocomplete="off"
-                                    data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}"
-                                    data-d-group="2" value="{$val['purchase_price']}">
+                                <input type="text" id="purchase_price" name="purchase_price" class="form-control amount" value="{$val['purchase_price']}">
     
                             </div>
                         </div>
@@ -57,8 +55,7 @@
     
                             <div class="col-md-9">
     
-                                <input type="text" id="parf_cost" name="parf_cost" class="form-control amount" autocomplete="off" data-a-sign="{$config['currency_code']} "
-                                    data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}" data-d-group="2" value="{$val['parf_cost']}">
+                                <input type="text" id="parf_cost" name="parf_cost" class="form-control amount"  value="{$val['parf_cost']}">
     
                             </div>
                         </div>
@@ -66,14 +63,14 @@
                         <div class="form-group">
                             <label for="date" class="col-md-3 control-label">{$_L['Purchase Date']}</label>
                             <div class="col-md-9">
-                                <input type="text" class="form-control" value="{$val['purchase_date']}" name="pdate" id="pdate" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true">
+                                <input type="date" class="form-control" value="{$val['purchase_date']}" name="pdate" id="pdate" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true">
                             </div>
                         </div>
     
                         <div class="form-group">
                             <label for="text" class="col-md-3 control-label">{$_L['Expiry Date']}</label>
                             <div class="col-md-9">
-                                <input type="text" class="form-control" value="{$val['expiry_date']}" name="edate" id="edate" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true"> 
+                                <input type="date" class="form-control" value="{$val['expiry_date']}" name="edate" id="edate" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true"> 
                             </div>
                         </div>
     
@@ -196,9 +193,9 @@
             <div class="ibox float-e-margins">
 
                 <div class="ibox-content" id="ibox_form" style="text-align: center">
-        
-                    <img src="{$baseUrl}/storage/items/thumb{$val['v_i']}" width="100px"  >
-        
+                    {if $val['v_i'] neq ""}
+                    <img src="{$baseUrl}/storage/items/thumb{$val['v_i']}" width="100%"  >
+                    {/if}
                 </div>
             </div>
 
@@ -226,9 +223,9 @@
             <div class="ibox float-e-margins">
                
                 <div class="ibox-content" id="ibox_form" style="text-align: center">
-            
-                    <img src="{$baseUrl}/storage/items/thumb{$val['v_o_c']}" width="100px" >
-            
+                    {if $val['v_o_c'] neq ""}
+                    <img src="{$baseUrl}/storage/items/thumb{$val['v_o_c']}" width="100%" >
+                    {/if}
                 </div>
             </div>
 
@@ -248,6 +245,7 @@
         <i class="fa fa-check"></i> {$_L['Update']}</button>
 </div>
 
+{block name="script"}
 <script>
 
     $(document).ready(function () {
@@ -341,5 +339,25 @@
             }
         }); 
 
+        
+        function ib_autonumeric() {
+            $('.amount').autoNumeric('init', {
+
+                aSign: '{$config['currency_code']} ',
+                dGroup: {$config['thousand_separator_placement']},
+                aPad: {$config['currency_decimal_digits']},
+                pSign: '{$config['currency_symbol_position']}',
+                aDec: '{$config['dec_point']}',
+                aSep: '{$config['thousands_sep']}',
+                vMax: '9999999999999999.00',
+                vMin: '-9999999999999999.00'
+
+            });
+
+        }
+
+        ib_autonumeric();
+
     });
 </script>
+{/block}

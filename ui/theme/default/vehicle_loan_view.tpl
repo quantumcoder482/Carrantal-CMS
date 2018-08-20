@@ -21,11 +21,11 @@
     <div class="col-md-12">
         <div class="ibox float-e-margins">
             <div class="ibox-title">
-               <h5>{$_L['Vehicle No']}:  {$val['vehicle_num']}</h5>
+               <h5>{$_L['Vehicle No']}  {$val['vehicle_num']}</h5>
             </div>
 
             <div class="ibox-content">
-                <table class="table table-bordered table-hover sys_table footable">
+                <table class="table table-bordered table-hover sys_table ">
                     <thead>
                         <tr>
                             <th>{$_L['Date']}</th>
@@ -44,16 +44,18 @@
                             <td>{$val['expire_date']}</td>
                             <td>{$val['duration']}</td>
                             <td>{$val['repayment']}</td>
-                            <td>{$val['amount']}</td>
+                            <td class="amount" data-value="{$val['amount']}" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}"                             
+                            data-d-group="2">{$val['amount']}</td>
                             <td>{$val['rate']}</td>
                             <td>{$val['interest']}</td>
-                            <td>{$val['total_due']}</td>
+                            <td class="amount"  data-value="{$val['total_due']}" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}"                             
+                            data-d-group="2">{$val['total_due']}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <div class="ibox-content">
-                <table class="table table-bordered table-hover sys_table footable">
+                <table class="table table-bordered table-hover sys_table ">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -73,10 +75,15 @@
                         <tr>
                             <td>{$i}</td>
                             <td>{$next_duedate[$i]}</td>
-                            <td>{$val['loan_amount']}</td>
-                            <td>{$val['interest_amount']}</td>
-                            <td>{$val['due_amount']}</td>
-                            <td>{$loan_balance[$i]}</td>
+
+                            <td class="amount" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}"
+                            data-d-group="2">{$val['loan_amount']}</td>
+                            <td class="amount" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}"                            
+                            data-d-group="2">{$val['interest_amount']}</td>
+                            <td class="amount" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}"                            
+                            data-d-group="2">{$val['due_amount']}</td>
+                            <td class="amount" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}"                             
+                            data-d-group="2">{$loan_balance[$i]}</td>
                             <td>
                                 {if $pay_status_string[$i] eq 'Paid'}
                                 <div class="label-success" style="margin:0 auto;font-size:85%;width:85px">
@@ -110,16 +117,31 @@
 
                         <tr>
                             <td colspan="2">{$_L['Total']}</td>
-                            <td>{$val['amount']}</td>
-                            <td>{$val['interest']}</td>
-                            <td>{$val['total_due']}</td>
+                            <td class="amount" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}"                             
+                            data-d-group="2">{$val['amount']}</td>
+                            <td class="amount" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}"                             
+                            data-d-group="2">{$val['interest']}</td>
+                            <td class="amount" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}"                             
+                            data-d-group="2">{$val['total_due']}</td>
                             <td colspan="4">&nbsp;</td>
                         </tr>
 
 
                     </tbody>
-                </table>
+                    
+                    {if $view_type == 'filter'}
+                    <tfoot>
+                        <tr>
+                            <td style="text-align: left;" colspan="9">
+                                <ul class="pagination">
+                                </ul>
+                            </td>
+                        </tr>
+                    </tfoot>
+                    {/if}
 
+                </table>
+                {$paginator['contents']}
             </div>
 
         </div>

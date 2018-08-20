@@ -48,7 +48,7 @@
                         <div class="form-group">
                             <label for="date" class="col-md-3 control-label">{$_L['Date']}</label>
                             <div class="col-md-9">
-                                <input type="text" class="form-control"  value="{$mdate}" name="date" id="date" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true">
+                                <input type="date" class="form-control"  value="{$mdate}" name="date" id="date" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true">
                             </div>
                         </div>
 
@@ -214,7 +214,7 @@
         
             <div class="ibox float-e-margins">
         
-                <div class="ibox-content" id="ibox_form" style="text-align: center; width:250">
+                <div class="ibox-content" id="ibox_form" style="text-align: center;">
         
                     <!-- <img src="{$baseUrl}/storage/items/thumb   " width="250px"> -->
         

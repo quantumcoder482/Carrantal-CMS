@@ -95,26 +95,25 @@ switch ($action) {
 
     case 'v-new':
 
+        $vehicles=ORM::for_table('sys_vehicles')->where('reg_product',0)->order_by_asc('id')->find_array();
+        $ui->assign('vehicles',$vehicles);
         $units = ORM::for_table('sys_units')->order_by_asc('sorder')->find_array();
         $ui->assign('units',$units);
 
-        $ui->assign('type','Product');
+        $ui->assign('type','Vehicle');
         $ui->assign('xheader', Asset::css(array('modal','dropzone/dropzone','redactor/redactor')));
         $ui->assign('xfooter', Asset::js(array('modal','dropzone/dropzone','redactor/redactor.min','numeric','jslib/add-ps')));
 
         $ui->assign('xjq', '$(\'.amount\').autoNumeric(\'init\');');
-
+        
         $max = ORM::for_table('sys_items')->max('id');
         $nxt = $max+1;
         $ui->assign('nxt',$nxt);
 
-        view('add-ps');
-
+        view('add_vehicle_product');
 
 
         break;
-
-
 
     case 'p-new':
 
@@ -163,12 +162,24 @@ switch ($action) {
 
 
         $name = _post('name');
+
         $sales_price = _post('sales_price','0.00');
         $sales_price = Finance::amount_fix($sales_price);
         $item_number = _post('item_number');
         $description = _post('description');
         $type = _post('type');
+        
+        // vehicle num && type
 
+
+        if($type=="Vehicle"){
+            $vehicle=ORM::for_table('sys_vehicles')->where('vehicle_num',$name)->find_one();
+            $vehicle_id=$vehicle->id;
+            $vehicle_type=$vehicle->vehicle_type;
+            $name=$name.' - '.$vehicle_type;
+
+        }
+      
         // other variables
 
         // check item number already exist
@@ -247,6 +258,13 @@ switch ($action) {
 
             _msglog('s',$_L['Item Added Successfully']);
 
+            
+       
+            if($type=="Vehicle"){
+                $vehicle->reg_product=$d->id();
+                $vehicle->save();
+            }
+           
             echo $d->id();
         }
         else{
@@ -293,15 +311,15 @@ switch ($action) {
   
   
     case 'v-list':
-        $paginator = Paginator::bootstrap('sys_items','type','Product');
-        $d = ORM::for_table('sys_items')->where('type','Product')->offset($paginator['startpoint'])->limit($paginator['limit'])->order_by_desc('id')->find_many();
+        $paginator = Paginator::bootstrap('sys_items','type','Vehicle');
+        $d = ORM::for_table('sys_items')->where('type','Vehicle')->offset($paginator['startpoint'])->limit($paginator['limit'])->order_by_desc('id')->find_many();
         $ui->assign('d',$d);
-        $ui->assign('type','Product');
+        $ui->assign('type','Vehicle');
         $ui->assign('paginator',$paginator);
         $ui->assign('xheader', Asset::css(array('modal','dropzone/dropzone','redactor/redactor')));
         $ui->assign('xfooter', Asset::js(array('clipboard.min','modal','dropzone/dropzone','redactor/redactor.min','numeric','js/ps_list')));
 
-        view('ps-list');
+        view('list_vehicle_product');
         break;
 
 

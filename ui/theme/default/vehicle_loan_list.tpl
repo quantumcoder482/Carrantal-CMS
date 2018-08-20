@@ -78,8 +78,8 @@
                             <td data-value="{strtotime($ds['expire_date'])}">
                                 {date( $config['df'], strtotime($ds['expire_date']))}
                             </td>
-                            <td data-value="{strtotime($ds['expire_date'])}">
-                                {date( $config['df'], strtotime($ds['expire_date']))}
+                            <td data-value="{strtotime($next_duedate[$ds['id']])}">
+                                {date( $config['df'], strtotime($next_duedate[$ds['id']]))}
                             </td>
                             <td>
                                 {if $pay_status_string[$ds['id']] eq 'Paid'}

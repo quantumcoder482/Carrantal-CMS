@@ -17,11 +17,18 @@ $(document).ready(function () {
 
 
         var btnsearch = $("#search");
-
+        var type=$('#stype').val();
         //btnsearch.html(_L['Searching']);
         //btnsearch.addClass("btn-danger");
+
         var _url = $("#_url").val();
-        $.post(_url + 'search/ps/', {
+        var post_url="";
+        if(type=="Vehicle"){
+            post_url=_url+'search/vehicle/';
+        }else{
+            post_url=_url+'search/ps/';
+        }
+        $.post(post_url, {
 
             txtsearch: $('#txtsearch').val(),
             stype: $('#stype').val()

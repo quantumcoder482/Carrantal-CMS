@@ -26,7 +26,7 @@
                                 <select id="vehicle_num" name="vehicle_num" class="form-control">
                                     <option selected>{$_L['select vehicle number']}</option>
                                     {foreach $vehicles as $vehicle}
-                                    <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']}</option>
+                                    <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']}-{$vehicle['vehicle_type']}</option>
                                     {/foreach}
                                 </select>
                                 
@@ -145,15 +145,6 @@
                 </div>
             </div>
     
-            <div class="ibox float-e-margins">
-
-                <div class="ibox-content" id="ibox_form" style="text-align: center; width:250">
-        
-                    <img src="{$baseUrl}/storage/items/thumb" width="250px" />
-        
-                </div>
-
-            </div>
 
         </div>
     

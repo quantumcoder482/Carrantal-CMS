@@ -1078,6 +1078,7 @@ $_L = [
     'PARF Cost' => 'PARF Cost',
     'Purchase Date' => 'Purchase Date',
     'Expiry Status' => 'Expiry Status',
+    'Certificate' => 'Certificate',
     'Description' =>'Description',
     'Vehicle Image' => 'Vehicle Image',
     'Vehicle Ownership Certificate' => 'Vehicle Ownership Certificate',
@@ -1151,7 +1152,11 @@ $_L = [
     'Loan Amount' => 'Loan Amount',
     'Interest Amount' => 'Interest Amount',
     'Due Amount' => 'Due Amount',
-    'Loan Balance' => 'Loan Balance', 
+    'Loan Balance' => 'Loan Balance',
+    'Add Vehicle Product' => 'Add Vehicle Product',
+    'Select Vehicle' => 'Select Vehicle',
+    'OUT' => 'OUT',
+
 
 
     

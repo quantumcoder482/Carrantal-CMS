@@ -20,6 +20,7 @@ switch ($action) {
         $name = _post('txtsearch');
         $d = ORM::for_table('sys_items')->where('type',$type)->where_like('name',"%$name%")->order_by_asc('name')->find_array();
         if($d){
+
             echo '<table class="table table-hover">
                   <tbody>
                     <tr>
@@ -73,6 +74,81 @@ switch ($action) {
               </tr>
               </tbody>
               </table>';
+        }else{
+            echo '<h4>Nothing Found</h4>';
+        }
+
+        break;
+
+
+    case 'vehicle':
+        
+        $type = _post('stype');
+        $name = _post('txtsearch');
+        $d = ORM::for_table('sys_items')->where('type',$type)->where_like('name',"%$name%")->order_by_asc('name')->find_array();
+       
+        if($d){
+            
+            echo '<table class="table-hover sys_table" width="100%">
+                  <thead>
+                    <tr style="text-align:center; height:45px">
+                        <th width="15%" > '.$_L['Image'].'</th>
+                        <th width="15%" class="project-title">'.$_L['Name'].'</th>
+                        <th width="15%">'.$_L['Cost Price'].'</th>
+                        <th width="15%">'.$_L['Sales Price'].'</th>
+                        <th width="15%" style="text-align:center">'.$_L['Inventory'].'</th>
+                        <th width="25%" class="project-actions" style="text-align:center">'.$_L['Manage'].'</th>
+                    </tr>
+                    </thead>
+                    <tbody>';
+
+            foreach ($d as $ds){
+
+                if($ds['image'] == ''){
+                    $img = '<img src="'.APP_URL.'/ui/lib/imgs/item_placeholder.png">';
+                }
+                else{
+                    $img = '<img src="'.APP_URL.'/storage/items/thumb'.$ds['image'].'">';
+                }
+
+            //  $price = number_format($ds['sales_price'],2,$config['dec_point'],$config['thousands_sep']);
+                $price = ib_money_format($ds['sales_price'],$config);
+                $cost_price = ib_money_format($ds['cost_price'],$config);
+
+                $available = round($ds['inventory']);
+
+                if($available != 0){
+                    $txt_available ="<div class='label-primary' style='color:#1e90ff;margin:0 auto;text-align:center; width:85px'>"
+                                    .$_L['Available']."</div>";
+                }else{
+                    $txt_available ="<div class='label-danger' style='color:#dc143c;margin:0 auto;text-align:center; width:85px'>"
+                                    .$_L['OUT']."</div>";
+                }
+                                    
+                echo '
+                <tr>
+                    <td>'.$img.'</td>
+                    <td class="project-title"><a href="#" class="cedit"  id="t'.$ds['id'].'">'.$ds['name'].'</a>
+                        <br>
+                        <small>'.$_L['Item Code'].' '.$ds['item_number'].'
+                    </td>
+                    <td>'.$cost_price.'</td>
+                    <td>'.$price.'</td>
+                    <td>'.$txt_available.'</td>
+                    <td class="project-actions" style="text-align:center">
+                        <a href="#" class="btn btn-primary btn-sm cedit" id="e'.$ds['id'].'"><i class="fa fa-pencil"></i> '.$_L['Edit'].' </a>
+                        <a href="#" class="btn btn-danger btn-sm cdelete" id="pid'.$ds['id'].'"><i class="fa fa-trash"></i> '.$_L['Delete'].' </a>
+                        <a href="'.U.'inventory/barcode/'.$ds['id'].'" target="_blank" class="btn btn-inverse btn-sm"><i class="fa fa-barcode"></i> '.$_L['Barcode'].' </a>
+                    </td>
+                </tr>';
+        }
+        echo '
+            </tbody>
+            <tr> 
+            <td colspan="6">&nbsp;</td>
+            </tr>
+            </tbody>
+            </table>';
         }else{
             echo '<h4>Nothing Found</h4>';
         }

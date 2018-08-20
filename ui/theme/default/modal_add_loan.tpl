@@ -31,7 +31,7 @@
                                 <select id="vehicle_num" name="vehicle_num" style="width:307px" class="form-control">
                                     <option value="{$val['vehicle_num']}" selected>{$val['vehicle_num']}</option>
                                     {foreach $vehicles as $vehicle}
-                                    <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']}</option>
+                                    <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']}-{$vehicle['vehicle_type']}</option>
                                     {/foreach}
                                 </select>
                                 
@@ -83,7 +83,7 @@
                         <div class="form-group">
                             <label for="date" class="col-md-4 control-label">{$_L['Loan Date']}</label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" value="{$val['loan_date']}" name="loan_date" id="loan_date" datepicker data-date-format="yyyy-mm-dd"
+                                <input type="date" class="form-control" value="{$val['loan_date']}" name="loan_date" id="loan_date" datepicker data-date-format="yyyy-mm-dd"
                                     data-auto-close="true">
                             </div>
                         </div>
@@ -151,10 +151,10 @@
     
             <div class="ibox float-e-margins">
 
-                <div class="ibox-content" id="ibox_form" style="text-align: center; width:250">
-        
-                    <img src="{$baseUrl}/storage/items/thumb{$val['ref_img']}" width="250px"  >
-        
+                <div class="ibox-content" id="ibox_form" style="text-align: center;">
+                    {if $val['ref_img'] neq ""}
+                    <img src="{$baseUrl}/storage/items/thumb{$val['ref_img']}" width="100%"  >
+                    {/if}
                 </div>
 
             </div>
@@ -178,6 +178,7 @@
      {/if}
 </div>
 
+{block name="script"}
 <script>
 
     $(document).ready(function () {
@@ -239,6 +240,28 @@
 
         });
 
-        
+        var $amount = $("#amount");
+
+
+        function ib_autonumeric() {
+            $('.amount').autoNumeric('init', {
+
+                aSign: '{$config['currency_code']} ',
+                dGroup: {$config['thousand_separator_placement']},
+                aPad: {$config['currency_decimal_digits']},
+                pSign: '{$config['currency_symbol_position']}',
+                aDec: '{$config['dec_point']}',
+                aSep: '{$config['thousands_sep']}',
+                vMax: '9999999999999999.00',
+                vMin: '-9999999999999999.00'
+
+            });
+
+        }
+
+
+        ib_autonumeric();
+
     });
 </script>
+{/block}

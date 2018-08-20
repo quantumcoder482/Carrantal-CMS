@@ -68,7 +68,9 @@
                                 <a href="#">{$ds['vehicle_num']}</a>
                             </td>
                             
-                            <td class="amount" data-value="{$ds['insurance_amount']}"  data-a-sign="{if $ds['currency_symbol'] eq ''} {$config['currency_code']} {else} {$ds['currency_symbol']}{/if} ">{$ds['insurance_amount']}({$ds['rebate_amount']})</td>
+                            <td data-value="{$ds['insurance_amount']}"><span class="amount" data-a-sign="{if $ds['currency_symbol'] eq ''} {$config['currency_code']} {else} {$ds['currency_symbol']}{/if} ">{$ds['insurance_amount']}
+                                    </span> &nbsp;(
+                                <span class="amount" data-a-sign="{if $ds['currency_symbol'] eq ''} {$config['currency_code']} {else} {$ds['currency_symbol']}{/if} ">{$ds['rebate_amount']}</span>)</td>
                             <td class="amount" data-value="{$ds['insurance_total']}" data-a-sign="{if $ds['currency_symbol'] eq ''} {$config['currency_code']} {else} {$ds['currency_symbol']}{/if} ">{$ds['insurance_total']}</td>
                             <td data-value="{strtotime($ds['insurance_date'])}">
                                 {date( $config['df'], strtotime($ds['insurance_date']))}

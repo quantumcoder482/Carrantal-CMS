@@ -39,6 +39,7 @@
                             <th>{$_L['Purchase Date']}</th>
                             <th>{$_L['Expiry Date']}</th>
                             <th>{$_L['Status']}</th>
+                            <th>{$_L['Certificate']}</th>
                             <th class="text-right" width="120px;">{$_L['Manage']}</th>
                         </tr>
                     </thead>
@@ -80,14 +81,27 @@
                                 <span class="label label-warning" style="color: #f7931e">
                                      {$ex_status[$ds['id']]}</span>
                                 {/if}
+                                
+                                <!-- {if $ex_status[$ds['id']] eq 'Active'}
+                                <div class="label-success" style="margin:0 auto;font-size:85%;width:95px">
+                                    {$ex_status[$ds['id']]}</div>
+                                {elseif $ex_status[$ds['id']] eq 'Expired'}
+                                <div class="label-danger" style="color:#ff2222;margin:0 auto;font-size:85%;width:95px">
+                                    {$ex_status[$ds['id']]}</div>
+                                {else}
+                                <div class="label-warning" style="border-color:#ffa500;color: #f7931e;margin:0 auto;font-size:85%;width:95px;">
+                                    {$ex_status[$ds['id']]}</div>
+                                {/if} -->
+
                             </td>
-                            <td class="text-right">
+                            <td>
                                 {if {$ds['v_o_c']} neq ''}
                                 <a href="#" class="btn btn-primary btn-xs view_cert_img" style="background-color:#f7931e" id="{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['View']}">
                                     <i class="fa fa-paperclip" ></i>
                                 </a>
                                 {/if}
-                                 
+                            </td>
+                            <td class="text-right">
                                 <a href="#" class="btn btn-info btn-xs edit_vehicle" id="{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['Edit']}">
                                     <i class="fa fa-pencil"></i>
                                 </a>

@@ -67,7 +67,8 @@
                             <td class="edit_roadtax" data-value="{$ds['vehicle_num']}" id="{$ds['id']}">
                                 <a href="#">{$ds['vehicle_num']}</a>
                             </td>
-                            <td class="amount" data-value="{$ds['roadtax_amount']}"  data-a-sign="{if $ds['currency_symbol'] eq ''} {$config['currency_code']} {else} {$ds['currency_symbol']}{/if} ">{$ds['roadtax_amount']}({$ds['rebate_amount']})</td>
+                            <td data-value="{$ds['roadtax_amount']}"><span class="amount" data-a-sign="{if $ds['currency_symbol'] eq ''} {$config['currency_code']} {else} {$ds['currency_symbol']}{/if} ">{$ds['roadtax_amount']} </span> &nbsp;(
+                                <span class="amount" data-a-sign="{if $ds['currency_symbol'] eq ''} {$config['currency_code']} {else} {$ds['currency_symbol']}{/if} ">{$ds['rebate_amount']}</span>)</td>
                             <td class="amount" data-value="{$ds['roadtax_total']}" data-a-sign="{if $ds['currency_symbol'] eq ''} {$config['currency_code']} {else} {$ds['currency_symbol']}{/if} ">{$ds['roadtax_total']}</td>
                             <td data-value="{strtotime($ds['roadtax_date'])}">
                                 {date( $config['df'], strtotime($ds['roadtax_date']))}

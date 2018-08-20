@@ -526,7 +526,6 @@ switch ($action) {
             $loan_duration=$data['loan_duration'];
 
             $interval = new DateInterval('P'.($pay_status+1).'M');
-            
             $next_duedate[$expiry_id]=date_create($data['loan_date'])->add($interval);
             $next_duedate[$expiry_id]=$next_duedate[$expiry_id]->format('Y-m-d');
             
@@ -570,6 +569,7 @@ switch ($action) {
         $ui->assign('xfooter', $mode_js);
         $ui->assign('view_type', $view_type);
         $ui->assign('d', $d);
+        $ui->assign('next_duedate',$next_duedate);
         $ui->assign('pay_status_string',$pay_status_string);
         $ui->assign('baseUrl',$baseUrl);
         $ui->assign('paginator', $paginator);
@@ -610,6 +610,8 @@ switch ($action) {
         $paginator = array();
         $mode_css = '';
         $mode_js = '';
+        $view_type = 'default';
+        $view_type = 'filter';
         $mode_css = Asset::css(array('modal','dropzone/dropzone','dp/dist/datepicker.min','footable/css/footable.core.min','redactor/redactor','s2/css/select2.min','vehicle/vehicle'));
         $mode_js = Asset::js(array('modal','dropzone/dropzone','dp/dist/datepicker.min','footable/js/footable.all.min','contacts/mode_search','redactor/redactor.min','numeric','s2/js/select2.min',
             's2/js/i18n/'.lan(), 'vehicle/vehicle_loan_view'
@@ -704,12 +706,26 @@ switch ($action) {
         $ui->assign('xheader', $mode_css);
         $ui->assign('xfooter', $mode_js);
         $ui->assign('val', $val);
+        $ui->assign('view_type',$view_type);
         $ui->assign('next_duedate',$next_duedate);
         $ui->assign('loan_balance',$loan_balance);
         $ui->assign('pay_status_string',$pay_status_string);
         $ui->assign('baseUrl',$baseUrl);
         $ui->assign('paginator', $paginator);
-        
+         $ui->assign('xjq', '
+            $(\'.amount\').autoNumeric(\'init\', {
+            dGroup: ' . $config['thousand_separator_placement'] . ',
+            aPad: ' . $config['currency_decimal_digits'] . ',
+            pSign: \'' . $config['currency_symbol_position'] . '\',
+            aDec: \'' . $config['dec_point'] . '\',
+            aSep: \'' . $config['thousands_sep'] . '\',
+            vMax: \'9999999999999999.00\',
+                        vMin: \'-9999999999999999.00\'
+
+            });
+            $(\'[data-toggle="tooltip"]\').tooltip();
+
+        ');
 
         view('vehicle_loan_view');
 
@@ -1092,8 +1108,9 @@ switch ($action) {
             $interest_rate=$loan->interest_rate;
             $loan_duration=$loan->loan_duration;
 
-            $val['amount']=$principal_amount/$loan_duration+$principal_amount*$interest_rate;
+            $val['amount']=$principal_amount/$loan_duration+$principal_amount*$interest_rate/100;
             $val['category']="Vehicle Loan";
+
         }else{
             $val['id']="";
             $val['vehicle_num']="";
