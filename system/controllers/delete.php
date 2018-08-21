@@ -18,54 +18,55 @@ switch ($action) {
 
         if(!has_access($user->roleid,'customers','delete')){
 
-        permissionDenied();
+            permissionDenied();
 
         }
 
-    $id = $routes['2'];
-    $id = str_replace('uid','',$id);
-    $d = ORM::for_table('crm_accounts')->find_one($id);
-    if($d){
-        $username = $d->account;
-//delete all activity
-        $x = ORM::for_table('sys_activity')->where('cid',$id)->delete_many();
-        $x = ORM::for_table('sys_invoices')->where('userid',$id)->delete_many();
-        $x = ORM::for_table('sys_quotes')->where('userid',$id)->delete_many();
-        $x = ORM::for_table('sys_orders')->where('cid',$id)->delete_many();
-        $x = ORM::for_table('sys_staffpermissions')->where('rid',$id)->delete_many();
-        $x = ORM::for_table('ib_doc_rel')->where('rtype','contact')->where('rid',$id)->delete_many();
+        $id = $routes['2'];
+        $id = str_replace('uid','',$id);
+        $d = ORM::for_table('crm_accounts')->find_one($id);
+        if($d){
+            $username = $d->account;
+            
+            //delete all activity
+            $x = ORM::for_table('sys_activity')->where('cid',$id)->delete_many();
+            $x = ORM::for_table('sys_invoices')->where('userid',$id)->delete_many();
+            $x = ORM::for_table('sys_quotes')->where('userid',$id)->delete_many();
+            $x = ORM::for_table('sys_orders')->where('cid',$id)->delete_many();
+            $x = ORM::for_table('sys_staffpermissions')->where('rid',$id)->delete_many();
+            $x = ORM::for_table('ib_doc_rel')->where('rtype','contact')->where('rid',$id)->delete_many();
 
-        // Delete credit card info if exist
+            // Delete credit card info if exist
 
-        $credit_card = CreditCard::where('contact_id',$id)->first();
+            $credit_card = CreditCard::where('contact_id',$id)->first();
 
-        if($credit_card)
-        {
-            $credit_card->delete();
-        }
+            if($credit_card)
+            {
+                $credit_card->delete();
+            }
 
-        //
+            //
 
-        #todo update payer and payee
-        $d->delete();
-        _log('Contact Deleted: '.$username,'Admin',$user['id']);
+            #todo update payer and payee
+            $d->delete();
+            _log('Contact Deleted: '.$username,'Admin',$user['id']);
 
-        $gid = route(3);
+            $gid = route(3);
 
-        if(!$gid){
-            r2(U.'contacts/list/','s',$_L['Contact Deleted Successfully']);
+            if(!$gid){
+                r2(U.'contacts/list/','s',$_L['Contact Deleted Successfully']);
+            }
+            else{
+                r2(U.'contacts/find_by_group/'.$gid.'/','s',$_L['Contact Deleted Successfully']);
+            }
+
+
+
         }
         else{
-            r2(U.'contacts/find_by_group/'.$gid.'/','s',$_L['Contact Deleted Successfully']);
+            echo 'contact not found';
         }
-
-
-
-    }
-    else{
-        echo 'contact not found';
-    }
-    break;
+        break;
 
     case 'ps':
 
@@ -75,26 +76,37 @@ switch ($action) {
 
         }
 
-    $id = $routes['2'];
-    $id = str_replace('pid','',$id);
-    $d = ORM::for_table('sys_items')->find_one($id);
-    if($d){
-        $type = $d['type'];
-        $r = 'ps/s-list';
-        if($type == 'Product'){
-            $r = 'ps/p-list';
+        $id = $routes['2'];
+        $id = str_replace('pid','',$id);
+        $d = ORM::for_table('sys_items')->find_one($id);
+        if($d){
+            $type = $d['type'];
+            $r = 'ps/s-list';
+            if($type == 'Product'){
+                $r = 'ps/p-list';
+            }
+            
+            //Vehicle reg_product refactoring
+
+            if($type=='Vehicle'){
+                
+                $r='ps/v-list';
+                $vehicle=ORM::for_table('sys_vehicles')->where('reg_product', $id)->find_one();
+                $vehicle->reg_product=0;
+                $vehicle->save();
+            }
+
+            _log($type.' Deleted: '.$d['name'].' [ID: '.$d['id'].']','Admin',$user['id']);
+
+            $d->delete();
+
+            r2(U.$r,'s', $type. ' ' .$_L['Deleted Successfully']);
+
         }
-        _log($type.' Deleted: '.$d['name'].' [ID: '.$d['id'].']','Admin',$user['id']);
-
-        $d->delete();
-
-        r2(U.$r,'s', $type. ' ' .$_L['Deleted Successfully']);
-
-    }
-    else{
-        echo 'not found';
-    }
-    break;
+        else{
+            echo 'not found';
+        }
+        break;
 
     case 'invoice':
 

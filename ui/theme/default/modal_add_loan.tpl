@@ -24,14 +24,14 @@
     
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label" for="vehicle_type">{$_L['Vehicle No']}</label>
+                            <label class="col-md-4 control-label" for="vehicle_type">{$_L['Vehicle No']}<small class="red">*</small></label>
     
                             <div class="col-md-4">
                                 
                                 <select id="vehicle_num" name="vehicle_num" style="width:307px" class="form-control">
                                     <option value="{$val['vehicle_num']}" selected>{$val['vehicle_num']}</option>
                                     {foreach $vehicles as $vehicle}
-                                    <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']}-{$vehicle['vehicle_type']}</option>
+                                    <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']} - {$vehicle['vehicle_type']}</option>
                                     {/foreach}
                                 </select>
                                 
@@ -39,7 +39,7 @@
                             </div>
                         </div>  
                         <div class="form-group">
-                            <label class="col-md-4 control-label" for="principal_amount">{$_L['Principal Amount']}</label>
+                            <label class="col-md-4 control-label" for="principal_amount">{$_L['Principal Amount']}<small class="red">*</small></label>
 
                             <div class="col-md-8">
                                 <input type="text" id="principal_amount" name="principal_amount" class="form-control amount" autocomplete="off" data-a-sign="{$config['currency_code']} "
@@ -49,7 +49,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label" for="interest_rate">{$_L['Interest Rate']}(%)</label>
+                            <label class="col-md-4 control-label" for="interest_rate">{$_L['Interest Rate']}(%)<small class="red">*</small></label>
                         
                             <div class="col-md-8">
                                 <input type="text" id="interest_rate" name="interest_rate" class="form-control" value="{$val['interest_rate']}">
@@ -58,7 +58,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label" for="loan_duration">{$_L['Loan Duration']}</label>
+                            <label class="col-md-4 control-label" for="loan_duration">{$_L['Loan Duration']}<small class="red">*</small></label>
                         
                             <div class="col-md-8">
                                 <input type="text" id="loan_duration" name="loan_duration" class="form-control" value="{$val['loan_duration']}">
@@ -67,13 +67,15 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label" for="repay_cycle_type">{$_L['Repayment Cycle']}</label>
+                            <label class="col-md-4 control-label" for="repay_cycle_type">{$_L['Repayment Cycle']}<small class="red">*</small></label>
                         
                             <div class="col-md-8">
                         
-                                <select class="form-control" id="repay_cycle_type" name="repay_cycle_type">
+                                <select class="form-control" style="width:100%" id="repay_cycle_type" name="repay_cycle_type">
                                     <option value="{$val['repay_cycle_type']}" selected>{$val['repay_cycle_type']}</option>
-                                    <option value="monthly">monthly</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="monthly">Monthly</option>
+                                    <option value="yearly">Yearly</option>
                                     
                                 </select>
                             </div>
@@ -81,20 +83,20 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="date" class="col-md-4 control-label">{$_L['Loan Date']}</label>
+                            <label for="date" class="col-md-4 control-label">{$_L['Loan Date']}<small class="red">*</small></label>
                             <div class="col-md-8">
-                                <input type="date" class="form-control" value="{$val['loan_date']}" name="loan_date" id="loan_date" datepicker data-date-format="yyyy-mm-dd"
+                                <input type="text" class="form-control datepicker" value="{$val['loan_date']}" name="loan_date" id="loan_date" datepicker data-date-format="yyyy-mm-dd"
                                     data-auto-close="true">
                             </div>
                         </div>
 
     
                         <div class="form-group">
-                            <label class="col-md-4 control-label" for="expiry_todate">{$_L['Expiry To Date']}</label>
+                            <label class="col-md-4 control-label" for="expiry_todate">{$_L['Expiry To Date']}<small class="red">*</small></label>
     
                             <div class="col-md-8">
     
-                                <select class="form-control" id="expiry_todate" name="expiry_todate">
+                                <select class="form-control" style="width:100%" id="expiry_todate" name="expiry_todate">
                                     <option value="{$val['expiry_todate']}" selected>{$val['expiry_todate']}</option>
                                     <option value="7">7</option>
                                     <option value="14">14</option>
@@ -152,10 +154,12 @@
             <div class="ibox float-e-margins">
 
                 <div class="ibox-content" id="ibox_form" style="text-align: center;">
-                    {if $val['ref_img'] neq ""}
-                    <img src="{$baseUrl}/storage/items/thumb{$val['ref_img']}" width="100%"  >
-                    {/if}
+                    {if $val['ref_img'] eq NULL || $val['ref_img'] eq " "}
+                    <p>&nbsp;</p>
+                    {else}
+                    <img src="{$baseUrl}/storage/items/thumb{$val['ref_img']}" width="100%"> {/if}
                 </div>
+                
 
             </div>
 
@@ -198,6 +202,14 @@
             theme: "bootstrap"
 
         });
+        
+        $('#expiry_todate').select2({
+            theme:"bootstrap"
+        });
+
+        $('#repay_cycle_type').select2({
+            theme:"bootstrap"
+        });
 
         
 
@@ -205,6 +217,8 @@
         var ib_submit = $("#submit");
 
         var $ref_img= $("#ref_img");
+
+        $('.datepicker').datepicker();
 
         var upload_resp;
 

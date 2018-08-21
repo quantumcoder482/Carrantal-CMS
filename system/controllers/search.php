@@ -186,11 +186,6 @@ switch ($action) {
             </table>';
         break;
     
-    case 'vehicle':
-
-
-
-    case 'vehicle_type':
     
 
 

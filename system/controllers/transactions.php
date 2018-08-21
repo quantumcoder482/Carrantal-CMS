@@ -1300,7 +1300,7 @@ switch ($action) {
                 fclose($fh);
                 break;
 
-            case 'handle_attachment':
+    case 'handle_attachment':
                 $uploader = new Uploader();
                 $uploader->setDir('storage/transactions/');
                 $uploader->sameName(false);
@@ -1332,7 +1332,7 @@ switch ($action) {
                 echo json_encode($a);
                 break;
 
-            case 'tr_list':
+    case 'tr_list':
 
                 //  sleep(5);
 
@@ -1479,7 +1479,7 @@ switch ($action) {
 
                 break;
 
-            case 'exchange':
+    case 'exchange':
                 $d = ORM::for_table('sys_accounts')->find_many();
                 $p = ORM::for_table('crm_accounts')->find_many();
                 $ui->assign('p', $p);
@@ -1541,7 +1541,7 @@ switch ($action) {
 
                 break;
 
-            case 'exchange-post':
+    case 'exchange-post':
 
 
 

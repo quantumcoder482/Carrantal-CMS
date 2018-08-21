@@ -101,8 +101,9 @@ switch ($action) {
         $ui->assign('units',$units);
 
         $ui->assign('type','Vehicle');
-        $ui->assign('xheader', Asset::css(array('modal','dropzone/dropzone','redactor/redactor')));
-        $ui->assign('xfooter', Asset::js(array('modal','dropzone/dropzone','redactor/redactor.min','numeric','jslib/add-ps')));
+        $ui->assign('xheader', Asset::css(array('modal','dropzone/dropzone','dp/dist/datepicker.min','footable/css/footable.core.min','redactor/redactor','s2/css/select2.min','vehicle/vehicle')));
+        $ui->assign('xfooter', Asset::js(array('modal','dropzone/dropzone','dp/dist/datepicker.min','footable/js/footable.all.min','contacts/mode_search','redactor/redactor.min','numeric','s2/js/select2.min',
+            's2/js/i18n/'.lan(), 'jslib/add-vehicle')));
 
         $ui->assign('xjq', '$(\'.amount\').autoNumeric(\'init\');');
         

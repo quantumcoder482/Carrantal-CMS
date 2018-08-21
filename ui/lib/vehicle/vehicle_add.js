@@ -15,6 +15,12 @@ $(document).ready(function () {
         theme: "bootstrap"
     });
 
+    var $expiry_status = $('#expiry_status');
+
+    $expiry_status.select2({
+        theme: "bootstrap"
+    });
+    
     var _url = $("#_url").val();
     var ib_submit = $("#submit");
 

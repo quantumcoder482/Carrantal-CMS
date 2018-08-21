@@ -13,6 +13,8 @@ $(document).ready(function () {
 
     $('[data-toggle="tooltip"]').tooltip();
 
+ 
+
 
     $('.edit_roadtax').on('click', function (e) {
         

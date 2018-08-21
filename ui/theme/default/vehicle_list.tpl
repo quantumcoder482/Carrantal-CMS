@@ -71,7 +71,7 @@
                                 {date( $config['df'], strtotime($ds['expiry_date']))}
                             </td>
                             <td>
-                                {if $ex_status[$ds['id']] eq 'Active'}
+                                <!-- {if $ex_status[$ds['id']] eq 'Active'}
                                 <span class="label label-success">
                                      {$ex_status[$ds['id']]}</span>
                                 {elseif $ex_status[$ds['id']] eq 'Expired'}
@@ -80,9 +80,9 @@
                                 {else}
                                 <span class="label label-warning" style="color: #f7931e">
                                      {$ex_status[$ds['id']]}</span>
-                                {/if}
+                                {/if} -->
                                 
-                                <!-- {if $ex_status[$ds['id']] eq 'Active'}
+                                {if $ex_status[$ds['id']] eq 'Active'}
                                 <div class="label-success" style="margin:0 auto;font-size:85%;width:95px">
                                     {$ex_status[$ds['id']]}</div>
                                 {elseif $ex_status[$ds['id']] eq 'Expired'}
@@ -91,12 +91,12 @@
                                 {else}
                                 <div class="label-warning" style="border-color:#ffa500;color: #f7931e;margin:0 auto;font-size:85%;width:95px;">
                                     {$ex_status[$ds['id']]}</div>
-                                {/if} -->
+                                {/if} 
 
                             </td>
                             <td>
                                 {if {$ds['v_o_c']} neq ''}
-                                <a href="#" class="btn btn-primary btn-xs view_cert_img" style="background-color:#f7931e" id="{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['View']}">
+                                <a href="#" class="btn btn-primary btn-xs view_cert_img" style="background-color:#f7931e; border:none;" id="{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['View']}">
                                     <i class="fa fa-paperclip" ></i>
                                 </a>
                                 {/if}
@@ -119,7 +119,7 @@
                     {if $view_type == 'filter'}
                     <tfoot>
                         <tr>
-                            <td style="text-align: left;" colspan="8">
+                            <td style="text-align: left;" colspan="9">
                                 <ul class="pagination">
                                 </ul>
                             </td>

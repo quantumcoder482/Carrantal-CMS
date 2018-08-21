@@ -51,6 +51,12 @@ $(document).ready(function () {
     });
 
 
+    $('#vehicle_num').select2({
+        theme:"bootstrap"
+    })
+
+
+
 
     $("#emsg").hide();
 

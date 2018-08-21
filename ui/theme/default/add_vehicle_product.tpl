@@ -27,9 +27,9 @@
                             <div class="col-lg-10">
                         
                                 <select id="name" name="name" class="form-control">
-                                    <option selected>{$_L['select vehicle number']}</option>
+                                    <option selected>{$_L['Select vehicle number']}</option>
                                     {foreach $vehicles as $vehicle}
-                                    <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']}-{$vehicle['vehicle_type']}</option>
+                                    <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']} - {$vehicle['vehicle_type']}</option>
                                     {/foreach}
                                 </select>
                         

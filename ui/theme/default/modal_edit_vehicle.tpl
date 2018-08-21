@@ -63,14 +63,14 @@
                         <div class="form-group">
                             <label for="date" class="col-md-3 control-label">{$_L['Purchase Date']}</label>
                             <div class="col-md-9">
-                                <input type="date" class="form-control" value="{$val['purchase_date']}" name="pdate" id="pdate" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true">
+                                <input type="text" class="form-control datepicker" value="{$val['purchase_date']}" name="pdate" id="pdate" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true">
                             </div>
                         </div>
     
                         <div class="form-group">
                             <label for="text" class="col-md-3 control-label">{$_L['Expiry Date']}</label>
                             <div class="col-md-9">
-                                <input type="date" class="form-control" value="{$val['expiry_date']}" name="edate" id="edate" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true"> 
+                                <input type="text" class="form-control datepicker" value="{$val['expiry_date']}" name="edate" id="edate" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true"> 
                             </div>
                         </div>
     
@@ -79,7 +79,7 @@
     
                             <div class="col-md-9">
     
-                                <select class="form-control" id="expiry_status" name="expiry_status">
+                                <select class="form-control" id="expiry_status" style="width:374px" name="expiry_status">
                                     <option value="{$val['expiry_status']}" selected>{$val['expiry_status']}</option>
                                     <option value="7">7</option>
                                     <option value="14">14</option>
@@ -265,7 +265,10 @@
             theme: "bootstrap"
 
         });
-
+        
+        $('#expiry_status').select2({
+            theme:"bootstrap"
+        });
         
 
         var _url = $("#_url").val();
@@ -273,6 +276,8 @@
 
         var $vehicle_file = $("#vehicle_file");
         var $cert_file = $("#cert_file");
+
+        $('.datepicker').datepicker();
 
         var upload_resp;
 

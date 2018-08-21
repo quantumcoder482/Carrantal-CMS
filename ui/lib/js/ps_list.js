@@ -55,6 +55,7 @@ $(document).ready(function () {
     });
     var $modal = $('#ajax-modal');
     var sysrender = $('#application_ajaxrender');
+    
     sysrender.on('click', '.cdelete', function(e){
         e.preventDefault();
         var id = this.id;

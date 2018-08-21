@@ -16,13 +16,48 @@ $(document).ready(function () {
         theme: "bootstrap"
     });
 
+    $('#expiry_todate').select2({
+        theme:"bootstrap"
+    });
+
     var _url = $("#_url").val();
     var ib_submit = $("#submit");
-
     var $ref_img = $("#ref_img");
-
     var upload_resp;
 
+    var roadtax_amount=$('#roadtax_amount');
+    var rebate_amount=$('#rebate_amount');
+    var roadtax_total=$('#roadtax_total');
+
+    roadtax_amount.on("keyup", function(){
+        var amount=roadtax_amount.val().slice(2);
+        var rebate = rebate_amount.val().slice(2);
+        amount = parseFloat(amount.replace(',', ''));
+        if(rebate){
+            rebate = parseFloat(rebate.replace(',', ''));
+        }else{
+            rebate=parseFloat(0);
+        }
+        if(!isNaN(amount-rebate)){
+            roadtax_total.val("$ " + (amount - rebate));
+        }
+
+    });
+    rebate_amount.on("keyup",function(){
+        var amount = roadtax_amount.val().slice(2);
+        var rebate = rebate_amount.val().slice(2);
+        rebate = parseFloat(rebate.replace(',', ''));
+        if (amount) {
+            amount = parseFloat(amount.replace(',', ''));
+        } else {
+            amount = parseFloat(0);
+        }
+        if (!isNaN(amount - rebate)) {
+            roadtax_total.val("$ "+(amount - rebate));
+        }
+
+    });
+    
 
     // Vehicle Image upload
     var ib_file = new Dropzone("#upload_container",

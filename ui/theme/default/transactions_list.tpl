@@ -9,7 +9,7 @@
 
 
                     <div class="row">
-                        <div class="col-md-2 col-sm-6">
+                        <div class="col-md-3 col-sm-6">
 
                             <form>
                                 <div class="form-group">
@@ -22,7 +22,7 @@
                                         <select id="vehicle_num" name="vehicle_num" class="form-control">
                                             <option value="" selected>{$_L['All']}</option>
                                             {foreach $vehicles as $vehicle}
-                                            <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']}</option>
+                                            <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']} - {$vehicle['vehicle_type']}</option>
                                             {/foreach}
                                         </select>
                                 </div>
@@ -39,7 +39,7 @@
                                 
                                 <div class="form-group" id="block_expense_type">
                                     <label for="ex_category"> {$_L['Expense Category']}</label>
-                                    <select id="ex_category" name="ex_category" class="form-control">
+                                    <select id="ex_category" name="ex_category" class="form-control" style="width:100%">
                                         <option value="">{$_L['All']}</option>
                                         {foreach $expense_categories as $expense_category}
                                             <option value="{$expense_category['name']}">{$expense_category['name']}</option>
@@ -77,7 +77,7 @@
 
 
                         </div>
-                        <div class="col-md-10 col-sm-6 ib_right_panel">
+                        <div class="col-md-9 col-sm-6 ib_right_panel">
 
 
                             <div class="table-responsive" id="ib_data_panel">
@@ -136,6 +136,11 @@
             $block_expense_type.hide();
 
             $("#tr_type").on('change',function () {
+                
+                $('#ex_category').select2({
+                    theme: "bootstrap"
+                });
+
                 if($(this).val() == 'Expense'){
                     $block_expense_type.show('slow');
                 }

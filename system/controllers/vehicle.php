@@ -111,7 +111,7 @@ switch ($action) {
                 $ex_status[$expiry_id]="Expired";
 
 
-            }elseif($rest>=$expiry_status){
+            }elseif($rest>$expiry_status){
 
                 $ex_status[$expiry_id]="Active";
 
@@ -436,12 +436,12 @@ switch ($action) {
             aDec: \'' . $config['dec_point'] . '\',
             aSep: \'' . $config['thousands_sep'] . '\',
             vMax: \'9999999999999999.00\',
-                        vMin: \'-9999999999999999.00\'
-
+            vMin: \'-9999999999999999.00\'
             });
             $(\'[data-toggle="tooltip"]\').tooltip();
 
         ');
+
 
 
         view('vehicle_insurance_list');
@@ -815,6 +815,7 @@ switch ($action) {
             $val['insurance_date']=$insurance->insurance_date;
             $val['due_date']=$insurance->due_date;
             $val['expiry_todate']=$insurance->expiry_todate;
+            $val['policy_num']=$insurance->policy_num;
             $val['description']=$insurance->description;
             $val['ref_img']=$insurance->ref_img;
 
@@ -827,6 +828,7 @@ switch ($action) {
             $val['insurance_date']="  ";
             $val['due_date']=" ";
             $val['expiry_todate']=" ";
+            $val['policy_num']=" ";
             $val['description']=" ";
             $val['ref_img']=" ";
         }
@@ -923,7 +925,7 @@ switch ($action) {
         if($roadtax){
             $val['id']=$id;
             $val['vehicle_num']=$roadtax->vehicle_num;
-            $val['amount']=$roadtax->roadtax_amount;
+            $val['amount']=$roadtax->roadtax_total;
             $val['category']="Road Tax";
         }else{
             $val['id']="";
@@ -1014,7 +1016,7 @@ switch ($action) {
         if($insurance){
             $val['id']=$id;
             $val['vehicle_num']=$insurance->vehicle_num;
-            $val['amount']=$insurance->insurance_amount;
+            $val['amount']=$insurance->insurance_total;
             $val['category']="Insurance";
         }else{
             $val['id']="";
@@ -1211,26 +1213,22 @@ switch ($action) {
 
         $msg='';
 
-        // if($vehicle_num == ''){
-        //    $msg .= 'You must input Vehicle number <br>';
-        // }
-        // if($vehicle_type == ''){
-        //    $msg .= 'You must select Vehicle type <br>';
-        // }
-        // if($purchase_price == ''){
-        //    $msg .= 'You must input Purchase_price <br>';
-        // }
-        // if($parf_cost == ''){
-        //    $msg .= 'You must input Purf_cost <br>';
-        // }
-        // if($expiry_date == ''){
-        //    $msg .= 'You must input Expiry_date <br>';
-        // }
-        // if($expiry_status == ''){
-        //    $msg .= 'You must select Expiry_status <br>';
-        // }
-
-
+        if($vehicle_num == ''){
+           $msg .= 'Vehicle Numver is required <br>';
+        }
+        if($roadtax_amount == ''){
+           $msg .= 'Road Tax Amount is requried <br>';
+        }
+        if($roadtax_date == ''){
+           $msg .= 'Road Tax Date is required <br>';
+        }
+        if($due_date == ''){
+           $msg .= 'Due Date is requried <br>';
+        }
+        if($expiry_todate == ''){
+           $msg .= 'Expiry To Date is requried <br>';
+        }
+        
         if($msg == ''){
 
             if($id == ''){
@@ -1280,6 +1278,7 @@ switch ($action) {
         $insurance_date=_post('insurance_date');
         $due_date=_post('due_date');
         $expiry_todate=_post('expiry_todate');
+        $policy_num=_post('policy_num');
         $description=_post('description');
         $ref_img=_post('ref_img');
         
@@ -1288,24 +1287,22 @@ switch ($action) {
 
         $msg='';
 
-        // if($vehicle_num == ''){
-        //    $msg .= 'You must input Vehicle number <br>';
-        // }
-        // if($vehicle_type == ''){
-        //    $msg .= 'You must select Vehicle type <br>';
-        // }
-        // if($purchase_price == ''){
-        //    $msg .= 'You must input Purchase_price <br>';
-        // }
-        // if($parf_cost == ''){
-        //    $msg .= 'You must input Purf_cost <br>';
-        // }
-        // if($expiry_date == ''){
-        //    $msg .= 'You must input Expiry_date <br>';
-        // }
-        // if($expiry_status == ''){
-        //    $msg .= 'You must select Expiry_status <br>';
-        // }
+        if($vehicle_num == ''){
+           $msg .= 'Vehicle Number is required <br>';
+        }
+        if($insurance_amount == ''){
+           $msg .= 'Insurance Amount is required <br>';
+        }
+        if($insurance_date == ''){
+           $msg .= 'Insurance Date is required <br>';
+        }
+        if($due_date == ''){
+           $msg .= 'Due Date is required <br>';
+        }
+        if($expiry_todate == ''){
+           $msg .= 'Expiry To Date is required <br>';
+        }
+        
 
 
         if($msg == ''){
@@ -1325,6 +1322,7 @@ switch ($action) {
             $d->insurance_date = $insurance_date;
             $d->due_date=$due_date;
             $d->expiry_todate = $expiry_todate;
+            $d->policy_num=$policy_num;
             $d->description = $description;
             $d->ref_img =$ref_img;
 
@@ -1345,48 +1343,49 @@ switch ($action) {
         $id=_post('rid');
 
         $vehicle_num = _post('vehicle_num');
-       
+    
         $principal_amount=_post('principal_amount','0.00');
         $principal_amount = Finance::amount_fix($principal_amount);
         $interest_rate=_post('interest_rate');
         $loan_duration=_post('loan_duration');
         $repay_cycle_type=_post('repay_cycle_type');
-        
         $loan_date=_post('loan_date');
-        $interval = new DateInterval('P'.$loan_duration.'M');
-        $expire_date=date_create($loan_date)->add($interval);
-        $expire_date=$expire_date->format('Y-m-d');
-
         $expiry_todate=_post('expiry_todate');
         $description=_post('description');
         $ref_img=_post('ref_img');
         
-
         // Check validate post data
 
         $msg='';
 
-        // if($vehicle_num == ''){
-        //    $msg .= 'You must input Vehicle number <br>';
-        // }
-        // if($vehicle_type == ''){
-        //    $msg .= 'You must select Vehicle type <br>';
-        // }
-        // if($purchase_price == ''){
-        //    $msg .= 'You must input Purchase_price <br>';
-        // }
-        // if($parf_cost == ''){
-        //    $msg .= 'You must input Purf_cost <br>';
-        // }
-        // if($expiry_date == ''){
-        //    $msg .= 'You must input Expiry_date <br>';
-        // }
-        // if($expiry_status == ''){
-        //    $msg .= 'You must select Expiry_status <br>';
-        // }
+        if($vehicle_num == ''){
+           $msg .= 'Vehicle Number is required <br>';
+        }
+        if($principal_amount == ''){
+           $msg .= 'Principal Amount is required <br>';
+        }
+        if($interest_rate == ''){
+           $msg .= 'Interest Rate is required <br>';
+        }
+        if($loan_duration == ''){
+           $msg .= 'Loan Duration is required <br>';
+        }
+        if($repay_cycle_type == ''){
+           $msg .= 'Repayment Cycle is required <br>';
+        }
+        if($loan_date == ''){
+           $msg .= 'Loan Date is required <br>';
+        }
+        if($expiry_todate == ''){
+           $msg .= 'Expiry To Date is required <br>';
+        }
 
 
         if($msg == ''){
+            
+            $interval = new DateInterval('P'.$loan_duration.'M');
+            $expire_date=date_create($loan_date)->add($interval);
+            $expire_date=$expire_date->format('Y-m-d');
 
             if($id == ''){
                 _msglog('s',$_L['Item Added Successfully']);
@@ -1451,22 +1450,22 @@ switch ($action) {
         }
 
         if($vehicle_num == ''){
-           $msg .= 'You must input Vehicle number <br>';
+           $msg .= 'Vehicle Number is required <br>';
         }
         if($vehicle_type == ''){
-           $msg .= 'You must select Vehicle type <br>';
+           $msg .= 'Vehicle Type is required <br>';
         }
         if($purchase_price == ''){
-           $msg .= 'You must input Purchase_price <br>';
+           $msg .= 'Purchase Price is required <br>';
         }
         if($parf_cost == ''){
-           $msg .= 'You must input Purf_cost <br>';
+           $msg .= 'Parf Cost is required <br>';
         }
         if($expiry_date == ''){
-           $msg .= 'You must input Expiry_date <br>';
+           $msg .= 'Expiry Date is required <br>';
         }
         if($expiry_status == ''){
-           $msg .= 'You must select Expiry_status <br>';
+           $msg .= 'Expiry status is requried <br>';
         }
 
 
@@ -1613,6 +1612,24 @@ switch ($action) {
 
         $msg='';
 
+        if($make == ''){
+            $msg.='Make is required <br/>';
+        }
+
+        if($model == ''){
+            $msg.='Model is required </br>';
+        }
+
+        if($engine_capacity == ''){
+            $msg.='Engine Capacity is required </br>';
+        }
+
+        if($transmission == ''){
+            $msg.='Transmission is requried </br>';
+        }
+
+
+
 
         if($msg == ''){
             if($id){
@@ -1631,8 +1648,6 @@ switch ($action) {
             $d->fuel_type=$fuel_type;
 
             $d->save();
-
-
 
             echo $d->id();
         }

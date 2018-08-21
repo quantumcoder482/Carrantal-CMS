@@ -19,14 +19,14 @@
                     <form class="form-horizontal" id="rform">
 
                         <div class="form-group">
-                            <label class="col-md-2 control-label" for="vehicle_type">{$_L['Vehicle No']}</label>
+                            <label class="col-md-2 control-label" for="vehicle_type">{$_L['Vehicle No']}<small class="red">*</small></label>
     
                             <div class="col-md-10">
     
                                 <select id="vehicle_num" name="vehicle_num" class="form-control">
-                                    <option selected>{$_L['select vehicle number']}</option>
+                                    <option value="" selected>{$_L['Select vehicle number']}</option>
                                     {foreach $vehicles as $vehicle}
-                                    <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']}-{$vehicle['vehicle_type']}</option>
+                                    <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']} - {$vehicle['vehicle_type']}</option>
                                     {/foreach}
                                 </select>
                                 
@@ -34,7 +34,7 @@
                             </div>
                         </div>  
                         <div class="form-group">
-                            <label class="col-md-2 control-label" for="rebate_amount">{$_L['Road Tax Amount']}</label>
+                            <label class="col-md-2 control-label" for="rebate_amount">{$_L['Road Tax Amount']}<small class="red">*</small></label>
 
                             <div class="col-md-10">
                                 <input type="text" id="roadtax_amount" name="roadtax_amount" class="form-control amount" autocomplete="off" data-a-sign="{$config['currency_code']} "
@@ -64,7 +64,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="date" class="col-md-2 control-label">{$_L['Road Tax Date']}</label>
+                            <label for="date" class="col-md-2 control-label">{$_L['Road Tax Date']}<small class="red">*</small></label>
                             <div class="col-md-10">
                                 <input type="text" class="form-control" value="" name="roadtax_date" id="roadtax_date" datepicker data-date-format="yyyy-mm-dd"
                                     data-auto-close="true">
@@ -72,7 +72,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="date" class="col-md-2 control-label">{$_L['Due Date']}</label>
+                            <label for="date" class="col-md-2 control-label">{$_L['Due Date']}<small class="red">*</small></label>
                             <div class="col-md-10">
                                 <input type="text" class="form-control" value="" name="due_date" id="due_date" datepicker data-date-format="yyyy-mm-dd"
                                     data-auto-close="true">
@@ -80,12 +80,12 @@
                         </div>
     
                         <div class="form-group">
-                            <label class="col-md-2 control-label" for="expiry_status">{$_L['Expiry To Date']}</label>
+                            <label class="col-md-2 control-label" for="expiry_todate">{$_L['Expiry To Date']}<small class="red">*</small></label>
     
                             <div class="col-md-10">
     
-                                <select class="form-control" id="expiry_todate" name="expiry_todate">
-                                    <option value="">{$_L['select expiry to date']}</option>
+                                <select class="form-control" style="width:100%" id="expiry_todate" name="expiry_todate">
+                                    <option value="">{$_L['Select expiry to date']}</option>
                                     <option value="7">7</option>
                                     <option value="14">14</option>
                                     <option value="21">21</option>

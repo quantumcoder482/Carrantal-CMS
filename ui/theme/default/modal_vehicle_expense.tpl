@@ -20,7 +20,7 @@
                         <div class="form-group">
                             <label for="account" class="col-md-3 control-label">{$_L['Account']}</label>
                             <div class="col-md-9">
-                                <select id="account" name="account" class="form-control">
+                                <select class="form-control" style="width:100%" id="account" name="account">
                                     <option value="">{$_L['Choose an Account']}</option>
                                     {foreach $d as $ds}
                                         <option value="{$ds['account']}">{$ds['account']}</option>
@@ -34,10 +34,10 @@
 
                             <div class="col-md-9">
 
-                                <select id="vehicle_num" name="vehicle_num" class="form-control" style="width:350px;">
+                                <select class="form-control" style="width:100%;" id="vehicle_num" name="vehicle_num">
                                     <option value="{$val['vehicle_num']}" selected>{$val['vehicle_num']}</option>
                                     {foreach $vehicles as $vehicle}
-                                    <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']}</option>
+                                    <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']} - {$vehicle['vehicle_type']}</option>
                                     {/foreach}
                                 </select>
 
@@ -48,7 +48,7 @@
                         <div class="form-group">
                             <label for="date" class="col-md-3 control-label">{$_L['Date']}</label>
                             <div class="col-md-9">
-                                <input type="date" class="form-control"  value="{$mdate}" name="date" id="date" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true">
+                                <input type="text" class="form-control datepicker"  value="{$mdate}" name="date" id="date" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true">
                             </div>
                         </div>
 
@@ -105,7 +105,7 @@
                         <div class="form-group">
                             <label for="cats" class="col-md-3 control-label">{$_L['Category']}</label>
                             <div class="col-md-9">
-                                <select id="cats" name="cats" class="form-control">
+                                <select id="cats" name="cats" class="form-control" style="width:100%">
                                     <option value="{$val['category']}">{$val['category']}</option>
                                     {foreach $cats as $cat}
                                         <option value="{$cat['name']}">{$cat['name']}</option>
@@ -142,7 +142,7 @@
                         <div class="form-group">
                             <label for="tags" class="col-md-3 control-label">{$_L['Tags']}</label>
                             <div class="col-md-9">
-                                <select name="tags[]" id="tags" class="form-control" multiple="multiple">
+                                <select name="tags[]" id="tags" class="form-control" style="width:100%" multiple="multiple">
                                     {foreach $tags as $tag}
                                         <option value="{$tag['text']}">{$tag['text']}</option>
                                     {/foreach}
@@ -153,7 +153,7 @@
                         <div class="form-group">
                             <label for="payee" class="col-md-3 control-label">{$_L['Payee']}</label>
                             <div class="col-md-9">
-                                <select id="payee" name="payee" class="form-control">
+                                <select id="payee" name="payee" class="form-control" style="width:100%">
                                     <option value="">{$_L['Choose Contact']}</option>
                                     {foreach $p as $ps}
                                         <option value="{$ps['id']}">{$ps['account']}</option>
@@ -166,7 +166,7 @@
                         <div class="form-group">
                             <label for="pmethod" class="col-md-3 control-label">{$_L['Method']}</label>
                             <div class="col-md-9">
-                                <select id="pmethod" name="pmethod" class="form-control">
+                                <select id="pmethod" name="pmethod" class="form-control" style="width:100%">
                                     <option value="">{$_L['Select Payment Method']}</option>
                                     {foreach $pms as $pm}
                                         <option value="{$pm['name']}">{$pm['name']}</option>
@@ -247,11 +247,24 @@
         var $vehicle_num = $('#vehicle_num');
 
         $vehicle_num.select2({
-
             theme: "bootstrap"
-
         });
 
+        $('#account').select2({
+            theme:"bootstrap"
+        });
+
+        $('#cats').select2({
+            theme:"bootstrap"
+        });
+
+        $('#payee').select2({
+            theme: "bootstrap"
+        });
+
+        $('#pmethod').select2({
+            theme: "bootstrap"
+        });
 
         var _url = $("#_url").val();
 
@@ -259,7 +272,21 @@
 
         var $attachments = $("#attachments");
 
+        $('.datepicker').datepicker();
+
         var upload_resp;
+
+
+        $('#tags').select2({
+            tags: true,
+            tokenSeparators: [','],
+            theme: "bootstrap",
+            language: {
+                noResults: function () {
+                    return $("#_lan_no_results_found").val();
+                }
+            }
+        });
 
 
         // Vehicle Image upload

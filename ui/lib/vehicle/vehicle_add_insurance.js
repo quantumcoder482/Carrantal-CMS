@@ -16,10 +16,47 @@ $(document).ready(function () {
         theme: "bootstrap"
     });
 
+    $('#expiry_todate').select2({
+        theme:"bootstrap"
+    });
+
     var _url = $("#_url").val();
     var ib_submit = $("#submit");
-
     var $ref_img = $("#ref_img");
+
+    var insurance_amount = $('#insurance_amount');
+    var rebate_amount = $('#rebate_amount');
+    var insurance_total = $('#insurance_total');
+
+    insurance_amount.on("keyup", function () {
+        var amount = insurance_amount.val().slice(2);
+        var rebate = rebate_amount.val().slice(2);
+        amount = parseFloat(amount.replace(',', ''));
+        
+        if (rebate) {
+            rebate = parseFloat(rebate.replace(',', ''));
+        } else {
+            rebate = parseFloat(0);
+        }
+        if (!isNaN(amount - rebate)) {
+            insurance_total.val("$ " + (amount - rebate));
+        }
+
+    });
+    rebate_amount.on("keyup", function () {
+        var amount = insurance_amount.val().slice(2);
+        var rebate = rebate_amount.val().slice(2);
+        rebate = parseFloat(rebate.replace(',', ''));
+        if (amount) {
+            amount = parseFloat(amount.replace(',', ''));
+        } else {
+            amount = parseFloat(0);
+        }
+        if (!isNaN(amount - rebate)) {
+            insurance_total.val("$ " + (amount - rebate));
+        }
+
+    });
 
     var upload_resp;
 

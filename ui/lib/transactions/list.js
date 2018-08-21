@@ -22,6 +22,12 @@ $(document).ready(function() {
         theme:"bootstrap"
     });
 
+    $('#tr_type').select2({
+        theme:"bootstrap"
+    });
+
+
+
     var start = moment().subtract(29, 'days');
     var end = moment();
 

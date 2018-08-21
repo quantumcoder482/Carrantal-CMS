@@ -33,7 +33,7 @@
                                 <select id="vehicle_num" name="vehicle_num" class="form-control">
                                     <option value="" selected>{$_L['All']}</option>
                                     {foreach $vehicles as $vehicle}
-                                    <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']}</option>
+                                    <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']} - {$vehicle['vehicle_type']}</option>
                                     {/foreach}
                                 </select>
 

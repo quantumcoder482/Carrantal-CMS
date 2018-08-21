@@ -56,7 +56,7 @@
                     <label class="col-md-12" for="transmission">{$_L['Transmission']}</label>
 
                     <div class="col-md-12">
-                        <select name="transmission" id="transmission" class="form-control country">
+                        <select name="transmission" id="transmission" style="width:100%" class="form-control country">
                             <option value="A">{$_L['Auto A']}</option>
                             <option value="M">{$_L['Manual M']}</option>
                         </select>
@@ -70,7 +70,7 @@
                     <label class="col-md-12" for="fuel_type">{$_L['Fuel Type']}</label>
                 
                     <div class="col-md-12">
-                        <select name="fuel_type" id="fuel_type" class="form-control country">
+                        <select name="fuel_type" id="fuel_type" style="width:100%" class="form-control country">
                             <option value="{$_L['Petrol']}">{$_L['Petrol']}</option>
                             <option value="{$_L['Diesel']}">{$_L['Diesel']}</option>
                             <option value="{$_L['Petrol Electric']}">{$_L['Petrol Electric']}</option>
@@ -103,3 +103,21 @@
     </button>
 
 </div>
+
+ {block name="script"}
+<script>
+
+    $(document).ready(function () {
+
+        $('#transmission').select2({
+            theme: "bootstrap"
+        });
+
+        $('#fuel_type').select2({
+            theme: "bootstrap"
+        });
+
+    });
+
+</script>
+ {/block}

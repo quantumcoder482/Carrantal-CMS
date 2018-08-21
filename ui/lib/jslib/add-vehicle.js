@@ -11,6 +11,15 @@ $(document).ready(function () {
 
     var upload_resp;
 
+    $('#name').select2({
+        theme:"bootstrap"
+    });
+
+    $('#unit').select2({
+        theme:"bootstrap"
+    });
+
+
     $('#description').redactor(
         {
             minHeight: 200 // pixels
@@ -71,35 +80,5 @@ $(document).ready(function () {
                 }
             });
     });
-
-    // var vp_submit=$('#vp_submit');
-
-    // vp_submit.click(function (e) {
-    //     e.preventDefault();
-    //     $('#ibox_form').block({ message: null });
-    //     var _url = $("#_url").val();
-    //     $.post(_url + 'ps/add-post/', $("#rform").serialize())
-    //         .done(function (data) {
-
-    //             if ($.isNumeric(data)) {
-
-    //                windows.location.href = _url + "ps/v-list/";
-    //             }
-    //             else {
-    //                 $('#ibox_form').unblock();
-
-    //                 $("#emsgbody").html(data);
-    //                 $("#emsg").show("slow");
-    //             }
-    //         });
-    // });
-
-
-
-
-
-
-
-
 
 });
