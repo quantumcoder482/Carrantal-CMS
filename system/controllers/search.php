@@ -89,18 +89,16 @@ switch ($action) {
        
         if($d){
             
-            echo '<table class="table-hover sys_table" width="100%">
-                  <thead>
-                    <tr style="text-align:center; height:45px">
-                        <th width="15%" > '.$_L['Image'].'</th>
-                        <th width="15%" class="project-title">'.$_L['Name'].'</th>
-                        <th width="15%">'.$_L['Cost Price'].'</th>
-                        <th width="15%">'.$_L['Sales Price'].'</th>
-                        <th width="15%" style="text-align:center">'.$_L['Inventory'].'</th>
-                        <th width="25%" class="project-actions" style="text-align:center">'.$_L['Manage'].'</th>
-                    </tr>
-                    </thead>
-                    <tbody>';
+            echo '<table class="table table-hover" width="100%">
+                  <tbody>
+                    <tr>
+                        <td width="15%" > '.$_L['Image'].'</td>
+                        <td width="15%" class="project-title">'.$_L['Name'].'</td>
+                        <td width="15%">'.$_L['Cost Price'].'</td>
+                        <td width="15%">'.$_L['Sales Price'].'</td>
+                        <td width="15%">'.$_L['Inventory'].'</td>
+                        <td width="25%" class="project-actions" >'.$_L['Manage'].'</td>
+                    </tr>';
 
             foreach ($d as $ds){
 
@@ -118,10 +116,10 @@ switch ($action) {
                 $available = round($ds['inventory']);
 
                 if($available != 0){
-                    $txt_available ="<div class='label-primary' style='color:#1e90ff;margin:0 auto;text-align:center; width:85px'>"
+                    $txt_available ="<div class='label-primary' style='color:#1e90ff; text-align:center; width:85px'>"
                                     .$_L['Available']."</div>";
                 }else{
-                    $txt_available ="<div class='label-danger' style='color:#dc143c;margin:0 auto;text-align:center; width:85px'>"
+                    $txt_available ="<div class='label-danger' style='color:#dc143c; text-align:center; width:85px'>"
                                     .$_L['OUT']."</div>";
                 }
                                     
@@ -135,7 +133,7 @@ switch ($action) {
                     <td>'.$cost_price.'</td>
                     <td>'.$price.'</td>
                     <td>'.$txt_available.'</td>
-                    <td class="project-actions" style="text-align:center">
+                    <td class="project-actions">
                         <a href="#" class="btn btn-primary btn-sm cedit" id="e'.$ds['id'].'"><i class="fa fa-pencil"></i> '.$_L['Edit'].' </a>
                         <a href="#" class="btn btn-danger btn-sm cdelete" id="pid'.$ds['id'].'"><i class="fa fa-trash"></i> '.$_L['Delete'].' </a>
                         <a href="'.U.'inventory/barcode/'.$ds['id'].'" target="_blank" class="btn btn-inverse btn-sm"><i class="fa fa-barcode"></i> '.$_L['Barcode'].' </a>
@@ -143,9 +141,8 @@ switch ($action) {
                 </tr>';
         }
         echo '
-            </tbody>
             <tr> 
-            <td colspan="6">&nbsp;</td>
+             <td colspan="6">&nbsp;</td>
             </tr>
             </tbody>
             </table>';

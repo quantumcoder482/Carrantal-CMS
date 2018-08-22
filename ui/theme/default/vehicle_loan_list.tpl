@@ -75,8 +75,8 @@
                             <td data-value="{strtotime($ds['loan_date'])}">
                                 {date( $config['df'], strtotime($ds['loan_date']))}
                             </td>
-                            <td data-value="{strtotime($ds['expire_date'])}">
-                                {date( $config['df'], strtotime($ds['expire_date']))}
+                            <td data-value="{strtotime($expire_date[$ds['id']])}">
+                                {date( $config['df'], strtotime($expire_date[$ds['id']]))}
                             </td>
                             <td data-value="{strtotime($next_duedate[$ds['id']])}">
                                 {date( $config['df'], strtotime($next_duedate[$ds['id']]))}

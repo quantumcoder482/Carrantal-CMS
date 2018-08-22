@@ -516,23 +516,42 @@ switch ($action) {
 
         $pay_status_string=array();
         $next_duedate=array();
+        $expire_date=array();
         foreach($d as $data){
 
             // Expiry status calculation
             $expiry_id=$data['id'];
             $expiry_todate=$data['expiry_todate'];
-            $expire_date=$data['expire_date'];
             $pay_status=$data['pay_status'];
             $loan_duration=$data['loan_duration'];
+            $repay_cycle_type=$data['repay_cycle_type'];
 
-            $interval = new DateInterval('P'.($pay_status+1).'M');
+            switch ($repay_cycle_type) {
+                case 'weekly':
+                    $expire_date_interval=new DateInterval('P'.($loan_duration*7).'D');
+                    $interval = new DateInterval('P'.(($pay_status+1)*7).'D');
+                    break;
+                case 'monthly':
+                    $expire_date_interval=new DateInterval('P'.$loan_duration.'M');
+                    $interval = new DateInterval('P'.($pay_status+1).'M');
+                    break;
+                case 'yearly':
+                    $expire_date_interval=new DateInterval('P'.$loan_duration.'Y');
+                    $interval = new DateInterval('P'.($pay_status+1).'Y');
+                    break;
+                default:
+                    break;
+            }
+
+            $expire_date[$expiry_id]=date_create($data['loan_date'])->add($expire_date_interval);
+            $expire_date[$expiry_id]=$expire_date[$expiry_id]->format('Y-m-d');
             $next_duedate[$expiry_id]=date_create($data['loan_date'])->add($interval);
             $next_duedate[$expiry_id]=$next_duedate[$expiry_id]->format('Y-m-d');
             
             $today = date("Y-m-d");
             $date1 = date_create($today);
             $date2 = date_create($next_duedate[$expiry_id]);
-            $date3 = date_create($expire_date);
+            $date3 = date_create($expire_date[$expiry_id]);
             $rest= date_diff($date1,$date3);
             $rest= intval($rest->format("%a"));
 
@@ -570,6 +589,7 @@ switch ($action) {
         $ui->assign('view_type', $view_type);
         $ui->assign('d', $d);
         $ui->assign('next_duedate',$next_duedate);
+        $ui->assign('expire_date',$expire_date);
         $ui->assign('pay_status_string',$pay_status_string);
         $ui->assign('baseUrl',$baseUrl);
         $ui->assign('paginator', $paginator);
@@ -626,11 +646,24 @@ switch ($action) {
         $val['vehicle_num']=$loan['vehicle_num'];
         $val['date']=$loan['loan_date'];
         $val['duration']=$loan['loan_duration'];
+        $repay_cycle_type=$loan['repay_cycle_type'];
         
         // Expire Date
-        
-        $interval = new DateInterval('P'.$val['duration'].'M');
-        $val['expire_date']=date_create($loan['loan_date'])->add($interval);
+        switch ($repay_cycle_type) {
+            case 'weekly':
+                $expire_date_interval=new DateInterval('P'.($val['duration']*7).'D');
+                break;
+            case 'monthly':
+                $expire_date_interval=new DateInterval('P'.$val['duration'].'M');
+                break;
+            case 'yearly':
+                $expire_date_interval=new DateInterval('P'.$val['duration'].'Y');
+                break;
+            default:
+                break;
+        }
+
+        $val['expire_date']=date_create($val['date'])->add($expire_date_interval);
         $val['expire_date']=$val['expire_date']->format('Y-m-d');
         
         $val['repayment']=$loan['repay_cycle_type'];
@@ -640,8 +673,22 @@ switch ($action) {
         $val['total_due']=$val['amount']+$val['interest'];
         
         $next_duedate=array();
+
         for($i=1;$i<=$val['duration'];$i++){
-            $interval=new DateInterval('P'.$i.'M');
+            switch ($repay_cycle_type) {
+                case 'weekly':
+                    $interval = new DateInterval('P'.($i*7).'D');
+                    break;
+                case 'monthly':
+                    $interval = new DateInterval('P'.$i.'M');
+                    break;
+                case 'yearly':
+                    $interval = new DateInterval('P'.$i.'Y');
+                    break;
+                default:
+                    break;
+            }
+            
             $next_duedate[$i]=date_create($loan['loan_date'])->add($interval);
             $next_duedate[$i]=$next_duedate[$i]->format('Y-m-d');
         }

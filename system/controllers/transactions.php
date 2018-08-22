@@ -368,10 +368,11 @@ switch ($action) {
 
         // New
 
-
+ 
         $sub_type = _post('sub_type');
         $cat = _post('cats');
-        $tags = _post('tags');
+        $tags =  $_POST['tags'];
+        
         $attachments = _post('attachments');
         if (!is_numeric($payee)) {
             $payee = '0';
