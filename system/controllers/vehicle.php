@@ -7,9 +7,10 @@
 |
 */
 _auth();
-$ui->assign('_application_menu', 'vehicles');
-$ui->assign('_title', $_L['Vehicles']);
+$ui->assign('_title', $_L['Vehicles'] . '- ' . $config['CompanyName']);
 $ui->assign('_st', $_L['Vehicles']);
+$ui->assign('_application_menu', 'vehicles');
+$ui->assign('content_inner', inner_contents($config['c_cache']));
 $action = $routes['1'];
 $user = User::_info();
 $ui->assign('user', $user);
@@ -759,7 +760,7 @@ switch ($action) {
         $ui->assign('pay_status_string',$pay_status_string);
         $ui->assign('baseUrl',$baseUrl);
         $ui->assign('paginator', $paginator);
-         $ui->assign('xjq', '
+        $ui->assign('xjq', '
             $(\'.amount\').autoNumeric(\'init\', {
             dGroup: ' . $config['thousand_separator_placement'] . ',
             aPad: ' . $config['currency_decimal_digits'] . ',
@@ -777,6 +778,85 @@ switch ($action) {
         view('vehicle_loan_view');
 
         break;
+
+    case 'summary':
+
+        $id=$routes['2'];
+        
+        $paginator = array();
+        $mode_css = '';
+        $mode_js = '';
+        $view_type = 'default';
+        $view_type = 'filter';
+        $mode_css = Asset::css(array('dashboard/dashboard','fc/fc','fc/fc_ibilling','footable/css/footable.core.min','redactor/redactor','s2/css/select2.min','vehicle/vehicle_summary'));
+        $mode_js = Asset::js(array('dashboard/graph','waypoints/jquery.waypoints.min','waypoints/jquery.counterup.min','fc/fc','footable/js/footable.all.min','contacts/mode_search','redactor/redactor.min','numeric','s2/js/select2.min',
+            's2/js/i18n/'.lan()
+        ));
+
+
+        // $xheader .= Asset::css(array('dashboard/dashboard','fc/fc','fc/fc_ibilling','modal'));
+        // $xfooter .= Asset::js(array('dashboard/graph','numeric','waypoints/jquery.waypoints.min','waypoints/jquery.counterup.min','fc/fc','modal'),$file_build).$xtra;
+
+        $baseUrl=APP_URL;
+        $total_expense=0;
+        $total_sales=23233;
+        $net_profits=123212;
+        $expiry_days=120;   
+        
+        $pay_status_string['roadtax']="Paid";
+        $pay_status_string['insurance']="unPaid";
+        $pay_status_string['loan']="Due";
+        
+        
+        
+        $vehicle_info=ORM::for_table('sys_vehicles')->find_one($id);
+        $vehicle_num=$vehicle_info->vehicle_num;
+        
+        $expense=ORM::for_table('sys_transactions')->where('type','Expense')->where('vehicle_num',$vehicle_num)->order_by_desc('date')->find_many();
+        
+        foreach($expense as $exp){
+            $total_expense+=floatval($exp->amount);
+        }
+        
+        
+        $insurance=ORM::for_table('sys_vehicle_insurance')->where('vehicle_num',$vehicle_num)->find_many();
+        $roadtax=ORM::for_table('sys_vehicle_roadtax')->where('vehicle_num', $vehicle_num)->find_many();
+        
+        
+
+
+        $ui->assign('baseUrl',$baseUrl);
+        $ui->assign('total_expense', $total_expense);
+        $ui->assign('total_sales', $total_sales);
+        $ui->assign('net_profits',$net_profits);
+        $ui->assign('expiry_days',$expiry_days);
+        $ui->assign('pay_status_string',$pay_status_string);
+        $ui->assign('vehicle',$vehicle_info);
+        $ui->assign('roadtax',$roadtax);
+        $ui->assign('insurance',$insurance);
+        $ui->assign('xheader', $mode_css);
+        $ui->assign('xfooter', $mode_js);
+        $ui->assign('paginator', $paginator);
+        $ui->assign('xjq', '
+            $(\'.amount\').autoNumeric(\'init\', {
+            dGroup: ' . $config['thousand_separator_placement'] . ',
+            aPad: ' . $config['currency_decimal_digits'] . ',
+            pSign: \'' . $config['currency_symbol_position'] . '\',
+            aDec: \'' . $config['dec_point'] . '\',
+            aSep: \'' . $config['thousands_sep'] . '\',
+            vMax: \'9999999999999999.00\',
+                        vMin: \'-9999999999999999.00\'
+
+            });
+            $(\'[data-toggle="tooltip"]\').tooltip();
+
+        ');
+
+        view('vehicle_summary');
+
+
+        break;
+
 
     case 'modal_add_roadtax':
         

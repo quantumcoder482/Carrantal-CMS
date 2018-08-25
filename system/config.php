@@ -6,4 +6,4 @@ define('DB_PASSWORD', ''); # Database Password
 define('DB_NAME', 'demo1'); # Database Name
 define('APP_URL', 'http://192.168.0.131:10080'); # Application URL.
 #Please include http and do not use trailing slash after the url. For example use in this format- http://www.example.com Or http://www.example.com/finance
-define('APP_STAGE', 'Dev'); # Change Live to Dev to enable Debug
+define('APP_STAGE', 'Live'); # Change Live to Dev to enable Debug

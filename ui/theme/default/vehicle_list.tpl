@@ -32,6 +32,7 @@
                 <table class="table table-bordered table-hover sys_table footable" {if $view_type=='filter' } data-filter="#foo_filter" data-page-size="50"{/if}>
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th>{$_L['Image']}</th>
                             <th>{$_L['Vehicle No']}</th>
                             <th>{$_L['Make s Model']}</th>
@@ -47,6 +48,9 @@
 
                         {foreach $d as $ds}
                         <tr>
+                            <td>
+                                <a href="#" data-value="{$ds['id']}" >{$ds['id']}</a>
+                            </td>
                             <td data-value="{$ds['v_i']}" alt="{$ds['v_i']}">
                                 <a href="#" class="view_vehicle_img" id="{$ds['id']}">
                                     {if {$ds['v_i']} eq ''}
@@ -57,7 +61,7 @@
                                 </a>
                             </td>
 
-                            <td class="edit_vehicle" data-value="{$ds['vehicle_num']}" id="{$ds['id']}">
+                            <td class="vehicle_summary" data-value="{$ds['vehicle_num']}" id="{$ds['id']}">
                                 <a href="#">{$ds['vehicle_num']}</a>
                             </td>
                             <td data-value="{$ds['vehicle_type']}">
@@ -102,6 +106,9 @@
                                 {/if}
                             </td>
                             <td class="text-right">
+                                <a href="#" class="btn btn-primary btn-xs vehicle_summary" id="{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['Summary']}">
+                                    <i class="fa fa-search"></i>
+                                </a>
                                 <a href="#" class="btn btn-info btn-xs edit_vehicle" id="{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['Edit']}">
                                     <i class="fa fa-pencil"></i>
                                 </a>
@@ -119,7 +126,7 @@
                     {if $view_type == 'filter'}
                     <tfoot>
                         <tr>
-                            <td style="text-align: left;" colspan="9">
+                            <td style="text-align: left;" colspan="10">
                                 <ul class="pagination">
                                 </ul>
                             </td>

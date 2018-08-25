@@ -1158,8 +1158,25 @@ $_L = [
     'Select Vehicle' => 'Select Vehicle',
     'OUT' => 'OUT',
 
-
-
-    
+    'Vehicle Summary' => 'Vehicle Summary',
+    'Total Sales' => 'Total Sales',
+    'Net Profits' => 'Net Profits',
+    'Expiry Remaining Day' =>'Expiry Remaining Day',
+    'Remaining Days' => 'Remaining Days',
+    'Scrap Date' => 'Scrap Date',
+    'PARF Value' => 'PARF Value',
+    'Loan p Interest' => 'Loan + Interest',
+    'Miscellanous' => 'Miscellanous',
+    'Loan Repay' => 'Loan Repay',
+    'Recent Vehicle Sales' => 'Recent Vehicle Sales',
+    'View Vehicle Income' => 'View Vehicle Income',
+    'Recent Vehicle Expense' => 'Recent Vehicle Expense',
+    'View Vehicle Expense' => 'View Vehicle Expense',
+    'Vehicle Information' => 'Vehicle Information',
+    'Total Vehicle Depreciation' => 'Total Vehicle Depreciation',
+    'Payment Due' => 'Payment Due',
+    'Recent Vehicle Sales' => 'Recent Vehicle Sales',
+    'Recent Vehicle Expense' => 'Recent Vehicle Expense',
+    'Renew' => 'Renew',
 
 ];

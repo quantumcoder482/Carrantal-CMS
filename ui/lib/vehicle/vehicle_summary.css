@@ -1,0 +1,22 @@
+.summary-box{
+    margin:15px 15px 15px 15px;
+}
+
+.div-title{
+    margin:0px 15px;
+}
+.div-title h4{
+    float: left;
+    
+}
+.div-title a{
+    float:right;
+    
+}
+td .title{
+    font-weight: 600;
+    background-color: #f9f9f9;	
+}
+.table-p-info span{
+    margin-left:30px;
+}

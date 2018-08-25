@@ -109,6 +109,7 @@
 
             var $modal = $('#ajax-modal');
             var sysrender = $('#application_ajaxrender');
+           
             sysrender.on('click', '.cdelete', function(e){
                 e.preventDefault();
                 var id = this.id;
@@ -116,7 +117,7 @@
                 bootbox.confirm(lan_msg, function(result) {
                     if(result){
                         var _url = $("#_url").val();
-                        window.location.href = _url + "delete/customfield/" + id + '/';
+                        window.location.href = _url + "delete/custom_field/" + id + '/';
                     }
                 });
             });

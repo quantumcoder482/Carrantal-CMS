@@ -14,6 +14,17 @@ $(document).ready(function () {
     $('[data-toggle="tooltip"]').tooltip();
 
 
+    $('.vehicle_summary').on('click', function (e) {
+        
+        var id=this.id;
+
+        e.preventDefault();
+       
+        window.location.href=_url+"vehicle/summary/"+id;
+
+
+    });
+
     $('.edit_vehicle').on('click', function (e) {
         
         var id = this.id;

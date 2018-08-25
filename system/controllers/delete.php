@@ -224,7 +224,13 @@ switch ($action) {
         if($d){
 
             $d->delete();
-            r2(U.'settings/customfields/','s',$_L['Custom Field Deleted Successfully']);
+            if($d->ctype=='crm'){
+                r2(U.'settings/customfields/','s',$_L['Custom Field Deleted Successfully']);
+            }
+            if($d->ctype==='cvm'){
+                r2(U.'settings/custom-vehicle-fields/','s',$_L['Custom Field Deleted Successfully']);
+            }
+            
 
         }
         else{
