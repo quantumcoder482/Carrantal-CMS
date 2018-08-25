@@ -2749,7 +2749,7 @@ else{
             'dp/dist/datepicker.min',
         )));
 
-        $cf = ORM::for_table('crm_customfields')->where('ctype','cvm')->order_by_asc('id')->find_many();
+        $cf = ORM::for_table('sys_vehicle_customfields')->order_by_asc('id')->find_many();
 
         $ui->assign('cf',$cf);
 
@@ -2828,7 +2828,7 @@ else{
         }
         if($fieldname != ''){
 
-            $d = ORM::for_table('crm_customfields')->create();
+            $d = ORM::for_table('sys_vehicle_customfields')->create();
             $d->fieldname = $fieldname;
             $d->fieldtype = $fieldtype;
             $d->description = $description;
@@ -2888,7 +2888,7 @@ else{
             ib_die('Name is Required');
         }
 
-        $d = ORM::for_table('crm_customfields')->find_one($id);
+        $d = ORM::for_table('sys_vehicle_customfields')->find_one($id);
         if($d){
 
             $fieldtype = _post('fieldtype');

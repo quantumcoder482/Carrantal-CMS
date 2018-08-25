@@ -88,31 +88,18 @@
                                 </select>
     
                             </div>
-    
-    
                         </div>
-    
-    
-                        <div class="form-group">
-                            <label class="col-md-3 control-label" for="description">{$_L['Description']}</label>
-    
-                            <div class="col-md-9">
-                                <textarea id="description" name="description" class="form-control" rows="3">{$val['description']}</textarea>
-    
-                            </div>
-                        </div>
-    
     
                         {* if isset($customfield) *}
-                                {foreach $fs as $f}
+                            {foreach $fs as $f}
                             
                             <div class="form-group">
-                                <label class="col-lg-2 control-label" for="cf{$f['id']}">{$f['fieldname']}</label>
+                                <label class="col-md-3 control-label" for="cf{$f['id']}">{$f['fieldname']}</label>
                                 {if ($f['fieldtype']) eq 'text'}
                             
                             
-                                <div class="col-lg-10">
-                                    <input type="text" id="cf{$f['id']}" name="cf{$f['id']}" class="form-control"> {if ($f['description']) neq ''}
+                                <div class="col-md-9">
+                                    <input type="text" id="cf{$f['id']}" name="cf{$f['id']}" class="form-control" value={$cf_value[$f['id']]}> {if ($f['description']) neq ''}
                                     <span class="help-block">{$f['description']}</span>
                                     {/if}
                             
@@ -120,17 +107,20 @@
                             
                                 {elseif ($f['fieldtype']) eq 'password'}
                             
-                                <div class="col-lg-10">
+                                <div class="col-md-9">
                                     <input type="password" id="cf{$f['id']}" name="cf{$f['id']}" class="form-control"> {if ($f['description']) neq ''}
                                     <span class="help-block">{$f['description']}</span>
                                     {/if}
                                 </div>
                             
                                 {elseif ($f['fieldtype']) eq 'dropdown'}
-                                <div class="col-lg-10">
+                                <div class="col-md-9">
                                     <select id="cf{$f['id']}" name="cf{$f['id']}" class="form-control">
+                                        {if ($cf_value[$f['id']])}
+                                            <option value="{$cf_value[$f['id']]}" selected>{$cf_value[$f['id']]}</option>
+                                        {/if}
                                         {foreach explode(',',$f['fieldoptions']) as $fo}
-                                        <option value="{$fo}">{$fo}</option>
+                                            <option value="{$fo}">{$fo}</option>
                                         {/foreach}
                                     </select>
                                     {if ($f['description']) neq ''}
@@ -141,16 +131,16 @@
                             
                                 {elseif ($f['fieldtype']) eq 'textarea'}
                             
-                                <div class="col-lg-10">
-                                    <textarea id="cf{$f['id']}" name="cf{$f['id']}" class="form-control" rows="3"></textarea> {if ($f['description']) neq ''}
+                                <div class="col-md-9">
+                                    <textarea id="cf{$f['id']}" name="cf{$f['id']}" class="form-control" rows="3">{$cf_value[$f['id']]}</textarea> {if ($f['description']) neq ''}
                                     <span class="help-block">{$f['description']}</span>
                                     {/if}
                                 </div>
                             
                                 {elseif ($f['fieldtype']) eq 'date'}
                             
-                                <div class="col-lg-10">
-                                    <input type="text" id="cf{$f['id']}" name="cf{$f['id']}" class="form-control" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true"> {if ($f['description']) neq ''}
+                                <div class="col-md-9">
+                                    <input type="text" id="cf{$f['id']}" name="cf{$f['id']}" class="form-control datepicker" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true" value="{$cf_value[$f['id']]}"> {if ($f['description']) neq ''}
                                     <span class="help-block">{$f['description']}</span>
                                     {/if}
                                 </div>
@@ -162,6 +152,15 @@
                         <input type="hidden" name="vid" id="vid" value="{$val['id']}">
                         <input type="hidden" name="vehicle_file" id="vehicle_file" value="{$val['v_i']}">
                         <input type="hidden" name="cert_file" id="cert_file" value="{$val['v_o_c']}">
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="description">{$_L['Description']}</label>
+    
+                            <div class="col-md-9">
+                                <textarea id="description" name="description" class="form-control" rows="3">{$val['description']}</textarea>
+    
+                            </div>
+                        </div>
 
                     </form>
                 </div>

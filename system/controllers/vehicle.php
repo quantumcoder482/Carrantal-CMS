@@ -26,7 +26,7 @@ switch ($action) {
         foreach ($vehicle_types as $v) {
             array_push($v_types,$v['make']." ".$v['model']." ".$v['engine_capacity']." (".$v['transmission'].")");
         }
-        $fs = ORM::for_table('crm_customfields')->where('ctype','cvm')->order_by_asc('id')->find_many();
+        $fs = ORM::for_table('sys_vehicle_customfields')->order_by_asc('id')->find_many();
         $ui->assign('fs',$fs);
 
         $ui->assign('vehicle_types',$vehicle_types);
@@ -1621,8 +1621,26 @@ switch ($action) {
 
 
             $d->save();
+            $cid = $d->id();
 
+            //now add custom fields values
+            $fs = ORM::for_table('sys_vehicle_customfields')->order_by_asc('id')->find_many();
 
+            foreach($fs as $f){
+                $fvalue = _post('cf'.$f['id']);
+                if($id){
+                    $fc=ORM::for_table('sys_vehicle_customfieldsvalues')->where('relid',$id)->where('fieldid',$f['id'])->find_one();
+                    $fc->fvalue = $fvalue;
+                    $fc->save();
+                }else{
+                    $fc = ORM::for_table('sys_vehicle_customfieldsvalues')->create();
+                    $fc->fieldid = $f['id'];
+                    $fc->relid = $cid;
+                    $fc->fvalue = $fvalue;
+                    $fc->save();
+                }
+               
+            }
 
             echo $d->id();
         }
@@ -1641,8 +1659,16 @@ switch ($action) {
             $vehicle=ORM::for_table('sys_vehicles')->find_one($id);
         }
 
-        $fs = ORM::for_table('crm_customfields')->where('ctype','cvm')->order_by_asc('id')->find_many();
+        $fs = ORM::for_table('sys_vehicle_customfields')->where('ctype','cvm')->order_by_asc('id')->find_many();
         $ui->assign('fs',$fs);
+        $cf_value=array();
+        foreach ($fs as $f) {
+            $cf=ORM::for_table('sys_vehicle_customfieldsvalues')->where('relid',$id)->where('fieldid',$f->id)->find_one();
+            if($cf){
+                $cf_value[$f->id]=$cf->fvalue;
+            }    
+        }
+        $ui->assign('cf_value',$cf_value);
 
         $val=array();
 
