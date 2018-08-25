@@ -63,7 +63,7 @@
                         
                             <div class="col-md-8">
                                 <input type="text" id="insurance_total" name="insurance_total" class="form-control amount" autocomplete="off" data-a-sign="{$config['currency_code']} " 
-                                    data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}" data-d-group="2" value="{$val['insurance_total']}">
+                                    data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}" data-d-group="2" value="{$val['insurance_total']}"disabled>
                         
                             </div>
                         </div>
