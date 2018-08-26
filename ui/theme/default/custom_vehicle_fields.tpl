@@ -117,7 +117,7 @@
                 bootbox.confirm(lan_msg, function(result) {
                     if(result){
                         var _url = $("#_url").val();
-                        window.location.href = _url + "delete/custom_field/" + id + '/';
+                        window.location.href = _url + "delete/custom-vehicle-field/" + id + '/';
                     }
                 });
             });
@@ -172,7 +172,7 @@
                 var vid = this.id;
                 var id = vid.replace("f", "");
                 id = vid.replace("d", "");
-                $modal.load(_url + 'settings/customfields-ajax-edit/' + id,'', function(){
+                $modal.load(_url + 'settings/vehicle-customfields-ajax-edit/' + id,'', function(){
                     $modal.modal(
                         {
 

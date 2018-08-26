@@ -93,6 +93,22 @@
                                 </div>
 
 
+                                <div class="form-group"><label class="col-md-4 control-label" for="nric">{$_L['NRIC']}</label>
+                                
+                                    <div class="col-lg-8"><input type="text" id="nric" name="nric" class="form-control">
+                                
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group"><label class="col-md-4 control-label" for="lic_passdate">{$_L['License Pass Date']}</label>
+                                
+                                    <div class="col-lg-8"><input type="text" id="lic_passdate" name="lic_passdate" class="form-control" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true">
+                                
+                                    </div>
+                                </div>
+
+
                                 <div class="form-group"><label class="col-md-4 control-label" for="email">{$_L['Email']}</label>
 
                                     <div class="col-lg-8"><input type="text" id="email" name="email" class="form-control">
@@ -120,16 +136,6 @@
                                     </div>
 
                                 {/if}
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -13,9 +13,6 @@ $(document).ready(function () {
 
     $('[data-toggle="tooltip"]').tooltip();
 
- 
-
-
     $('.edit_roadtax').on('click', function (e) {
         
         var id = this.id;
@@ -83,6 +80,8 @@ $(document).ready(function () {
 
     $modal.on('click', '.modal_submit', function (e) {
 
+        $('#roadtax_total').prop('disabled', false);
+        
         e.preventDefault();
 
         $modal.modal('loading');

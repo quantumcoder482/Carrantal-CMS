@@ -26,9 +26,9 @@
                         <div class="form-group">
                             <label class="col-md-4 control-label" for="vehicle_type">{$_L['Vehicle No']}<small class="red">*</small></label>
     
-                            <div class="col-md-4">
+                            <div class="col-md-8">
     
-                                <select id="vehicle_num" name="vehicle_num" style="width:307px" class="form-control">
+                                <select id="vehicle_num" name="vehicle_num" style="width:100%" class="form-control">
                                     <option value="{$val['vehicle_num']}" selected>{$val['vehicle_num']}</option>
                                     {foreach $vehicles as $vehicle}
                                     <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']} - {$vehicle['vehicle_type']}</option>
@@ -63,7 +63,7 @@
                         
                             <div class="col-md-8">
                                 <input type="text" id="roadtax_total" name="roadtax_total" class="form-control amount" autocomplete="off" data-a-sign="{$config['currency_code']} "
-                                    data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}" data-d-group="2" value="{$val['roadtax_total']}"disabled>
+                                    data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}" data-d-group="2" value="{$val['roadtax_total']}" disabled>
                         
                             </div>
                         </div>
@@ -205,40 +205,28 @@
         $('.datepicker').datepicker();
 
         // Auto calculation amounts
-
         var roadtax_amount = $('#roadtax_amount');
         var rebate_amount = $('#rebate_amount');
         var roadtax_total = $('#roadtax_total');
 
         roadtax_amount.on("keyup", function () {
-            var amount = roadtax_amount.val().slice(2);
-            var rebate = rebate_amount.val().slice(2);
-            amount = parseFloat(amount.replace(',', ''));
-            if (rebate) {
-                rebate = parseFloat(rebate.replace(',', ''));
-            } else {
-                rebate = parseFloat(0);
-            }
-            if (!isNaN(amount - rebate)) {
-                roadtax_total.val("$ " + (amount - rebate));
-            }
+
+            var amount = roadtax_amount.val();
+            var rebate = rebate_amount.val();
+            amount = Number(amount.replace(/[^0-9.-]+/g, ""));
+            rebate = Number(rebate.replace(/[^0-9.-]+/g, ""));
+            roadtax_total.val("{$config['currency_code']} " + (amount - rebate));
 
         });
         rebate_amount.on("keyup", function () {
-            var amount = roadtax_amount.val().slice(2);
-            var rebate = rebate_amount.val().slice(2);
-            rebate = parseFloat(rebate.replace(',', ''));
-            if (amount) {
-                amount = parseFloat(amount.replace(',', ''));
-            } else {
-                amount = parseFloat(0);
-            }
-            if (!isNaN(amount - rebate)) {
-                roadtax_total.val("$ " + (amount - rebate));
-            }
+
+            var amount = roadtax_amount.val();
+            var rebate = rebate_amount.val();
+            amount = Number(amount.replace(/[^0-9.-]+/g, ""));
+            rebate = Number(rebate.replace(/[^0-9.-]+/g, ""));
+            roadtax_total.val("{$config['currency_code']} " + (amount - rebate));
 
         });
-
 
         var upload_resp;
         // Vehicle Image upload

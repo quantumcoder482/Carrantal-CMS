@@ -23,7 +23,7 @@
     
                             <div class="col-md-10">
     
-                                <select id="vehicle_num" name="vehicle_num" class="form-control">
+                                <select id="vehicle_num" name="vehicle_num" class="form-control" style="width:100%">
                                     <option value="" selected>{$_L['Select vehicle number']}</option>
                                     {foreach $vehicles as $vehicle}
                                     <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']} - {$vehicle['vehicle_type']}</option>
@@ -84,7 +84,7 @@
     
                             <div class="col-md-10">
     
-                                <select class="form-control" id="expiry_todate" name="expiry_todate">
+                                <select class="form-control" style="width:100%" id="expiry_todate" name="expiry_todate">
                                     <option value="">{$_L['Select expiry to date']}</option>
                                     <option value="7">7</option>
                                     <option value="14">14</option>
@@ -157,4 +157,57 @@
     
     </div>
 
+{/block}
+{block name="script"}
+<script>
+
+    $(document).ready(function () {
+
+        var insurance_amount = $('#insurance_amount');
+        var rebate_amount = $('#rebate_amount');
+        var insurance_total = $('#insurance_total');
+
+        insurance_amount.on("keyup", function () {
+
+            var amount = insurance_amount.val();
+            var rebate = rebate_amount.val();
+            amount = Number(amount.replace(/[^0-9.-]+/g, ""));
+            rebate = Number(rebate.replace(/[^0-9.-]+/g, ""));
+            insurance_total.val("{$config['currency_code']} " + (amount - rebate));
+
+        });
+        rebate_amount.on("keyup", function () {
+
+            var amount = insurance_amount.val();
+            var rebate = rebate_amount.val();
+            amount = Number(amount.replace(/[^0-9.-]+/g, ""));
+            rebate = Number(rebate.replace(/[^0-9.-]+/g, ""));
+            insurance_total.val("{$config['currency_code']} " + (amount - rebate));
+
+        });
+
+
+
+
+        function ib_autonumeric() {
+            $('.amount').autoNumeric('init', {
+
+                aSign: '{$config['currency_code']} ',
+                dGroup: {$config['thousand_separator_placement']},
+                aPad: {$config['currency_decimal_digits']},
+                pSign: '{$config['currency_symbol_position']}',
+                aDec: '{$config['dec_point']}',
+                aSep: '{$config['thousands_sep']}',
+                vMax: '9999999999999999.00',
+                vMin: '-9999999999999999.00'
+
+            });
+
+        }
+
+
+
+
+    });
+</script>
 {/block}

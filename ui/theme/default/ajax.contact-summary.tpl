@@ -5,6 +5,8 @@
    {if ($d['company']) neq ''}
        <strong>{$_L['Company Name']}: </strong> {$d['company']} <br>
    {/if}
+    <strong>{$_L['NRIC']}: </strong> {if ($d['nric']) neq ''} {$d['nric']} {else} N/A {/if} <br>
+    <strong>{$_L['License Pass Date']}: </strong> {if ($d['lic_passdate']) neq ''} {$d['lic_passdate']} {else} N/A {/if} <br>
     <strong>{$_L['Email']}: </strong> {if ($d['email']) neq ''} {$d['email']} {else} N/A {/if} <br>
 
     <strong>{$_L['Phone']}: </strong> {if ($d['phone']) neq ''} {$d['phone']} {else} N/A {/if} <br>

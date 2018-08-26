@@ -26,9 +26,9 @@
                         <div class="form-group">
                             <label class="col-md-4 control-label" for="vehicle_type">{$_L['Vehicle No']}<small class="red">*</small></label>
     
-                            <div class="col-md-4">
+                            <div class="col-md-8">
                                 
-                                <select id="vehicle_num" name="vehicle_num" style="width:307px" class="form-control">
+                                <select id="vehicle_num" name="vehicle_num" style="width:100%" class="form-control">
                                     <option value="{$val['vehicle_num']}" selected>{$val['vehicle_num']}</option>
                                     {foreach $vehicles as $vehicle}
                                     <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']} - {$vehicle['vehicle_type']}</option>

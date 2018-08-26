@@ -30,6 +30,24 @@
         </div>
     </div>
 
+    <div class="form-group"><label class="col-lg-2 control-label" for="nric">{$_L['NRIC']}</label>
+
+        <div class="col-lg-10"><input type="text" id="nric" name="nric" class="form-control" value="{$d['nric']}">
+
+        </div>
+    </div>
+
+
+    <div class="form-group"><label class="col-lg-2 control-label" for="lic_passdate">{$_L['License Pass Date']}</label>
+
+        <div class="col-lg-10"><input type="text" id="lic_passdate" name="lic_passdate" class="form-control" datepicker data-date-format="yyyy-mm-dd"
+                data-auto-close="true" value="{$d['lic_passdate']}">
+
+        </div>
+    </div>
+
+
+
     <div class="form-group"><label class="col-lg-2 control-label" for="edit_email">{$_L['Email']}</label>
 
         <div class="col-lg-10"><input type="text" id="edit_email" name="edit_email" class="form-control" value="{$d['email']}">

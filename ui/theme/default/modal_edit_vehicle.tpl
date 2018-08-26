@@ -30,7 +30,7 @@
     
                             <div class="col-md-9">
     
-                                <select id="vehicle_type" name="vehicle_type" style="width:374px" class="form-control">
+                                <select id="vehicle_type" name="vehicle_type" style="width:100%" class="form-control">
                                     <option value="{$val['vehicle_type']}" selected>{$val['vehicle_type']}</option>
                                     {foreach $v_types as $v_type}
                                     <option value="{$v_type}">{$v_type}</option>
@@ -79,7 +79,7 @@
     
                             <div class="col-md-9">
     
-                                <select class="form-control" id="expiry_status" style="width:374px" name="expiry_status">
+                                <select class="form-control" id="expiry_status" style="width:100%" name="expiry_status">
                                     <option value="{$val['expiry_status']}" selected>{$val['expiry_status']}</option>
                                     <option value="7">7</option>
                                     <option value="14">14</option>
@@ -115,9 +115,11 @@
                             
                                 {elseif ($f['fieldtype']) eq 'dropdown'}
                                 <div class="col-md-9">
-                                    <select id="cf{$f['id']}" name="cf{$f['id']}" class="form-control">
+                                    <select id="cf{$f['id']}" name="cf{$f['id']}" class="form-control" style="width:100%">
                                         {if ($cf_value[$f['id']])}
                                             <option value="{$cf_value[$f['id']]}" selected>{$cf_value[$f['id']]}</option>
+                                        {else}
+                                            <option value=""></option>
                                         {/if}
                                         {foreach explode(',',$f['fieldoptions']) as $fo}
                                             <option value="{$fo}">{$fo}</option>

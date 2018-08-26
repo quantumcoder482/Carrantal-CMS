@@ -573,6 +573,8 @@ $i = ORM::for_table('sys_invoices')->where('userid',$cid)->find_many();
         $company = '';
         $cid = 0;
 
+        $nric=_post('nric');
+        $lic_passdate=_post('lic_passdate');
         $email = _post('email');
         $username = _post('username');
         $phone = _post('phone');
@@ -663,6 +665,13 @@ $i = ORM::for_table('sys_invoices')->where('userid',$cid)->find_many();
 //        if($chk){
 //            $msg .= 'Account already exist <br>';
 //        }
+        if($nric != ''){
+            $f=ORM::for_table('crm_accounts')->where('nric',$nric)->find_one();
+            if($f){
+                $msg.=$_L['NRIC already exist'];
+            }
+        }
+
 
         if($email != ''){
             if(Validator::Email($email) == false){
@@ -741,6 +750,8 @@ $i = ORM::for_table('sys_invoices')->where('userid',$cid)->find_many();
             $d = ORM::for_table('crm_accounts')->create();
 
             $d->account = $account;
+            $d->nric=$nric;
+            $d->lic_passdate=$lic_passdate;
             $d->email = $email;
             $d->phone = $phone;
             $d->address = $address;
@@ -992,6 +1003,10 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
 
             }
 
+            $nric=_post('nric');
+           
+            $lic_passdate=_post('lic_passdate');
+
             $email = _post('edit_email');
 
             if(isset($_POST['tags'])){
@@ -1060,6 +1075,15 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
 //            if($country == ''){
 //                $msg .= 'Country is required <br>';
 //            }
+                if($nric != ''){
+                    if($nric != $d['nric']){
+                        $f=ORM::for_table('crm_account')->where('nric',$nric)->find_one();
+                        if($f){
+                            $msg.=$_L['NRIC already exist'].' <br>';
+                        }
+                    }
+                }
+
                 if($email != ''){
 
                 if($email != ($d['email'])){
@@ -1103,7 +1127,8 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
                 $d->company = $company;
                 $d->cid = $company_id;
 
-
+                $d->nric=$nric;
+                $d->lic_passdate=$lic_passdate;
                 $d->email = $email;
                 $d->tags = Arr::arr_to_str($tags);
                 $d->phone = $phone;

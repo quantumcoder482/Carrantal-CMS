@@ -23,7 +23,7 @@
     
                             <div class="col-md-10">
     
-                                <select id="vehicle_num" name="vehicle_num" class="form-control">
+                                <select id="vehicle_num" name="vehicle_num" class="form-control" style="width:100%">
                                     <option value="" selected>{$_L['Select vehicle number']}</option>
                                     {foreach $vehicles as $vehicle}
                                     <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']} - {$vehicle['vehicle_type']}</option>
@@ -58,7 +58,7 @@
                         
                             <div class="col-md-10">
                                 <input type="text" id="roadtax_total" name="roadtax_total" class="form-control amount" autocomplete="off" data-a-sign="{$config['currency_code']} "
-                                    data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}" data-d-group="2" value=""disabled>
+                                    data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}" data-d-group="2" value="" disabled>
                         
                             </div>
                         </div>
@@ -150,4 +150,57 @@
     
     </div>
 
+{/block}
+{block name="script"}
+<script>
+
+    $(document).ready(function () {
+        
+        var roadtax_amount = $('#roadtax_amount');
+        var rebate_amount = $('#rebate_amount');
+        var roadtax_total = $('#roadtax_total');
+
+        roadtax_amount.on("keyup", function () {
+
+            var amount = roadtax_amount.val();
+            var rebate = rebate_amount.val();
+            amount = Number(amount.replace(/[^0-9.-]+/g, ""));
+            rebate = Number(rebate.replace(/[^0-9.-]+/g, ""));
+            roadtax_total.val("{$config['currency_code']} " + (amount - rebate));
+          
+        });
+        rebate_amount.on("keyup", function () {
+
+            var amount = roadtax_amount.val();
+            var rebate = rebate_amount.val();
+            amount = Number(amount.replace(/[^0-9.-]+/g, ""));
+            rebate = Number(rebate.replace(/[^0-9.-]+/g, ""));
+            roadtax_total.val("{$config['currency_code']} "+(amount - rebate));
+            
+        });
+        
+
+
+
+        function ib_autonumeric() {
+            $('.amount').autoNumeric('init', {
+
+                aSign: '{$config['currency_code']} ',
+                dGroup: {$config['thousand_separator_placement']},
+                aPad: {$config['currency_decimal_digits']},
+                pSign: '{$config['currency_symbol_position']}',
+                aDec: '{$config['dec_point']}',
+                aSep: '{$config['thousands_sep']}',
+                vMax: '9999999999999999.00',
+                vMin: '-9999999999999999.00'
+
+            });
+
+        }
+
+
+
+
+    });
+</script>
 {/block}

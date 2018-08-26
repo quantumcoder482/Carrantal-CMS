@@ -26,9 +26,9 @@
                         <div class="form-group">
                             <label class="col-md-4 control-label" for="vehicle_type">{$_L['Vehicle No']}<small class="red">*</small></label>
     
-                            <div class="col-md-4">
+                            <div class="col-md-8">
     
-                                <select id="vehicle_num" name="vehicle_num" style="width:307px" class="form-control">
+                                <select id="vehicle_num" name="vehicle_num" style="width:100%" class="form-control">
                                     <option value="{$val['vehicle_num']}" selected>{$val['vehicle_num']}</option>
                                     {foreach $vehicles as $vehicle}
                                     <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']} - {$vehicle['vehicle_type']}</option>
@@ -218,31 +218,21 @@
         var insurance_total = $('#insurance_total');
 
         insurance_amount.on("keyup", function () {
-            var amount = insurance_amount.val().slice(2);
-            var rebate = rebate_amount.val().slice(2);
-            amount = parseFloat(amount.replace(',', ''));
-            if (rebate) {
-                rebate = parseFloat(rebate.replace(',', ''));
-            } else {
-                rebate = parseFloat(0);
-            }
-            if (!isNaN(amount - rebate)) {
-                insurance_total.val("$ " + (amount - rebate));
-            }
+
+            var amount = insurance_amount.val();
+            var rebate = rebate_amount.val();
+            amount = Number(amount.replace(/[^0-9.-]+/g, ""));
+            rebate = Number(rebate.replace(/[^0-9.-]+/g, ""));
+            insurance_total.val("{$config['currency_code']} " + (amount - rebate));
 
         });
         rebate_amount.on("keyup", function () {
-            var amount = insurance_amount.val().slice(2);
-            var rebate = rebate_amount.val().slice(2);
-            rebate = parseFloat(rebate.replace(',', ''));
-            if (amount) {
-                amount = parseFloat(amount.replace(',', ''));
-            } else {
-                amount = parseFloat(0);
-            }
-            if (!isNaN(amount - rebate)) {
-                insurance_total.val("$ " + (amount - rebate));
-            }
+
+            var amount = insurance_amount.val();
+            var rebate = rebate_amount.val();
+            amount = Number(amount.replace(/[^0-9.-]+/g, ""));
+            rebate = Number(rebate.replace(/[^0-9.-]+/g, ""));
+            insurance_total.val("{$config['currency_code']} " + (amount - rebate));
 
         });
 

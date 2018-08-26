@@ -94,6 +94,7 @@ $(document).ready(function () {
 
 
     ib_submit.click(function (e) {
+        $('#insurance_total').prop('disabled', false);
         e.preventDefault();
         $('#ibox_form').block({ message: null });
 

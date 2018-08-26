@@ -92,12 +92,12 @@ switch ($action) {
             echo '<table class="table table-hover" width="100%">
                   <tbody>
                     <tr>
-                        <td width="15%" > '.$_L['Image'].'</td>
-                        <td width="15%" class="project-title">'.$_L['Name'].'</td>
-                        <td width="15%">'.$_L['Cost Price'].'</td>
-                        <td width="15%">'.$_L['Sales Price'].'</td>
-                        <td width="15%">'.$_L['Inventory'].'</td>
-                        <td width="25%" class="project-actions" >'.$_L['Manage'].'</td>
+                        <td width="20%" > '.$_L['Image'].'</td>
+                        <td width="20%" class="project-title">'.$_L['Name'].'</td>
+                        <td width="13%">'.$_L['Cost Price'].'</td>
+                        <td width="13%">'.$_L['Sales Price'].'</td>
+                        <td width="13%">'.$_L['Inventory'].'</td>
+                        <td width="21%" class="project-actions" >'.$_L['Manage'].'</td>
                     </tr>';
 
             foreach ($d as $ds){

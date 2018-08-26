@@ -122,7 +122,7 @@
                             <div class="form-group">
                                 <label for="sub_type" class="col-md-3 control-label">Type</label>
                                 <div class="col-md-9">
-                                    <select id="sub_type" name="sub_type" class="form-control">
+                                    <select id="sub_type" name="sub_type" class="form-control" style="width:100%">
 
                                         {foreach $expense_types as $expense_type}
                                             <option value="{$expense_type->name}">{$expense_type->name}</option>

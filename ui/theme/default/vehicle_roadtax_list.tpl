@@ -43,7 +43,7 @@
                 </form>
                 {/if}
 
-                <table class="table table-bordered table-hover sys_table footable" {if $view_type=='filter' } data-filter="#foo_filter" data-page-size="50"{/if}>
+                <table class="table table-bordered table-hover sys_table footable" {if $view_type=='filter' } data-filter="#foo_filter" data-page-size="10"{/if}>
                     <thead>
                         <tr>
                             <th>#</th>

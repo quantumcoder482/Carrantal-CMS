@@ -17,7 +17,7 @@ $ui->assign('user', $user);
 
 switch ($action) {
 
-    case 'add_vehicle':
+    case 'add_vehicle': 
 
         $vehicle_types=ORM::for_table('sys_vehicle_type')->order_by_asc('id')->find_array();
 
@@ -1630,8 +1630,17 @@ switch ($action) {
                 $fvalue = _post('cf'.$f['id']);
                 if($id){
                     $fc=ORM::for_table('sys_vehicle_customfieldsvalues')->where('relid',$id)->where('fieldid',$f['id'])->find_one();
-                    $fc->fvalue = $fvalue;
-                    $fc->save();
+                    if($fc){
+                        $fc->fvalue = $fvalue;
+                        $fc->save();
+                    }else{
+                        $fc = ORM::for_table('sys_vehicle_customfieldsvalues')->create();
+                        $fc->fieldid = $f['id'];
+                        $fc->relid = $cid;
+                        $fc->fvalue = $fvalue;
+                        $fc->save();    
+                    }
+                    
                 }else{
                     $fc = ORM::for_table('sys_vehicle_customfieldsvalues')->create();
                     $fc->fieldid = $f['id'];
@@ -1659,11 +1668,12 @@ switch ($action) {
             $vehicle=ORM::for_table('sys_vehicles')->find_one($id);
         }
 
-        $fs = ORM::for_table('sys_vehicle_customfields')->where('ctype','cvm')->order_by_asc('id')->find_many();
+        $fs = ORM::for_table('sys_vehicle_customfields')->order_by_asc('id')->find_many();
         $ui->assign('fs',$fs);
         $cf_value=array();
         foreach ($fs as $f) {
             $cf=ORM::for_table('sys_vehicle_customfieldsvalues')->where('relid',$id)->where('fieldid',$f->id)->find_one();
+            $cf_value[$f->id]='';
             if($cf){
                 $cf_value[$f->id]=$cf->fvalue;
             }    

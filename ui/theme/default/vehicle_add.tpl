@@ -30,7 +30,7 @@
                         
                             <div class="col-lg-10">
                         
-                                <select id="vehicle_type" name="vehicle_type" class="form-control">
+                                <select id="vehicle_type" name="vehicle_type" class="form-control" style="width:100%">
                                     <option value="0">{$_L['Select Make s Model']}</option>
                                     {foreach $v_types as $v_type}
                                      <option value="{$v_type}" >{$v_type}</option>
@@ -77,7 +77,7 @@
 
                             <div class="col-lg-10">
 
-                                <select class="form-control" id="expiry_status" name="expiry_status">
+                                <select class="form-control" style="width:100%" id="expiry_status" name="expiry_status">
                                     <option value=""></option>
                                     <option value="7">7</option>
                                     <option value="14">14</option>
@@ -127,7 +127,8 @@
                         
                             {elseif ($f['fieldtype']) eq 'dropdown'}
                             <div class="col-lg-10">
-                                <select id="cf{$f['id']}" name="cf{$f['id']}" class="form-control">
+                                <select id="cf{$f['id']}" name="cf{$f['id']}" class="form-control" style="width:100%">
+                                    <option value=""></option>
                                     {foreach explode(',',$f['fieldoptions']) as $fo}
                                     <option value="{$fo}">{$fo}</option>
                                     {/foreach}

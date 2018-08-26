@@ -1178,5 +1178,8 @@ $_L = [
     'Recent Vehicle Sales' => 'Recent Vehicle Sales',
     'Recent Vehicle Expense' => 'Recent Vehicle Expense',
     'Renew' => 'Renew',
+    'NRIC' => 'NRIC',
+    'License Pass Date' => 'License Pass Date',
+    'NRIC already exist' => 'NRIC already exist',
 
 ];

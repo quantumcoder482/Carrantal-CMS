@@ -215,6 +215,26 @@ switch ($action) {
         break;
 
 
+    case 'custom-vehicle-field':
+
+        $id = $routes[2];
+        $id = str_replace('d','',$id);
+
+        $d = ORM::for_table('sys_vehicle_customfields')->find_one($id);
+        if($d){
+
+            $d->delete();
+            r2(U.'settings/custom-vehicle-fields/','s',$_L['Custom Field Deleted Successfully']);
+            
+        }
+        else{
+            echo 'Custom Field Not found';
+        }
+
+    
+        break;
+    
+    
     case 'customfield':
 
         $id = $routes[2];
@@ -224,14 +244,8 @@ switch ($action) {
         if($d){
 
             $d->delete();
-            if($d->ctype=='crm'){
-                r2(U.'settings/customfields/','s',$_L['Custom Field Deleted Successfully']);
-            }
-            if($d->ctype==='cvm'){
-                r2(U.'settings/custom-vehicle-fields/','s',$_L['Custom Field Deleted Successfully']);
-            }
+            r2(U.'settings/customfields/','s',$_L['Custom Field Deleted Successfully']);
             
-
         }
         else{
             echo 'Custom Field Not found';

@@ -2878,6 +2878,24 @@ else{
         break;
 
 
+    case 'vehicle-customfields-ajax-edit':
+
+        $id = $routes[2];
+        $id = str_replace('f','',$id);
+
+        $d = ORM::for_table('sys_vehicle_customfields')->find_one($id);
+        if($d){
+            $ui->assign('d',$d);
+            view('ajax-edit-custom-field');
+        }
+        else{
+            echo 'Not Found';
+        }
+
+
+        break;
+
+
     case 'custom-vehicle-field-edit-post':
 
         $id = _post('id');
