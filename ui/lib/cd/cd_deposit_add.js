@@ -20,6 +20,14 @@ $(document).ready(function () {
         theme:"bootstrap"
     });
 
+    $('#customer').select2({
+        theme:"bootstrap"
+    });
+
+    $('#repay_cycle_type').select2({
+        theme:"bootstrap"
+    });
+
     var _url = $("#_url").val();
     var ib_submit = $("#submit");
     var $ref_img = $("#ref_img");
@@ -30,7 +38,7 @@ $(document).ready(function () {
     // Vehicle Image upload
     var ib_file = new Dropzone("#upload_container",
         {
-            url: _url + "vehicle/upload/",
+            url: _url + "cd/upload/",
             maxFiles: 1
         }
     );
@@ -60,11 +68,11 @@ $(document).ready(function () {
 
 
     ib_submit.click(function (e) {
-        $('#insurance_total').prop('disabled', false);
+        $('#balance').prop('disabled', false);
         e.preventDefault();
         $('#ibox_form').block({ message: null });
 
-        $.post(_url + 'vehicle/post_insurance', $("#rform").serialize())
+        $.post(_url + 'cd/post_deposit', $("#rform").serialize())
             .done(function (data) {
 
                 if ($.isNumeric(data)) {

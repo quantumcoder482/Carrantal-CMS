@@ -679,10 +679,42 @@ switch ($action) {
 
     case 'cats':
 
+        break;
+
+
+    case 'view_img':
+        $id=$routes['2'];
+        $d = ORM::for_table('sys_items')->find_one($id);
+        $img_path=APP_URL."/storage/items/".$d->image;
+
+        // echo "<img src='".$img_path."' width='300px'>";
+        
+        echo "
+            <div class='modal-header'>
+               <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button>
+               <h3>".$d['name']."</h3>
+            </div>
+
+            <div class='modal-body'>
+                    <div class='row'>
+                        <div class='col-md-12'>
+                            <img src='".$img_path."' width='100%' />
+                        </div>
+                    </div>
+            </div>
+            <div class='modal-footer'>
+            <button class='btn btn-primary view_submit' type='submit' id='view_submit'>".$_L['Close']."</button>
+
+            </div>";
+
+
+
+
 
 
 
         break;
+
 
 
     case 'upload':
@@ -729,7 +761,7 @@ switch ($action) {
             // resize the image to exactly 100x100 pixels by using the "crop from center" method
             // (read more in the overview section or in the documentation)
             //  and if there is an error, check what the error is about
-            if (!$image->resize(100, 100, ZEBRA_IMAGE_CROP_CENTER)) {
+            if (!$image->resize(200, 100, ZEBRA_IMAGE_CROP_CENTER)) {
 
 
 

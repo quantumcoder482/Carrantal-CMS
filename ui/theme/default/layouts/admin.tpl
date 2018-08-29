@@ -187,8 +187,37 @@
                     {/if}
 
 
+                    {$admin_extra_nav[3]} 
+                     
+                    {if has_access($user->roleid,'contract_deposit')}
+                    
+                    <li class="{if $_application_menu eq 'contract_deposit'}active{/if}">
+                        <a href="#">
+                            <i class="fa fa-certificate"></i>
+                            <span class="nav-label">{$_L['Contract n Deposit']}</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="{$_url}cd/add_contract/">{$_L['Add Contract']}</a>
+                            </li>
+                            <li>
+                                <a href="{$_url}cd/contract_list/">{$_L['Contract']}</a>
+                            </li>
+                            <li>
+                                <a href="{$_url}cd/add_deposit/">{$_L['Add Deposit']}</a>
+                            </li>
+                            <li>
+                                <a href="{$_url}cd/deposit_list/">{$_L['Deposit']}</a>
+                            </li>
+                            
+                        </ul>
+                    </li>
+                    
+                    {/if}
 
-                    {$admin_extra_nav[3]}
+
+                    {$admin_extra_nav[4]}
 
                     {if has_access($user->roleid,'transactions')}
                         {if $config['accounting'] eq '1'}
@@ -204,6 +233,7 @@
                                     {/if}
 
                                     <li><a href="{$_url}transactions/list/">{$_L['View Transactions']}</a></li>
+                                    <li><a href="{$_url}transactions/vehicle_transactions_list/">{$_L['Vehicle Transactions']}</a></li>
                                     <li><a href="{$_url}accounts/balances/transactions">{$_L['Balance Sheet']}</a></li>
                                 </ul>
                             </li>
@@ -211,7 +241,7 @@
                     {/if}
 
 
-                    {$admin_extra_nav[4]}
+                    {$admin_extra_nav[5]}
 
 
                     {if has_access($user->roleid,'sales')}
@@ -455,7 +485,7 @@
                     {/if}
 
 
-                    {$admin_extra_nav[5]}
+                    {$admin_extra_nav[6]}
 
                     {if has_access($user->roleid,'bank_n_cash')}
                         {if $config['accounting'] eq '1'}
@@ -474,7 +504,7 @@
                     {/if}
 
 
-                    {$admin_extra_nav[6]}
+                    {$admin_extra_nav[7]}
 
 
                     {if has_access($user->roleid,'products_n_services')}
@@ -502,7 +532,7 @@
 
                     
 
-                    {$admin_extra_nav[7]}
+                    {$admin_extra_nav[8]}
 
                     {if has_access($user->roleid,'reports')}
 

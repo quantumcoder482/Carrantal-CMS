@@ -123,6 +123,49 @@
                 </table>
                 {$paginator['contents']}
             </div>
+            <div class="ibox-title">
+                <h5>{$_L['Recent Expense Transactions']}</h5>
+            </div>
+            <div class="ibox-content">
+                <table class="table table-bordered table-hover sts_table footable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>{$_L['Date']}</th>
+                            <th>{$_L['Account']}</th>
+                            <th>{$_L['Vehicle No']}</th>
+                            <th>{$_L['Category']}</th>
+                            <th>{$_L['Amount']}</th>
+                            <th>{$_L['Description']}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {*foreach $transactions as $t*}
+                        {if $transactions neq ''}
+                        <tr>
+                            <td>{$transactions[0]['id']}</td>
+                            <td> {date( $config['df'], strtotime($transactions[0]['date']))}</td>
+                            <td>{$transactions[0]['account']}</td>
+                            <td><a href="#">{$transactions[0]['vehicle_num']}</a></td>
+                            <td>{$transactions[0]['category']}</td>
+                            <td class="amount" data-a-sign="{if $ds['currency_symbol'] eq ''} {$config['currency_code']} {else} {$ds['currency_symbol']}{/if}">{$transactions[0]['amount']}</td>
+                            <td>{$transactions[0]['description']}</td>
+                        </tr>
+                        {else}
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        {/if}
+                        {*/foreach*}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

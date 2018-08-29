@@ -80,6 +80,11 @@ switch ($action) {
 
         $msg = '';
 
+        // Case vehicle deposit 
+        $did=_post('did');
+        $firstdeposit_flag=_post('firstdeposit_flag');
+        
+        
         Event::trigger('transactions/deposit-post/');
         $account = _post('account');
         $date = _post('date');
@@ -87,6 +92,7 @@ switch ($action) {
         /* @since v2. added support for ',' as decimal separator */
         $amount = Finance::amount_fix($amount);
         $payerid = _post('payer');
+        $vehicle_num=_post('vehicle_num');
 
 
         $ref = _post('ref');
@@ -238,6 +244,7 @@ switch ($action) {
             $d->method = $pmethod;
             $d->ref = $ref;
             $d->description = $description;
+            $d->vehicle_num=$vehicle_num;
 
             // Build 4560
 
@@ -269,7 +276,27 @@ switch ($action) {
             _msglog('s', $_L['Transaction Added Successfully']);
 
             // find the category and adjust balance
+            if($did){
+               
+                if($firstdeposit_flag){
+                    $vehicle_deposit=ORM::for_table('sys_vehicle_deposit')->where('id', $did)->find_one();
+                    $vehicle_deposit->first_paystatus=$tid;
+                    $vehicle_deposit->save();
+                }elseif($cat=='Vehicle Deposit'){
+                    
+                    $vehicle_deposit=ORM::for_table('sys_vehicle_deposit')->where('id', $did)->find_one();
+                    $vehicle_deposit->pay_status+=1;
+                    $vehicle_deposit->save();
+                   
+                    $vehicle_depositlog=ORM::for_table('sys_vehicle_depositlog')->create();
+                    $vehicle_depositlog->deposit_id=$did;
+                    $vehicle_depositlog->transaction_date=$date;
+                    $vehicle_depositlog->transaction_amount=$amount;
+                    $vehicle_depositlog->save();
 
+                }
+
+            }
 
             echo $tid;
         }
@@ -346,7 +373,6 @@ switch ($action) {
         $eid=_post('eid');
 
         $account = _post('account');
-        $vehicle_num=_post('vehicle_num');
         $date = _post('date');
         $amount = _post('amount');
         $amount = Finance::amount_fix($amount);
@@ -542,13 +568,13 @@ switch ($action) {
                 switch ($cat) {
                     case 'Road Tax':
                         $vehicle_roadtax=ORM::for_table('sys_vehicle_roadtax')->where('id', $eid)->find_one();
-                        $vehicle_roadtax->pay_status=$tid-1;
+                        $vehicle_roadtax->pay_status=$tid;
                         $vehicle_roadtax->save();
                         break;
                     
                     case 'Insurance':
                         $vehicle_insurance=ORM::for_table('sys_vehicle_insurance')->where('id', $eid)->find_one();
-                        $vehicle_insurance->pay_status=$tid-1;
+                        $vehicle_insurance->pay_status=$tid;
                         $vehicle_insurance->save();
                         break;
                     
@@ -883,6 +909,68 @@ switch ($action) {
         ]);
         break;
 
+
+    case 'vehicle_transactions_list':
+
+        Event::trigger('transactions/vehicle_transactions_list/');
+        $cid = route(2);
+        if ($cid == '' || $cid == '0') {
+            $ui->assign('p_cid', '');
+        }
+        else {
+            $ui->assign('p_cid', $cid);
+        }
+
+        $tr_type = route(3);
+        if ($tr_type == 'income') {
+            $tr_type = 'Income';
+        }
+        elseif ($tr_type == 'expense') {
+            $tr_type = 'Expense';
+        }
+        else {
+            $tr_type = '';
+        }
+
+        $parent_menu = route(4);
+        if ($parent_menu == 'reports') {
+            $ui->assign('_application_menu', 'reports');
+        }
+
+        $account = route(3);
+        if ($account == '' || $account == '0') {
+            $ui->assign('p_account', '');
+        }
+        else {
+            $ui->assign('p_account', $account);
+        }
+
+        $c = ORM::for_table('crm_accounts')->select('id')->select('account')->select('company')->select('email')->order_by_desc('id')->find_many();
+        $ui->assign('c', $c);
+        $a = ORM::for_table('sys_accounts')->find_array();
+        $ui->assign('a', $a);
+        $vehicles=ORM::for_table('sys_vehicles')->find_array();
+        $ui->assign('vehicles',$vehicles);
+        $ui->assign('xheader', Asset::css(array(
+            's2/css/select2.min',
+            'dt/dt',
+            'daterangepicker/daterangepicker'
+        )));
+        $ui->assign('xfooter', Asset::js(array(
+            's2/js/select2.min',
+            's2/js/i18n/' . lan() ,
+            'dt/dt',
+            'daterangepicker/daterangepicker',
+            'transactions/vehicle_list'
+        )));
+        view('transactions_vehicle_list', [
+            'tr_type' => $tr_type,
+            'expense_categories' => ORM::for_table('sys_cats')->where('type','expense')->order_by_asc('sorder')->find_array()
+
+        ]);
+        break;
+
+
     case 'a':
         Event::trigger('transactions/a/');
         $d = ORM::for_table('sys_accounts')->find_many();
@@ -1145,6 +1233,65 @@ switch ($action) {
         }
         else {
             r2(U . 'transactions/list', 'e', $_L['Transaction_Not_Found']);
+        }
+
+        break;
+
+
+    case 'vehicle_manage':
+        
+        Event::trigger('transactions/vehicle_manage/');
+        $id = $routes['2'];
+        $t = ORM::for_table('sys_transactions')->find_one($id);
+        if ($t) {
+            $p = ORM::for_table('crm_accounts')->find_many();
+            $ui->assign('p', $p);
+            $ui->assign('t', $t);
+            $d = ORM::for_table('sys_accounts')->find_many();
+            $ui->assign('d', $d);
+            $icat = '1';
+            if (($t['type']) == 'Income') {
+                $cats = ORM::for_table('sys_cats')->where('type', 'Income')->find_many();
+                $tags = Tags::get_all('Income');
+            }
+            elseif (($t['type']) == 'Expense') {
+                $cats = ORM::for_table('sys_cats')->where('type', 'Expense')->find_many();
+                $tags = Tags::get_all('Expense');
+            }
+            else {
+                $cats = '0';
+                $icat = '0';
+                $tags = Tags::get_all('Transfer');
+            }
+
+            $vehicle_num=$t->vehicle_num;
+            $vehicle=ORM::for_table('sys_vehicles')->where('vehicle_num',$vehicle_num)->find_one();
+            $vehicle_num=$vehicle_num." - ".$vehicle->vehicle_type;
+            $ui->assign('vehicle_num',$vehicle_num);
+            $ui->assign('tags', $tags);
+            $dtags = explode(',', $t['tags']);
+            $ui->assign('dtags', $dtags);
+            $ui->assign('icat', $icat);
+            $ui->assign('cats', $cats);
+            $pms = ORM::for_table('sys_pmethods')->find_many();
+            $ui->assign('pms', $pms);
+            $ui->assign('mdate', $mdate);
+            $ui->assign('xheader', Asset::css(array(
+                's2/css/select2.min',
+                'dp/dist/datepicker.min'
+            )));
+            $ui->assign('xfooter', Asset::js(array(
+                's2/js/select2.min',
+                's2/js/i18n/' . lan() ,
+                'dp/dist/datepicker.min',
+                'dp/i18n/' . $config['language'],
+                'numeric',
+                'tr-manage'
+            )));
+            view('transactions_vehicle_manage');
+        }
+        else {
+            r2(U . 'transactions/vehicle_transactions_list', 'e', $_L['Transaction_Not_Found']);
         }
 
         break;
@@ -1444,8 +1591,8 @@ switch ($action) {
                 $sEcho = intval($_REQUEST['draw']);
                 $records = array();
                 $records["data"] = array();
-                $end = $iDisplayStart + $iDisplayLength;
-                $end = $end > $iTotalRecords ? $iTotalRecords : $end;
+                // $end = $iDisplayStart + $iDisplayLength;
+                // $end = $end > $iTotalRecords ? $iTotalRecords : $end;
                 if ($o_type == 'desc') {
                     $d->order_by_desc($a_order_by);
                 }
@@ -1453,7 +1600,7 @@ switch ($action) {
                     $d->order_by_asc($a_order_by);
                 }
 
-                $d->limit($end);
+                $d->limit($iDisplayLength);
                 $d->offset($iDisplayStart);
                 $x = $d->find_array();
                 $i = $iDisplayStart;
@@ -1479,6 +1626,134 @@ switch ($action) {
                 api_response($records);
 
                 break;
+
+    case 'tr_vehicle_list':
+
+                $columns = array();
+                $columns[] = 'id';
+                $columns[] = 'date';
+                $columns[] = 'vehicle_num';
+                $columns[] = 'account';
+                $columns[] = 'type';
+                $columns[] = 'amount';
+                $columns[] = 'category';
+                $columns[] = 'description';
+                $columns[] = 'dr';
+                $columns[] = 'cr';
+                $columns[] = 'bal';
+                $columns[] = 'manage';
+                $order_by = $_POST['order'];
+                $o_c_id = $order_by[0]['column'];
+                $o_type = $order_by[0]['dir'];
+                $a_order_by = $columns[$o_c_id];
+                $d = ORM::for_table('sys_transactions')->where_not_equal('vehicle_num'," ");
+                $d->select('id');
+                $d->select('account');
+                $d->select('type');
+                $d->select('date');
+                $d->select('vehicle_num');
+                $d->select('amount');
+                $d->select('category');
+                $d->select('description');
+                $d->select('dr');
+                $d->select('cr');
+                $d->select('bal');
+
+                $tr_type = _post('tr_type');
+                if ($tr_type != '') {
+                    $d->where('type', $tr_type);
+                }
+                
+                $ex_category=_post('ex_category');
+                if($ex_category != ''){
+                    $d->where('category',$ex_category);
+                }
+            
+                $account = _post('account');
+                if ($account != '') {
+                    $d->where('account', $account);
+                }
+
+                $cid = _post('cid');
+                if ($cid != '') {
+                    $d->where_any_is(array(
+                        array(
+                            'payerid' => $cid
+                        ) ,
+                        array(
+                            'payeeid' => $cid
+                        )
+                    ));
+                }
+                
+                $vehicle_num=_post('vehicle_num');
+                if($vehicle_num != ''){
+                    $d->where('vehicle_num',$vehicle_num);
+                }
+
+                // 11/04/2016 - 12/03/2016
+
+                $reportrange = _post('reportrange');
+                if ($reportrange != '') {
+                    $reportrange = explode('-', $reportrange);
+                    $from_date = trim($reportrange[0]);
+                    $to_date = trim($reportrange[1]);
+                    $d->where_gte('date', $from_date);
+                    $d->where_lte('date', $to_date);
+                }
+
+                if (!has_access($user->roleid, 'transactions', 'all_data')) {
+                    $d->where('aid', $user->id);
+                }
+
+                $x = $d->find_array();
+                $iTotalRecords = $d->count();
+
+                
+                $iDisplayLength = intval($_REQUEST['length']);
+                $iDisplayLength = $iDisplayLength < 0 ? $iTotalRecords : $iDisplayLength;
+                $iDisplayStart = intval($_REQUEST['start']);
+                $sEcho = intval($_REQUEST['draw']);
+                $records = array();
+                $records["data"] = array();
+                // $end = $iDisplayStart + $iDisplayLength;
+                // $end = $end > $iTotalRecords ? $iTotalRecords : $end;
+             
+
+                if ($o_type == 'desc') {
+                    $d->order_by_desc($a_order_by);
+                }
+                else {
+                    $d->order_by_asc($a_order_by);
+                }
+
+                $d->limit($iDisplayLength);
+                $d->offset($iDisplayStart);
+                $x = $d->find_array();
+                $i = $iDisplayStart;
+                foreach($x as $xs) {
+                    $records["data"][] = array(
+                        '<a href="' . U . 'transactions/vehicle_manage/' . $xs['id'] . '">' . $xs['id'] . '</a>',
+                        $xs['date'],
+                        $xs['vehicle_num'],
+                        htmlentities($xs['account']),
+                        htmlentities($xs['type']),
+                        $xs['amount'], 
+                        $xs['category'],
+                        htmlentities($xs['description']),
+                        $xs['dr'],
+                        $xs['cr'],
+                        $xs['bal'],
+                        '<a href="' . U . 'transactions/vehicle_manage/' . $xs['id'] . '" class="btn btn-primary btn-xs"><i class="fa fa-file-text-o"></i></a>',
+                    );
+                }
+
+                $records["draw"] = $sEcho;
+                $records["recordsTotal"] = $iTotalRecords;
+                $records["recordsFiltered"] = $iTotalRecords;
+                api_response($records);
+
+        break;
 
     case 'exchange':
                 $d = ORM::for_table('sys_accounts')->find_many();

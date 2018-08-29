@@ -258,6 +258,7 @@ switch ($action) {
         // Expiry Status
 
         $pay_status_string=array();
+        $rest_status=array();
 
         foreach($d as $data){
 
@@ -286,9 +287,24 @@ switch ($action) {
 
             };
 
+            $rest_status[$expiry_id]=0;
+            if($rest<$expiry_todate){
+                $rest_status[$expiry_id]=1;
+            }
+            
+            if($data['expired']==1){
+                $pay_status_string[$expiry_id]="Expired";
+                $rest_status[$expiry_id]=0;
+            }
+
 
         }
 
+        $transactions=ORM::for_table('sys_transactions')->where('type','Expense')->where('category','Road Tax')->order_by_desc('id')->find_many();
+        $ui->assign('transactions',$transactions);
+        if(!$transactions){
+            $transactions="";
+        }
 
 
         $paginator['contents'] = '';
@@ -299,6 +315,7 @@ switch ($action) {
         $ui->assign('view_type', $view_type);
         $ui->assign('d', $d);
         $ui->assign('pay_status_string',$pay_status_string);
+        $ui->assign('rest_status',$rest_status);
         $ui->assign('baseUrl',$baseUrl);
         $ui->assign('paginator', $paginator);
         $ui->assign('xjq', '
@@ -386,6 +403,7 @@ switch ($action) {
         // Expiry Status
 
         $pay_status_string=array();
+        $rest_status=array();
 
         foreach($d as $data){
 
@@ -414,9 +432,22 @@ switch ($action) {
 
             };
 
-
+            $rest_status[$expiry_id]=0;
+            if($rest<$expiry_todate){
+                $rest_status[$expiry_id]=1;
+            }
+            
+            if($data['expired']==1){
+                $pay_status_string[$expiry_id]="Expired";
+                $rest_status[$expiry_id]=0;
+            }
         }
 
+        $transactions=ORM::for_table('sys_transactions')->where('type','Expense')->where('category','Insurance')->order_by_desc('id')->find_many();
+        $ui->assign('transactions',$transactions);
+        if(!$transactions){
+            $transactions="";
+        }
 
 
         $paginator['contents'] = '';
@@ -427,6 +458,7 @@ switch ($action) {
         $ui->assign('view_type', $view_type);
         $ui->assign('d', $d);
         $ui->assign('pay_status_string',$pay_status_string);
+        $ui->assign('rest_status',$rest_status);
         $ui->assign('baseUrl',$baseUrl);
         $ui->assign('paginator', $paginator);
         $ui->assign('xjq', '
@@ -556,14 +588,14 @@ switch ($action) {
             $rest= date_diff($date1,$date3);
             $rest= intval($rest->format("%a"));
 
-            if($pay_status && $date1<$date2 && $rest>$expiry_todate){
-
-                $pay_status_string[$expiry_id]="Paid";
-
-            }
             if(!$pay_status || $date1>$date2){
 
                 $pay_status_string[$expiry_id]="unPaid";
+
+            }
+            if($pay_status && $date1<$date2 && $rest>$expiry_todate){
+
+                $pay_status_string[$expiry_id]="Paid";
 
             }
             if($rest<$expiry_todate && $loan_duration>$pay_status) {
@@ -578,9 +610,17 @@ switch ($action) {
             // $interest_rate=$data['interest_rate'];
             // $loan_duration=$data['loan_duration'];
 
+            
+            // next due date overflow expire date
+            if($next_duedate[$expiry_id]>$expire_date[$expiry_id]) {
+                $next_duedate[$expiry_id]=$expire_date[$expiry_id];
+                $pay_status_string[$expiry_id]="Paid";
+            }
+
         }
 
-
+        $transactions=ORM::for_table('sys_transactions')->where('type','Expense')->where('category','Vehicle Loan')->order_by_desc('id')->find_many();
+        $ui->assign('transactions',$transactions);
 
         $paginator['contents'] = '';
 
@@ -1944,6 +1984,79 @@ switch ($action) {
 
         break;
 
+    case 'clone_roadtax':
+        $id=$routes['2'];
+
+        if($id){
+            $d=ORM::for_table('sys_vehicle_roadtax')->find_one($id);
+            $vehicle_num=$d->vehicle_num;
+            $roadtax_amount=$d->roadtax_amount;
+            $rebate_amount=$d->rebate_amount;
+            $roadtax_total=$d->roadtax_total;
+            $roadtax_date=$d->roadtax_date;
+            $due_date=$d->due_date;
+            $expiry_todate=$d->expiry_todate;
+            // $pay_status=$d->pay_status;
+            $description=$d->description;
+            $ref_img=$d->ref_img;
+            $d->expired=1;
+            $d->save();
+        }
+
+        $renew=ORM::for_table('sys_vehicle_roadtax')->create();
+        $renew->vehicle_num=$vehicle_num;
+        $renew->roadtax_amount=$roadtax_amount;
+        $renew->rebate_amount=$rebate_amount;
+        $renew->roadtax_total=$roadtax_total;
+        $renew->roadtax_date=$roadtax_date;
+        $renew->due_date=$due_date;
+        $renew->expiry_todate=$expiry_todate;
+        // $renew->pay_status=$pay_status;
+        $renew->description=$description;
+        $renew->ref_img=$ref_img;
+        $renew->save();
+
+        r2(U . 'vehicle/road_tax', 's', $_L['Clone Roadtax Successful']);
+
+        break;
+
+    case 'clone_insurance':
+        
+        $id=$routes['2'];
+
+        if($id){
+            $d=ORM::for_table('sys_vehicle_insurance')->find_one($id);
+            $vehicle_num=$d->vehicle_num;
+            $insurance_amount=$d->insurance_amount;
+            $rebate_amount=$d->rebate_amount;
+            $insurance_total=$d->insurance_total;
+            $insurance_date=$d->insurance_date;
+            $due_date=$d->due_date;
+            $expiry_todate=$d->expiry_todate;
+            // $pay_status=$d->pay_status;
+            $description=$d->description;
+            $ref_img=$d->ref_img;
+            $d->expired=1;
+            $d->save();
+        }
+
+        $renew=ORM::for_table('sys_vehicle_insurance')->create();
+        $renew->vehicle_num=$vehicle_num;
+        $renew->insurance_amount=$insurance_amount;
+        $renew->rebate_amount=$rebate_amount;
+        $renew->insurance_total=$insurance_total;
+        $renew->insurance_date=$insurance_date;
+        $renew->due_date=$due_date;
+        $renew->expiry_todate=$expiry_todate;
+        // $renew->pay_status=$pay_status;
+        $renew->description=$description;
+        $renew->ref_img=$ref_img;
+        $renew->save();
+
+        r2(U . 'vehicle/insurance', 's', $_L['Clone Insurance Successful']);
+
+        break;
+    
     case 'upload':  
 
         if(APP_STAGE == 'Demo'){
@@ -2011,6 +2124,7 @@ switch ($action) {
 
         break;
    
+    
     default:
         echo 'action not defined';
 }

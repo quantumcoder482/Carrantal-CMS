@@ -58,6 +58,15 @@ $(document).ready(function () {
         });
 
     });
+
+    $('.renew').on('click', function(e){
+        var id=this.id;
+        e.preventDefault();
+        var _url=$('#_url').val();
+        // alert(_url + "vehicle/clone_roadtax/" + id);
+        window.location.href = _url +"vehicle/clone_roadtax/"+id;
+
+    });
     
 
     $(".cdelete").click(function (e) {

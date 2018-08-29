@@ -68,6 +68,19 @@ $(document).ready(function () {
         });
     });
 
+    sysrender.on('click', '.view_img',function(e){
+        e.preventDefault();
+        var id=this.id;
+    
+        $('body').modalmanager('loading');
+        var _url=$('#_url').val();
+        $modal.load(_url+"ps/view_img/"+id,'', function(){
+            $modal.modal();
+
+        });
+
+    });
+    
     sysrender.on('click', '.cedit', function(e){
         e.preventDefault();
         var vid = this.id;
@@ -130,6 +143,11 @@ $(document).ready(function () {
         });
     });
 
+    $modal.on('click','#view_submit',function(){
+        var _url = $("#_url").val();
+        location.reload();
+    });
+    
     $modal.on('click', '#update', function(){
         $modal.modal('loading');
 

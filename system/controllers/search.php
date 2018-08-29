@@ -92,22 +92,23 @@ switch ($action) {
             echo '<table class="table table-hover" width="100%">
                   <tbody>
                     <tr>
-                        <td width="20%" > '.$_L['Image'].'</td>
-                        <td width="20%" class="project-title">'.$_L['Name'].'</td>
-                        <td width="13%">'.$_L['Cost Price'].'</td>
-                        <td width="13%">'.$_L['Sales Price'].'</td>
-                        <td width="13%">'.$_L['Inventory'].'</td>
+                        <td width="7%" > '.$_L['Image'].'</td>
+                        <td width="30%" class="project-title">'.$_L['Name'].'</td>
+                        <td width="14%">'.$_L['Cost Price'].'</td>
+                        <td width="14%">'.$_L['Sales Price'].'</td>
+                        <td width="14%">'.$_L['Inventory'].'</td>
                         <td width="21%" class="project-actions" >'.$_L['Manage'].'</td>
                     </tr>';
 
             foreach ($d as $ds){
 
                 if($ds['image'] == ''){
-                    $img = '<img src="'.APP_URL.'/ui/lib/imgs/item_placeholder.png">';
+                    $img = "<img src='".APP_URL."/ui/lib/imgs/item_placeholder.png' width='50px'>";
                 }
                 else{
-                    $img = '<img src="'.APP_URL.'/storage/items/thumb'.$ds['image'].'">';
+                    $img = "<a href='#' class='view_img' id='".$ds['id']."'><img src='".APP_URL."/storage/items/thumb".$ds['image']."' width='50px' ></a>";
                 }
+
 
             //  $price = number_format($ds['sales_price'],2,$config['dec_point'],$config['thousands_sep']);
                 $price = ib_money_format($ds['sales_price'],$config);
