@@ -40,6 +40,7 @@
                         <tr>
                             <th>#</th>
                             <th>{$_L['Vehicle No']}</th>
+                            <th>{$_L['Customer']}</th>
                             <th>{$_L['Amount']}</th>
                             <th>{$_L['Duration']}</th>
                             <th>{$_L['Deposit Date']}</th>
@@ -60,6 +61,9 @@
                             
                             <td class="edit" data-value="{$ds['vehicle_num']}" id="{$ds['id']}">
                                 <a href="#">{$ds['vehicle_num']}</a>
+                            </td>
+                            <td data-value="{$customer[$ds['id']]}">
+                                 {$customer[$ds['id']]}
                             </td>
                             <td class="amount" data-value="{$ds['principal_amount']}" data-a-sign="{if $ds['currency_symbol'] eq ''} {$config['currency_code']} {else} {$ds['currency_symbol']}{/if} ">{$ds['deposit_amount']}</td>
                             <td data-value="{$ds['duration']}">
@@ -107,7 +111,7 @@
                     {if $view_type == 'filter'}
                     <tfoot>
                         <tr>
-                            <td style="text-align: left;" colspan="9">
+                            <td style="text-align: left;" colspan="10">
                                 <ul class="pagination">
                                 </ul>
                             </td>
@@ -117,6 +121,60 @@
 
                 </table>
                 {$paginator['contents']}
+            </div>
+
+            <div class="ibox-title">
+                <h5>{$_L['Recent Deposit Transactions']}</h5>
+            </div>
+            <div class="ibox-content">
+                <table class="table table-bordered table-hover footable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>{$_L['Date']}</th>
+                            <th>{$_L['Customer']}</th>
+                            <th>{$_L['Vehicle No']}</th>
+                            <th>{$_L['Category']}</th>
+                            <th>{$_L['Amount']}</th>
+                            <th>{$_L['Description']}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {foreach $transactions as $t} 
+                        {if $transactions neq ''}
+                        <tr>
+                            <td>{$t['id']}</td>
+                            <!-- <td> {date( $config['df'], strtotime($t['date']))}</td> -->
+                            <td>{$t['date']}</td>
+                            <td>{$transaction_customer[$t['id']]}</td>
+                            <td><a href="#">{$t['vehicle_num']}</a></td>
+                            <td>{$t['category']}</td>
+                            <td data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}"
+                                data-d-group="2">{$t['amount']}</td>
+                            <td>{$t['description']}</td>
+                        </tr>
+                        {else}
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        {/if}
+                        {/foreach}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td style="text-align: left;" colspan="7">
+                                <ul class="pagination">
+                                </ul>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
          
            

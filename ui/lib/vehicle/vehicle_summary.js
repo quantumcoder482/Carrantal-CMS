@@ -1,50 +1,34 @@
 
-Dropzone.autoDiscover = false;
-
 $(document).ready(function () {
-
+    
     // modal loading part....
 
     var _url = $("#_url").val();
-
+    
+    var renew_path="";
+    
     $.fn.modal.defaults.width = '850px';
-
+    
     var $modal = $('#ajax-modal');
 
     $('[data-toggle="tooltip"]').tooltip();
 
-
-    $('.edit_insurance').on('click', function (e) {
-
+    $('.roadtax_expense').on('click', function (e) {
+        
         var id = this.id;
-
+        
         e.preventDefault();
 
         $('body').modalmanager('loading');
 
-        $modal.load(_url + 'vehicle/modal_add_insurance/' + id, '', function () {
+        $modal.load(_url + 'vehicle/modal_roadtax_expense/'+id, '', function () {
 
             $modal.modal();
 
         });
     });
 
-    $('.add_insurance').on('click', function (e) {
-
-        var id = this.id;
-
-        e.preventDefault();
-
-        $('body').modalmanager('loading');
-
-        $modal.load(_url + 'vehicle/modal_add_insurance/', '', function () {
-
-            $modal.modal();
-
-        });
-    });
-
-    $('.add_expense').on('click', function (e) {
+    $('.insurance_expense').on('click', function (e) {
 
         var id = this.id;
 
@@ -57,13 +41,43 @@ $(document).ready(function () {
             $modal.modal();
 
         });
-
     });
 
-    $('.renew').on('click', function (e) {
+    $('.loan_expense').on('click', function (e) {
+
+        var id = this.id;
+
+        e.preventDefault();
+
+        $('body').modalmanager('loading');
+
+        $modal.load(_url + 'vehicle/modal_loan_expense/' + id, '', function () {
+
+            $modal.modal();
+
+        });
+    });
+
+    $('.roadtax_renew').on('click', function(e){
+        var id=this.id;
+        e.preventDefault();
+        renew_path=_url+'vehicle/post_roadtax';
+
+        $('body').modalmanager('loading');
+
+        $modal.load(_url + 'vehicle/modal_add_roadtax/'+id+'/clone', '', function () {
+
+            $modal.modal();
+
+        });
+        
+
+    });
+    
+    $('.insurance_renew').on('click', function (e) {
         var id = this.id;
         e.preventDefault();
-        var _url = $('#_url').val();
+        renew_path=_url+'vehicle/post_insurance';
 
         $('body').modalmanager('loading');
 
@@ -88,25 +102,27 @@ $(document).ready(function () {
 
                 var _url = $("#_url").val();
 
-                window.location.href = _url + "vehicle/del_insurance/" + id;
+                window.location.href = _url + "vehicle/del_roadtax/" + id;
             }
         });
     });
 
 
     $modal.on('click', '.modal_submit', function (e) {
-        $('#insurance_total').prop('disabled',false);
+
+        $('#roadtax_total').prop('disabled', false);
+        
         e.preventDefault();
 
         $modal.modal('loading');
 
-        $.post(_url + "vehicle/post_insurance/", $("#rform").serialize())
+        $.post(renew_path, $("#rform").serialize())
             .done(function (data) {
 
                 if ($.isNumeric(data)) {
 
-                    window.location = base_url + 'vehicle/insurance/';
-
+                    location.reload();
+                   
                 }
 
                 else {
@@ -117,6 +133,7 @@ $(document).ready(function () {
             });
 
     });
+
 
     $modal.on('click', '.expense_submit', function (e) {
 
@@ -129,7 +146,7 @@ $(document).ready(function () {
 
                 if ($.isNumeric(data)) {
 
-                    window.location = base_url + 'vehicle/insurance/';
+                    location.reload();
 
                 }
 
@@ -141,7 +158,6 @@ $(document).ready(function () {
             });
 
     });
-
 
 
 });

@@ -19,19 +19,17 @@
                     <form class="form-horizontal" id="rform">
 
                         <div class="form-group">
-                            <!-- <label class="col-lg-2 control-label" for="vehicle_num">{$_L['Vehicle No']}</label> -->
                             <div class="col-lg-12">
-                                <input type="text" id="title" name="title" class="form-control" autocomplete="off" placeholder="Title">
+                                <input type="text" id="title" name="title" class="form-control" autocomplete="off"
+                                    style="border-top-style:hidden; border-left-style:hidden; border-right-style:hidden;" placeholder="Title">
                             </div>
                         </div>
                         
                         <hr>
                        
                         <div class="form-group">
-                            <!-- <label class="col-lg-2 control-label" for="description">{$_L['Description']}</label> -->
-
-                            <div class="col-lg-12"><textarea id="description" name="description" class="form-control" rows="3"></textarea>
-
+                            <div class="col-lg-12">
+                                <textarea id="description" name="description" class="form-control sysedit" rows="3"></textarea>
                             </div>
                         </div>
 

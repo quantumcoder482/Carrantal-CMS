@@ -114,6 +114,7 @@
     
     
                         <input type="hidden" name="rid" id="rid" value="{$val['id']}">
+                        <input type="hidden" name="clone" id="clone" value="{$clone}">
                         <input type="hidden" name="ref_img" id="ref_img" value="{$val['ref_img']}">
 
                     </form>

@@ -140,16 +140,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {*foreach $transactions as $t*}
+                        {foreach $transactions as $t}
                         {if $transactions neq ''}
                         <tr>
-                            <td>{$transactions[0]['id']}</td>
-                            <td> {date( $config['df'], strtotime($transactions[0]['date']))}</td>
-                            <td>{$transactions[0]['account']}</td>
-                            <td><a href="#">{$transactions[0]['vehicle_num']}</a></td>
-                            <td>{$transactions[0]['category']}</td>
-                            <td class="amount" data-a-sign="{if $ds['currency_symbol'] eq ''} {$config['currency_code']} {else} {$ds['currency_symbol']}{/if}">{$transactions[0]['amount']}</td>
-                            <td>{$transactions[0]['description']}</td>
+                            <td>{$t['id']}</td>
+                            <td> {date( $config['df'], strtotime($t['date']))}</td>
+                            <td>{$t['account']}</td>
+                            <td><a href="#">{$t['vehicle_num']}</a></td>
+                            <td>{$t['category']}</td>
+                            <td class="amount" data-a-sign="{if $ds['currency_symbol'] eq ''} {$config['currency_code']} {else} {$ds['currency_symbol']}{/if}">{$t['amount']}</td>
+                            <td>{$t['description']}</td>
                         </tr>
                         {else}
                         <tr>
@@ -162,8 +162,16 @@
                             <td></td>
                         </tr>
                         {/if}
-                        {*/foreach*}
+                        {/foreach}
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td style="text-align: left;" colspan="7">
+                                <ul class="pagination">
+                                </ul>
+                            </td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>

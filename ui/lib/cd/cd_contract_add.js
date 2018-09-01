@@ -1,14 +1,11 @@
-Dropzone.autoDiscover = false;
+// Dropzone.autoDiscover = false;
 
 $(document).ready(function () {
     
     $(".progress").hide();
     $("#emsg").hide();
-    $('#description').redactor(
-        {
-            minHeight: 200 // pixels
-        }
-    );
+    ib_editor('.sysedit');
+    
     var $vehicle_type = $('#vehicle_type');
 
     $vehicle_type.select2({
@@ -31,12 +28,12 @@ $(document).ready(function () {
 
 
     // Vehicle Image upload
-    var ib_file1 = new Dropzone("#upload_container1",
-        {
-            url: _url + "vehicle/upload/",
-            maxFiles: 1
-        }
-    );
+    // var ib_file1 = new Dropzone("#upload_container1",
+    //     {
+    //         url: _url + "vehicle/upload/",
+    //         maxFiles: 1
+    //     }
+    // );
 
     ib_file1.on("sending", function () {
 
@@ -62,12 +59,12 @@ $(document).ready(function () {
     });
 
     // Cert file upload
-    var ib_file2 = new Dropzone("#upload_container2",
-        {
-            url: _url + "vehicle/upload/",
-            maxFiles: 1
-        }
-    );
+    // var ib_file2 = new Dropzone("#upload_container2",
+    //     {
+    //         url: _url + "vehicle/upload/",
+    //         maxFiles: 1
+    //     }
+    // );
 
     ib_file2.on("sending", function () {
 

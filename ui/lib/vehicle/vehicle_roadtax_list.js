@@ -63,8 +63,15 @@ $(document).ready(function () {
         var id=this.id;
         e.preventDefault();
         var _url=$('#_url').val();
-        // alert(_url + "vehicle/clone_roadtax/" + id);
-        window.location.href = _url +"vehicle/clone_roadtax/"+id;
+
+        $('body').modalmanager('loading');
+
+        $modal.load(_url + 'vehicle/modal_add_roadtax/'+id+'/clone', '', function () {
+
+            $modal.modal();
+
+        });
+        
 
     });
     

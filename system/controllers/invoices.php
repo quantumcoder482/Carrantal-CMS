@@ -1647,6 +1647,21 @@ $(".cdelete").click(function (e) {
         $sid = $routes['2'];
         $d = ORM::for_table('sys_invoices')->find_one($sid);
         if ($d) {
+
+            //get invoice product item 
+            $invoice_item=ORM::for_table('sys_invoiceitems')->where('invoiceid',$d['id'])->find_one();
+            if($invoice_item['itemcode']){
+              
+                $item=ORM::for_table('sys_items')->where('id',$invoice_item['itemcode'])->find_one();
+                $item_type=$item['type'];
+                if($item_type == 'Vehicle'){
+                    $item_name=explode(" ",$item['name']);
+                    $vehicle_num=$item_name[0];
+                }
+            }
+
+
+            
             $itotal = $d['total'];
             $ic = $d['credit'];
             $np = $itotal - $ic;
@@ -1810,6 +1825,7 @@ data-d-group="2" value="">
 
 <input type="hidden" name="iid" value="' . $d['id'] . '">
 <input type="hidden" name="payer" value="' . $d['userid'] . '">
+<input type="hidden" name="vehicle_num" value="'.$vehicle_num.'">
 </form>
 
 </div>
@@ -1836,6 +1852,7 @@ data-d-group="2" value="">
         $amount = Finance::amount_fix($amount);
         $payerid = _post('payer');
         $pmethod = _post('pmethod');
+        $vehicle_num=_post('vehicle_num');
         $ref = _post('ref');
         if ($payerid == '') {
             $payerid = '0';
@@ -1928,6 +1945,7 @@ data-d-group="2" value="">
             $d->date = $date;
             $d->dr = '0.00';
             $d->cr = $amount;
+            $d->vehicle_num=$vehicle_num;
 
             // $d->bal = $nbal;
 

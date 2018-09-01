@@ -291,6 +291,7 @@ switch ($action) {
                     $vehicle_depositlog=ORM::for_table('sys_vehicle_depositlog')->create();
                     $vehicle_depositlog->deposit_id=$did;
                     $vehicle_depositlog->transaction_date=$date;
+                    $vehicle_depositlog->transaction_id=$tid;
                     $vehicle_depositlog->transaction_amount=$amount;
                     $vehicle_depositlog->save();
 
@@ -586,6 +587,7 @@ switch ($action) {
                         $vehicle_loanlog=ORM::for_table('sys_vehicle_loanlog')->create();
                         $vehicle_loanlog->loan_id=$eid;
                         $vehicle_loanlog->transaction_date=$date;
+                        $vehicle_loanlog->transaction_id=$tid;
                         $vehicle_loanlog->transaction_amount=$amount;
                         $vehicle_loanlog->save();
                         break;

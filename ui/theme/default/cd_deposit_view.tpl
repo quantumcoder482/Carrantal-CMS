@@ -163,12 +163,12 @@
                 <h5>{$_L['Recent Deposit Transactions']}</h5>
             </div>
             <div class="ibox-content">
-                <table class="table table-bordered table-hover">
+                <table class="table table-bordered table-hover footable">
                     <thead>
                         <tr>
                             <th>#</th>
                             <th>{$_L['Date']}</th>
-                            <th>{$_L['Account']}</th>
+                            <th>{$_L['Customer']}</th>
                             <th>{$_L['Vehicle No']}</th>
                             <th>{$_L['Category']}</th>
                             <th>{$_L['Amount']}</th>
@@ -176,25 +176,46 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {*foreach $transactions as $t*}
+                        {if $f_d_t}
+                            <tr>
+                                <td>{$f_d_t['id']}</td>
+                                <!-- <td> {date( $config['df'], strtotime($f_d_t['date']))}</td> -->
+                                <td>{$f_d_t['date']}</td>
+                                <td>{$f_t_c}</td>
+                                <td><a href="#">{$f_d_t['vehicle_num']}</a></td>
+                                <td>{$f_d_t['category']}</td>
+                                <td data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}"
+                                    data-d-group="2">{$f_d_t['amount']}</td>
+                                <td>{$f_d_t['description']}</td>
+                            </tr>
+                        {/if}
+                        {foreach $transactions as $t}
                         {if $transactions neq ''}
                         <tr>
-                            <td>{$transactions[0]['id']}</td>
-                            <!-- <td> {date( $config['df'], strtotime($transactions[0]['date']))}</td> -->
-                            <td>{$transactions[0]['date']}</td>
-                            <td>{$transactions[0]['account']}</td>
-                            <td><a href="#">{$transactions[0]['vehicle_num']}</a></td>
-                            <td>{$transactions[0]['category']}</td>
-                            <td  data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}" data-d-group="2">{$transactions[0]['amount']}</td>
-                            <td>{$transactions[0]['description']}</td>
+                            <td>{$t['id']}</td>
+                            <!-- <td> {date( $config['df'], strtotime($t['date']))}</td> -->
+                            <td>{$t['date']}</td>
+                            <td>{$transaction_customer[$t['id']]}</td>
+                            <td><a href="#">{$t['vehicle_num']}</a></td>
+                            <td>{$t['category']}</td>
+                            <td  data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}" data-d-group="2">{$t['amount']}</td>
+                            <td>{$t['description']}</td>
                         </tr>
                         {else}
                         <tr>
                             <td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td>
                         </tr>
                         {/if}
-                        {*/foreach*}
+                        {/foreach}
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td style="text-align: left;" colspan="7">
+                                <ul class="pagination">
+                                </ul>
+                            </td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
 

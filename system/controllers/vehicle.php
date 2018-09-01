@@ -301,11 +301,11 @@ switch ($action) {
         }
 
         $transactions=ORM::for_table('sys_transactions')->where('type','Expense')->where('category','Road Tax')->order_by_desc('id')->find_many();
-        $ui->assign('transactions',$transactions);
         if(!$transactions){
             $transactions="";
         }
-
+        
+        $ui->assign('transactions',$transactions);
 
         $paginator['contents'] = '';
 
@@ -444,11 +444,11 @@ switch ($action) {
         }
 
         $transactions=ORM::for_table('sys_transactions')->where('type','Expense')->where('category','Insurance')->order_by_desc('id')->find_many();
-        $ui->assign('transactions',$transactions);
         if(!$transactions){
             $transactions="";
         }
-
+        
+        $ui->assign('transactions',$transactions);
 
         $paginator['contents'] = '';
 
@@ -620,6 +620,10 @@ switch ($action) {
         }
 
         $transactions=ORM::for_table('sys_transactions')->where('type','Expense')->where('category','Vehicle Loan')->order_by_desc('id')->find_many();
+        if(!$transactions){
+            $transactions="";
+        }
+
         $ui->assign('transactions',$transactions);
 
         $paginator['contents'] = '';
@@ -788,6 +792,19 @@ switch ($action) {
 
         }
 
+
+        $transactions=ORM::for_table('sys_transactions')->select('sys_transactions.*')
+        ->inner_join('sys_vehicle_loanlog',array('sys_vehicle_loanlog.transaction_id','=','sys_transactions.id'))
+        ->where('sys_vehicle_loanlog.loan_id',$id)->order_by_desc('id')->find_many();
+
+
+        
+        if(!$transactions){
+            $transactions="";
+        }
+
+        $ui->assign('transactions',$transactions);
+
         $paginator['contents'] = '';
 
         // $ui->assign('total_items', $total_items);
@@ -828,9 +845,9 @@ switch ($action) {
         $mode_js = '';
         $view_type = 'default';
         $view_type = 'filter';
-        $mode_css = Asset::css(array('dashboard/dashboard','fc/fc','fc/fc_ibilling','footable/css/footable.core.min','redactor/redactor','s2/css/select2.min','vehicle/vehicle_summary'));
-        $mode_js = Asset::js(array('dashboard/graph','waypoints/jquery.waypoints.min','waypoints/jquery.counterup.min','fc/fc','footable/js/footable.all.min','contacts/mode_search','redactor/redactor.min','numeric','s2/js/select2.min',
-            's2/js/i18n/'.lan()
+        $mode_css = Asset::css(array('modal','dropzone/dropzone','dp/dist/datepicker.min','dashboard/dashboard','fc/fc','fc/fc_ibilling','footable/css/footable.core.min','redactor/redactor','s2/css/select2.min','vehicle/vehicle_summary'));
+        $mode_js = Asset::js(array('modal','dropzone/dropzone','dp/dist/datepicker.min','dashboard/graph','waypoints/jquery.waypoints.min','waypoints/jquery.counterup.min','fc/fc','footable/js/footable.all.min','contacts/mode_search','redactor/redactor.min','numeric','s2/js/select2.min',
+            's2/js/i18n/'.lan(),'vehicle/vehicle_summary'
         ));
 
 
@@ -838,39 +855,259 @@ switch ($action) {
         // $xfooter .= Asset::js(array('dashboard/graph','numeric','waypoints/jquery.waypoints.min','waypoints/jquery.counterup.min','fc/fc','modal'),$file_build).$xtra;
 
         $baseUrl=APP_URL;
-        $total_expense=0;
-        $total_sales=23233;
-        $net_profits=123212;
-        $expiry_days=120;   
-        
-        $pay_status_string['roadtax']="Paid";
-        $pay_status_string['insurance']="unPaid";
-        $pay_status_string['loan']="Due";
-        
-        
-        
+             
+        // Vehicle Datas
+
         $vehicle_info=ORM::for_table('sys_vehicles')->find_one($id);
         $vehicle_num=$vehicle_info->vehicle_num;
+        $parf_cost=$vehicle_info->parf_cost;
+        $purchase_price=$vehicle_info->purchase_price;
+        $vehicle_totalcost=$purchase_price-$parf_cost;
+        $purchase_date=$vehicle_info->purchase_date;
+        $expiry_date=$vehicle_info->expiry_date;
+
+        $today=date('Y-m-d');
+
+        $expiry_remain_days=date_diff(date_create($expiry_date),date_create($purchase_date));
+        $expiry_remain_days=intval($expiry_remain_days->format("%a"));
+
+        $remain_day=date_diff(date_create($expiry_date),date_create($today));
+        $remain_day=intval($remain_day->format("%a"));
+
+        $ui->assign('remain_day', $remain_day);
+        $ui->assign('expiry_remain_days',$expiry_remain_days);
+        $ui->assign('vehicle_totalcost', $vehicle_totalcost);
         
-        $expense=ORM::for_table('sys_transactions')->where('type','Expense')->where('vehicle_num',$vehicle_num)->order_by_desc('date')->find_many();
+        // vehicle income
         
-        foreach($expense as $exp){
-            $total_expense+=floatval($exp->amount);
+        $incomes=ORM::for_table('sys_transactions')->where('type', 'Income')->where('vehicle_num', $vehicle_num)->order_by_desc('id')->find_many();
+        $income_total=ORM::for_table('sys_transactions')->where('type', 'Income')->where('vehicle_num', $vehicle_num)->sum('amount');
+        $income_total=$income_total?$income_total:null;
+        $customer=array();
+        foreach($incomes as $income){
+            $d=ORM::for_table('crm_accounts')->where('id',$income->payerid)->find_one();
+            if($d){
+                $customer[$income->id]=$d->account;
+            }else{
+                $customer[$income->id]="anonymous";
+            }
         }
+        $ui->assign('incomes', $incomes);
+        $ui->assign('customer',$customer);
+        $ui->assign('income_total', $income_total);
+
+        //Total vehicle Depreciation
+
+        $expenses=ORM::for_table('sys_transactions')->where('type','Expense')->where('vehicle_num',$vehicle_num);
+        $expense_insurance=$expenses->where('category', 'Insurance')->order_by_desc('id')->find_one();
+        $expense_insurance=$expense_insurance?$expense_insurance->amount:null;
+
+        $expenses=ORM::for_table('sys_transactions')->where('type','Expense')->where('vehicle_num',$vehicle_num);
+        $expense_roadtax=$expenses->where('category', 'Road Tax')->order_by_desc('id')->find_one();
+        $expense_roadtax=$expense_roadtax?$expense_roadtax->amount:null;
         
+        $expenses=ORM::for_table('sys_transactions')->where('type','Expense')->where('vehicle_num',$vehicle_num);
+        $expense_loan=$expenses->where('category','Vehicle Loan')->sum('amount');
+
+        $expenses=ORM::for_table('sys_transactions')->where('type','Expense')->where('vehicle_num',$vehicle_num);
+        $expense_others=$expenses->where_not_equal('category','Road Tax')
+            ->where_not_equal('category','Insurance')
+            ->where_not_equal('category','Vehicle Loan')->sum('amount');
+
+        $vehicle_total_expense=$vehicle_totalcost+$expense_roadtax+$expense_insurance+$expense_loan+$expense_others;
+
+        $ui->assign('expense_roadtax',$expense_roadtax);
+        $ui->assign('expense_insurance',$expense_insurance);
+        $ui->assign('expense_loan', $expense_loan);
+        $ui->assign('expense_others', $expense_others);
+        $ui->assign('vehicle_total_expense', $vehicle_total_expense);
+
+
+        // Insurnace
         
-        $insurance=ORM::for_table('sys_vehicle_insurance')->where('vehicle_num',$vehicle_num)->find_many();
-        $roadtax=ORM::for_table('sys_vehicle_roadtax')->where('vehicle_num', $vehicle_num)->find_many();
+        $insurance=ORM::for_table('sys_vehicle_insurance')->where('vehicle_num',$vehicle_num)->order_by_desc('id')->find_one();
         
+        if($insurance){
+            $insurance_id=$insurance->id;
+            $insurance_amount=$insurance->insurance_amount;
+            $insurance_duedate=$insurance->due_date;
+            $expiry_todate=$insurance->expiry_todate;
+    
+            $today = date("Y-m-d");
+            $date1 = date_create($today);
+            $date2 = date_create($insurance_duedate);
+            $rest= date_diff($date1,$date2);
+            $rest= intval($rest->format("%a"));
+            
+            $insurance_paystatus=$insurance->pay_status !=0 ? "Paid":($rest<$expiry_todate?"Due":"unPaid");
+            $insurance_duestatus=$rest<$expiry_todate?1:0;
+        }
+        else{
+            $insurance_id="";
+            $insurance_amount="";
+            $insurance_paystatus="";
+            $insurance_duedate="";
+            $insurance_duestatus="";
+        }
+
+        $ui->assign('insurance_id',$insurance_id);
+        $ui->assign('insurance_amount',$insurance_amount);
+        $ui->assign('insurance_paystatus',$insurance_paystatus);
+        $ui->assign('insurance_duedate', $insurance_duedate);
+        $ui->assign('insurance_duestatus',$insurance_duestatus);
+
+        // Load Tax
+
+        $roadtax=ORM::for_table('sys_vehicle_roadtax')->where('vehicle_num', $vehicle_num)->order_by_desc('id')->find_one();
+        
+        if($roadtax){
+
+            $roadtax_id=$roadtax->id;
+            $roadtax_amount=$roadtax->roadtax_amount;
+            $roadtax_duedate=$roadtax->due_date;
+            $expiry_todate=$roadtax->expiry_todate;
+    
+            $today = date("Y-m-d");
+            $date1 = date_create($today);
+            $date2 = date_create($roadtax_duedate);
+            $rest= date_diff($date1,$date2);
+            $rest= intval($rest->format("%a"));
+            
+            $roadtax_paystatus=$roadtax->pay_status !=0 ? "Paid":($rest<$expiry_todate?"Due":"unPaid");
+            $roadtax_duestatus=$rest<$expiry_todate?1:0;
+
+        }else{
+            $roadtax_id="";
+            $roadtax_amount="";
+            $roadtax_paystatus="";
+            $roadtax_duedate="";
+            $roadtax_duestatus="";
+        }
+
+        $ui->assign('roadtax_id',$roadtax_id);
+        $ui->assign('roadtax_amount',$roadtax_amount);
+        $ui->assign('roadtax_paystatus',$roadtax_paystatus);
+        $ui->assign('roadtax_duedate', $roadtax_duedate);
+        $ui->assign('roadtax_duestatus',$roadtax_duestatus);
+
+
+        // Loan
+
+        $loan=ORM::for_table('sys_vehicle_loan')->where('vehicle_num', $vehicle_num)->order_by_desc('id')->find_one();
+        
+        if($loan){
+
+            $loan_id=$loan->id;
+            $principal_amount=$loan->principal_amount;
+            $interest_rate=$loan->interest_rate;
+            $loan_duration=$loan->loan_duration;
+            $repay_cycle_type=$loan->repay_cycle_type;
+            $loan_date=$loan->loan_date;
+            $pay_status=$loan->pay_status;
+            $expiry_todate=$loan->expiry_todate;
+    
+           
+            switch ($repay_cycle_type) {
+                case 'weekly':
+                    $expire_date_interval=new DateInterval('P'.($loan_duration*7).'D');
+                     $interval = new DateInterval('P'.(($pay_status+1)*7).'D');
+                    break;
+                case 'monthly':
+                    $expire_date_interval=new DateInterval('P'. $loan_duration.'M');
+                    $interval = new DateInterval('P'.($pay_status+1).'M');
+                    break;
+                case 'yearly':
+                    $expire_date_interval=new DateInterval('P'. $loan_duration.'Y');
+                    $interval = new DateInterval('P'.($pay_status+1).'Y');
+                    break;
+                default:
+                    break;
+            }
+    
+            $expire_date=date_create($loan_date)->add($expire_date_interval);
+            $expire_date=$expire_date->format('Y-m-d');
+            $next_duedate=date_create($loan_date)->add($interval);
+            $next_duedate=$next_duedate->format('Y-m-d');
+            
+    
+            $loan_amount=$principal_amount/$loan_duration;
+            $interest_amount=($principal_amount*$interest_rate)/100;
+            $loan_amount=$loan_amount+$interest_amount;
+    
+    
+            $today = date("Y-m-d");
+            $date1 = date_create($today);
+            $date2 = date_create($next_duedate);
+            $date3 = date_create($expire_date);
+            $rest= date_diff($date1,$date2);
+            $rest= intval($rest->format("%a"));
+            
+                    
+            if(!$pay_status || $date1>$date2){
+    
+                $loan_paystatus="unPaid";
+    
+            }
+            if($pay_status && $date1<$date2 && $rest>$expiry_todate){
+    
+                $loan_paystatus="Paid";
+    
+            }
+            if($rest<$expiry_todate && $loan_duration>$pay_status) {
+    
+                $loan_paystatus="Due";
+    
+            };
+            
+    
+    
+            $loan_duestatus=$rest<$expiry_todate?1:0;
+            
+            $renew_status="";
+            if($next_duedate>$expire_date) {
+                $next_duedate=$expire_date;
+                $loan_paystatus="Paid";
+                $renew_status="renew";
+            }
+
+        }else{
+            $loan_id="";
+            $loan_amount="";
+            $loan_paystatus="";
+            $renew_status="";
+            $next_duedate="";
+            $loan_duestatus="";
+        }
+
+
+        $ui->assign('loan_id',$loan_id);
+        $ui->assign('loan_amount',$loan_amount);
+        $ui->assign('loan_paystatus',$loan_paystatus);
+        $ui->assign('renew_status', $renew_status);
+        $ui->assign('loan_duedate', $next_duedate);
+        $ui->assign('loan_duestatus',$loan_duestatus);
+
+        // Total expense 
+
+        $recent_expenses=ORM::for_table('sys_transactions')
+            ->where('type','Expense')
+            ->where('vehicle_num',$vehicle_num)
+            ->order_by_desc('id')->find_many();
+        
+        $total_expense_amount=ORM::for_table('sys_transactions')
+            ->where('type','Expense')
+            ->where('vehicle_num',$vehicle_num) 
+            ->sum('amount');
+
+        $recent_expenses=$recent_expenses?$recent_expenses:"";
+        $total_expense_amount=$total_expense_amount?$total_expense_amount:null;
+        
+        $ui->assign('recent_expenses',$recent_expenses);
+        $ui->assign('total_expense_amount',$total_expense_amount);
         
 
 
         $ui->assign('baseUrl',$baseUrl);
-        $ui->assign('total_expense', $total_expense);
-        $ui->assign('total_sales', $total_sales);
-        $ui->assign('net_profits',$net_profits);
-        $ui->assign('expiry_days',$expiry_days);
-        $ui->assign('pay_status_string',$pay_status_string);
         $ui->assign('vehicle',$vehicle_info);
         $ui->assign('roadtax',$roadtax);
         $ui->assign('insurance',$insurance);
@@ -901,6 +1138,8 @@ switch ($action) {
     case 'modal_add_roadtax':
         
         $id=$routes['2'];
+        @$clone=$routes['3'];
+
         $f_type="add";
         $roadtax=false;
 
@@ -925,6 +1164,13 @@ switch ($action) {
             $val['expiry_todate']=$roadtax->expiry_todate;
             $val['description']=$roadtax->description;
             $val['ref_img']=$roadtax->ref_img;
+            if($clone != ''){
+                $interval = new DateInterval('P1D');
+                $val['roadtax_date']=$roadtax->due_date;
+                $val['roadtax_date']=date_create($val['roadtax_date'])->add($interval);
+                $val['roadtax_date']=$val['roadtax_date']->format('Y-m-d');
+
+            }
 
         }else{
             $val['id']=" ";
@@ -948,6 +1194,7 @@ switch ($action) {
 
         $ui->assign('val',$val);
         $ui->assign('f_type',$f_type);
+        $ui->assign('clone',$clone);
         $ui->assign('vehicles',$vehicles);
         $ui->assign('baseUrl',$baseUrl);
 
@@ -960,6 +1207,7 @@ switch ($action) {
     case 'modal_add_insurance':
         
         $id=$routes['2'];
+        @$clone=$routes['3'];
         $f_type="add";
         $insurance=false;
 
@@ -985,6 +1233,13 @@ switch ($action) {
             $val['policy_num']=$insurance->policy_num;
             $val['description']=$insurance->description;
             $val['ref_img']=$insurance->ref_img;
+            if($clone != ''){
+                $interval = new DateInterval('P1D');
+                $val['insurance_date']=$insurance->due_date;
+                $val['insurance_date']=date_create($val['insurance_date'])->add($interval);
+                $val['insurance_date']=$val['insurance_date']->format('Y-m-d');
+
+            }
 
         }else{
             $val['id']=" ";
@@ -1009,6 +1264,7 @@ switch ($action) {
 
         $ui->assign('val',$val);
         $ui->assign('f_type',$f_type);
+        $ui->assign('clone',$clone);
         $ui->assign('vehicles',$vehicles);
         $ui->assign('baseUrl',$baseUrl);
 
@@ -1359,7 +1615,7 @@ switch ($action) {
     case 'post_roadtax':
       
         $id=_post('rid');
-
+        $clone=_post('clone');
         $vehicle_num = _post('vehicle_num');
        
         $roadtax_amount=_post('roadtax_amount','0.00');
@@ -1401,7 +1657,13 @@ switch ($action) {
             if($id == ''){
                 _msglog('s',$_L['Item Added Successfully']);
                 $d = ORM::for_table('sys_vehicle_roadtax')->create();
-            } else{
+            }elseif($clone !=''){
+                _msglog('s',$_L['Item Updated Successfully']);
+                $old_d=ORM::for_table('sys_vehicle_roadtax')->find_one($id);
+                $old_d->expired=1;
+                $old_d->save();
+                $d = ORM::for_table('sys_vehicle_roadtax')->create();
+            }else{
                 _msglog('s',$_L['Item Updated Successfully']);
                 $d = ORM::for_table('sys_vehicle_roadtax')->find_one($id);
             }
@@ -1419,8 +1681,6 @@ switch ($action) {
 
             $d->save();
 
-
-
             echo $d->id();
         }
         else{
@@ -1432,7 +1692,7 @@ switch ($action) {
     case 'post_insurance':
 
         $id=_post('rid');
-
+        $clone=_post('clone');
         $vehicle_num = _post('vehicle_num');
        
         $insurance_amount=_post('insurance_amount','0.00');
@@ -1477,7 +1737,13 @@ switch ($action) {
             if($id == ''){
                 _msglog('s',$_L['Item Added Successfully']);
                 $d = ORM::for_table('sys_vehicle_insurance')->create();
-            } else{
+            }elseif($clone !=''){
+                _msglog('s',$_L['Item Updated Successfully']);
+                $old_d=ORM::for_table('sys_vehicle_insurance')->find_one($id);
+                $old_d->expired=1;
+                $old_d->save();
+                $d = ORM::for_table('sys_vehicle_insurance')->create();
+            }else{
                 _msglog('s',$_L['Item Updated Successfully']);
                 $d = ORM::for_table('sys_vehicle_insurance')->find_one($id);
             }
@@ -2015,7 +2281,7 @@ switch ($action) {
         $renew->description=$description;
         $renew->ref_img=$ref_img;
         $renew->save();
-
+        
         r2(U . 'vehicle/road_tax', 's', $_L['Clone Roadtax Successful']);
 
         break;

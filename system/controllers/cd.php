@@ -31,9 +31,9 @@ switch ($action) {
 
         $ui->assign('vehicle_types',$vehicle_types);
         $ui->assign('v_types',$v_types);
-        $ui->assign('xheader', Asset::css(array('modal','dp/dist/datepicker.min','dropzone/dropzone','redactor/redactor','s2/css/select2.min')));
-        $ui->assign('xfooter', Asset::js(array('modal','dp/dist/datepicker.min','dropzone/dropzone','redactor/redactor.min','numeric','s2/js/select2.min',
-            's2/js/i18n/'.lan(), 'cd/cd_contract_add')));
+        $ui->assign('xheader', Asset::css(array('modal','dp/dist/datepicker.min','dropzone/dropzone','s2/css/select2.min','cd/cd_contract_add')));
+        $ui->assign('xfooter', Asset::js(array('modal','dp/dist/datepicker.min','dropzone/dropzone','numeric','s2/js/select2.min',
+            's2/js/i18n/'.lan(), 'tinymce/tinymce.min','js/editor','cd/cd_contract_add')));
         $ui->assign('xjq', '$(\'.amount\').autoNumeric(\'init\');');
 
         //$max = ORM::for_table('sys_vehicles')->max('id');
@@ -193,7 +193,7 @@ switch ($action) {
         $pay_status_string=array();
         $next_duedate=array();
         $expire_date=array();
-        
+        $customer=array();
         foreach($d as $data){
 
             // Expiry status calculation
@@ -201,6 +201,7 @@ switch ($action) {
             $expiry_todate=$data['expiry_todate'];
             $pay_status=$data['pay_status'];
             $duration=$data['duration'];
+            $first_paystatus=$data['first_paystatus'];
             $repay_cycle_type=$data['repay_cycle_type'];
 
             switch ($repay_cycle_type) {
@@ -232,17 +233,17 @@ switch ($action) {
             $rest= date_diff($date1,$date3);
             $rest= intval($rest->format("%a"));
 
-            if(!$pay_status || $date1>$date2){
+            if(!$first_paystatus|| !$pay_status || $date1>$date2){
 
                 $pay_status_string[$expiry_id]="unPaid";
 
             }
-            if($pay_status && $date1<$date2 && $rest>$expiry_todate){
+            if($first_paystatus && $pay_status && $date1<=$date2 && $rest>$expiry_todate){
 
                 $pay_status_string[$expiry_id]="Paid";
 
             }
-            if($rest<$expiry_todate && $duration>$pay_status) {
+            if($rest<=$expiry_todate && $duration>$pay_status) {
 
                 $pay_status_string[$expiry_id]=$rest." - Day Due";
 
@@ -250,20 +251,35 @@ switch ($action) {
 
                         
             // next due date overflow expire date
-            if($next_duedate[$expiry_id]>$expire_date[$expiry_id]) {
+            if($first_paystatus && $next_duedate[$expiry_id]>$expire_date[$expiry_id]) {
                 $next_duedate[$expiry_id]=$expire_date[$expiry_id];
                 $pay_status_string[$expiry_id]="Paid";
             }
+
+            $customers=ORM::for_table('crm_accounts')->where('id',$data['customerid'])->find_one();
+            $customer[$expiry_id]=$customers['account'];
 
         }
 
 
 
-        $transactions=ORM::for_table('sys_transactions')->where('type','Expense')->where('category','Insurance')->order_by_desc('id')->find_many();
-        $ui->assign('transactions',$transactions);
+        $transactions=ORM::for_table('sys_transactions')->where('type','Income')->where('category','Vehicle Deposit');
+        $transactions=$transactions->where_not_null('vehicle_num')->order_by_desc('id')->find_array();
+        $transaction_customer=array();
+        foreach($transactions as $t){
+            $tc=ORM::for_table('crm_accounts')->where('id',$t['payerid'])->find_one();
+            $transaction_customer[$t['id']]=$tc['account'];
+        }
+
+        if(!$transactions){
+            $transactions="";
+        }
+
+        $ui->assign('transactions', $transactions);
+        $ui->assign('transaction_customer',$transaction_customer);
 
         $paginator['contents'] = '';
-
+        $ui->assign('customer',$customer);
         $ui->assign('total_items', $total_items);
         $ui->assign('xheader', $mode_css);
         $ui->assign('xfooter', $mode_js);
@@ -440,7 +456,7 @@ switch ($action) {
         if($expiry_todate == ''){
             $msg .= 'Expiry To Date is required <br>';
         }
-
+       
 
         if($msg == ''){
             switch ($repay_cycle_type) {
@@ -579,7 +595,9 @@ switch ($action) {
             $next_duedate[$i]=$next_duedate[$i]->format('Y-m-d');
         }
 
-        $val['balance_amount']=$val['total_due']/$val['duration'];       
+        if($val['total_due'] && $val['duration']){
+            $val['balance_amount']=$val['total_due']/$val['duration'];       
+        }
 
         $balance_due=array();
         $balance_due[0]=$val['total_due'];
@@ -632,14 +650,38 @@ switch ($action) {
         }
 
 
-        // Transaction  data
+        // Trasaction  data
+        $first_deposit_transaction="";
+        if($deposit['first_paystatus']){
+            $first_deposit_transaction=ORM::for_table('sys_transactions')->where('id',$deposit['first_paystatus'])->find_one();
+            $f_t_c=ORM::for_table('crm_accounts')->where('id',$first_deposit_transaction['payerid'])->find_one();
+            $f_t_c=$f_t_c['account'];
+        }else{
+            $f_t_c="";
+        }
+        // $transactions=ORM::for_table('sys_transactions')->where('type','Income')->where('category','Vehicle Deposit');
+        // $transactions=$transactions->where_not_null('vehicle_num')->where('vehicle_num',)->order_by_desc('id')->find_array();
 
-        $transactions=ORM::for_table('sys_transactions')->where('type','Income');
-        $transactions=$transactions->where_not_null('vehicle_num')->order_by_desc('id')->find_array();
+        $transactions=ORM::for_table('sys_transactions')->select('sys_transactions.*')
+        ->inner_join('sys_vehicle_depositlog',array('sys_vehicle_depositlog.transaction_id','=','sys_transactions.id'))
+        ->where('sys_vehicle_depositlog.deposit_id',$id)->order_by_desc('id')->find_many();
+        //$transactions+=$first_deposit_transaction;
+        
+        $transaction_customer=array();
+        foreach($transactions as $t){
+            $tc=ORM::for_table('crm_accounts')->where('id',$t['payerid'])->find_one();
+            $transaction_customer[$t['id']]=$tc['account'];
+        }
+        
         if(!$transactions){
             $transactions="";
         }
 
+        $ui->assign('transactions', $transactions);
+        $ui->assign('transaction_customer', $transaction_customer);
+
+        $ui->assign('f_d_t', $first_deposit_transaction);
+        $ui->assign('f_t_c', $f_t_c);
         $paginator['contents'] = '';
 
         // $ui->assign('total_items', $total_items);
@@ -694,8 +736,10 @@ switch ($action) {
             $deposit_amount=$deposit->deposit_amount;
             $first_deposit=$deposit->first_deposit;
             $duration=$deposit->duration;
-
-            $val['amount']=($deposit_amount-$first_deposit)/$duration;
+            if($duration){
+                $val['amount']=($deposit_amount-$first_deposit)/$duration;
+            }
+            $val['amount']=$firstdeposit_flag?$first_deposit:$val['amount'];
             $val['category']="Vehicle Deposit";
             $val['customerid']=$deposit->customerid;
             $c=ORM::for_table('crm_accounts')->where('id',$deposit->customerid)->find_one();

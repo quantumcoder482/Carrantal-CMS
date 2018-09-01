@@ -47,7 +47,8 @@
                             <td class="amount" data-value="{$val['amount']}" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}"                             
                             data-d-group="2">{$val['amount']}</td>
                             <td>{$val['rate']}</td>
-                            <td>{$val['interest']}</td>
+                            <td class="amount" data-value="{$val['total_due']}" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}"
+                            data-a-sep="{$config['thousands_sep']}" data-d-group="2">{$val['interest']}</td>
                             <td class="amount"  data-value="{$val['total_due']}" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}"                             
                             data-d-group="2">{$val['total_due']}</td>
                         </tr>
@@ -55,7 +56,7 @@
                 </table>
             </div>
             <div class="ibox-content">
-                <table class="table table-bordered table-hover sys_table ">
+                <table class="table table-bordered table-hover sys_table">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -115,33 +116,78 @@
 
                     {/for}
 
+                    <tr>
+                        <td colspan="2" style="font-weight:600">{$_L['Total']}</td>
+                        <td class="amount" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}"                             
+                        data-d-group="2">{$val['amount']}</td>
+                        <td class="amount" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}"                             
+                        data-d-group="2">{$val['interest']}</td>
+                        <td class="amount" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}"                             
+                        data-d-group="2">{$val['total_due']}</td>
+                        <td colspan="4">&nbsp;</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td style="text-align: left;" colspan="9">
+                            <ul class="pagination">
+                            </ul>
+                        </td>
+                    </tr>
+                </tfoot>
+             </table>
+            {$paginator['contents']}
+            </div>
+
+            <div class="ibox-title">
+                <h5>{$_L['Recent Expense Transactions']}</h5>
+            </div>
+            <div class="ibox-content">
+                <table class="table table-bordered table-hover sts_table footable">
+                    <thead>
                         <tr>
-                            <td colspan="2">{$_L['Total']}</td>
-                            <td class="amount" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}"                             
-                            data-d-group="2">{$val['amount']}</td>
-                            <td class="amount" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}"                             
-                            data-d-group="2">{$val['interest']}</td>
-                            <td class="amount" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}"                             
-                            data-d-group="2">{$val['total_due']}</td>
-                            <td colspan="4">&nbsp;</td>
+                            <th>#</th>
+                            <th>{$_L['Date']}</th>
+                            <th>{$_L['Account']}</th>
+                            <th>{$_L['Vehicle No']}</th>
+                            <th>{$_L['Category']}</th>
+                            <th>{$_L['Amount']}</th>
+                            <th>{$_L['Description']}</th>
                         </tr>
-
-
+                    </thead>
+                    <tbody>
+                        {foreach $transactions as $t} {if $transactions neq ''}
+                        <tr>
+                            <td>{$t['id']}</td>
+                            <td> {date( $config['df'], strtotime($t['date']))}</td>
+                            <td>{$t['account']}</td>
+                            <td><a href="#">{$t['vehicle_num']}</a></td>
+                            <td>{$t['category']}</td>
+                            <td class="amount" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}"
+                            data-d-group="2">{$t['amount']}</td>
+                            <td>{$t['description']}</td>
+                        </tr>
+                        {else}
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        {/if} {/foreach}
                     </tbody>
-                    
-                    {if $view_type == 'filter'}
                     <tfoot>
                         <tr>
-                            <td style="text-align: left;" colspan="9">
+                            <td style="text-align: left;" colspan="7">
                                 <ul class="pagination">
                                 </ul>
                             </td>
                         </tr>
                     </tfoot>
-                    {/if}
-
                 </table>
-                {$paginator['contents']}
             </div>
 
         </div>

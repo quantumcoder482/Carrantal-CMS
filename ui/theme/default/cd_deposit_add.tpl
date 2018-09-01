@@ -197,8 +197,9 @@
 
         var deposit_amount = $('#deposit_amount');
         var first_deposit = $('#first_deposit');
+        var duration=$('#duration');
         var balance = $('#balance');
-
+        
         deposit_amount.on("keyup", function () {
 
             var amount = deposit_amount.val();
@@ -208,6 +209,7 @@
             balance.val("{$config['currency_code']} " + (amount - rebate));
 
         });
+        
         first_deposit.on("keyup", function () {
 
             var amount = deposit_amount.val();
@@ -218,7 +220,20 @@
 
         });
 
-
+        duration.on('focusout',function(){
+            if(duration.val()==0 && deposit_amount.val() != 0){
+                var amount = deposit_amount.val();
+                amount = Number(amount.replace(/[^0-9.-]+/g, ""));
+                first_deposit.val(amount);
+                first_deposit.disabled=true;
+                balance.val(0);
+            }
+            if(duration.val() != 0){
+                first_deposit.disabled=false;
+                first_deposit.val(''); 
+                first_deposit.keyup();
+            }
+        });
 
 
         function ib_autonumeric() {
