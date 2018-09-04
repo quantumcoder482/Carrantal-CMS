@@ -5,96 +5,67 @@ $(document).ready(function () {
     $(".progress").hide();
     $("#emsg").hide();
     ib_editor('.sysedit');
-    
-    var $vehicle_type = $('#vehicle_type');
-
-    $vehicle_type.select2({
-        theme: "bootstrap"
-    });
-
-    var $expiry_status = $('#expiry_status');
-
-    $expiry_status.select2({
-        theme: "bootstrap"
-    });
-    
+  
     var _url = $("#_url").val();
     var ib_submit = $("#submit");
+    var close=$("#close");
 
-    var $vehicle_file= $("#vehicle_file");
-    var $cert_file=$("#cert_file");
-
-    var upload_resp;
-
-
-    // Vehicle Image upload
-    // var ib_file1 = new Dropzone("#upload_container1",
-    //     {
-    //         url: _url + "vehicle/upload/",
-    //         maxFiles: 1
-    //     }
-    // );
-
-    ib_file1.on("sending", function () {
-
-        ib_submit.prop('disabled', true);
-
+    $('#insert_name').click(function(){
+        tinymce.get("content").execCommand('mceInsertContent', false, "<span style='color:#3366ff;'>{{name}}</span>");
     });
-
-    ib_file1.on("success", function (file, response) {
-
-        ib_submit.prop('disabled', false);
-
-        upload_resp = response;
-
-        if (upload_resp.success == 'Yes') {
-
-            toastr.success(upload_resp.msg);
-            $vehicle_file.val(upload_resp.file);
-        }
-        else {
-            toastr.error(upload_resp.msg);
-        }
-
+    $('#insert_address').click(function () {
+        tinymce.get("content").execCommand('mceInsertContent', false, "<span style='color:#3366ff;'>{{address}}</span>");
     });
-
-    // Cert file upload
-    // var ib_file2 = new Dropzone("#upload_container2",
-    //     {
-    //         url: _url + "vehicle/upload/",
-    //         maxFiles: 1
-    //     }
-    // );
-
-    ib_file2.on("sending", function () {
-
-        ib_submit.prop('disabled', true);
-
+    $('#insert_nric').click(function () {
+        tinymce.get("content").execCommand('mceInsertContent', false, "<span style='color:#3366ff;'>{{nric}}</span>");
     });
-
-    ib_file2.on("success", function (file, response) {
-
-        ib_submit.prop('disabled', false);
-
-        upload_resp = response;
-
-        if (upload_resp.success == 'Yes') {
-
-            toastr.success(upload_resp.msg);
-            $cert_file.val(upload_resp.file);
-
-        }
-        else {
-            toastr.error(upload_resp.msg);
-        }
+    $('#insert_contact').click(function () {
+        tinymce.get("content").execCommand('mceInsertContent', false, "<span style='color:#3366ff;'>{{contact}}</span>");
     });
+    $('#insert_date').click(function () {
+        tinymce.get("content").execCommand('mceInsertContent', false, "<span style='color:#3366ff;'>{{date}}</span>");
+    });
+    $('#insert_passdate').click(function () {
+        tinymce.get("content").execCommand('mceInsertContent', false, "<span style='color:#3366ff;'>{{pass_date}}</span>");
+    });
+    $('#insert_depositamount').click(function () {
+        tinymce.get("content").execCommand('mceInsertContent', false, "<span style='color:#3366ff;'>{{deposit_amount}}</span>");
+    });
+    $('#insert_vstartdate').click(function () {
+        tinymce.get("content").execCommand('mceInsertContent', false, "<span style='color:#3366ff;'>{{v_start_date}}</span>");
+    });
+    $('#insert_venddate').click(function () {
+        tinymce.get("content").execCommand('mceInsertContent', false, "<span style='color:#3366ff;'>{{v_end_date}}</span>");
+    });
+    $('#insert_vduration').click(function () {
+        tinymce.get("content").execCommand('mceInsertContent', false, "<span style='color:#3366ff;'>{{v_duration}}</span>");
+    });
+    $('#insert_vmakemodel').click(function () {
+        tinymce.get("content").execCommand('mceInsertContent', false, "<span style='color:#3366ff;'>{{v_make_model}}</span>");
+    });
+    $('#insert_vehiclenum').click(function () {
+        tinymce.get("content").execCommand('mceInsertContent', false, "<span style='color:#3366ff;'>{{vehicle_no}}</span>");
+    });
+    $('#insert_invoiceamount').click(function () {
+        tinymce.get("content").execCommand('mceInsertContent', false, "<span style='color:#3366ff;'>{{invoice_amount}}</span>");
+    });
+    $('#insert_deposit').click(function () {
+        tinymce.get("content").execCommand('mceInsertContent', false, "<span style='color:#3366ff;'>{{deposit}}</span>");
+    });
+    $('#insert_depositbalance').click(function () {
+        tinymce.get("content").execCommand('mceInsertContent', false, "<span style='color:#3366ff;'>{{deposit_balance}}</span>");
+    });
+    $('#insert_depositrepayamount').click(function () {
+        tinymce.get("content").execCommand('mceInsertContent', false, "<span style='color:#3366ff;'>{{deposit_repay_amount}}</span>");
+    });
+   
 
 
     ib_submit.click(function (e) {
         e.preventDefault();
         $('#ibox_form').block({ message: null });
 
-        $.post(_url + 'vehicle/post_vehicle/', $("#rform").serialize())
+        $.post(_url + 'cd/post_contract/', $("#rform").serialize())
             .done(function (data) {
 
                 if ($.isNumeric(data)) {
@@ -110,8 +81,25 @@ $(document).ready(function () {
             });
     });
 
+    close.click(function (e) {
+        e.preventDefault();
+        $('#ibox_form').block({ message: null });
 
+        $.post(_url + 'cd/post_contract/', $("#rform").serialize())
+            .done(function (data) {
 
+                if ($.isNumeric(data)) {
+
+                    window.location.href=_url+"cd/contract_list/";
+                }
+                else {
+                    $('#ibox_form').unblock();
+
+                    $("#emsgbody").html(data);
+                    $("#emsg").show("slow");
+                }
+            });
+    });
     // New Make/Model 
 
     $.fn.modal.defaults.width = '700px';

@@ -327,7 +327,6 @@
 
 
                         <div class="row">
-                            <div class="col-md-12">
                                 <div class="form-group">
                                     <div class="col-md-offset-2 col-lg-10">
 

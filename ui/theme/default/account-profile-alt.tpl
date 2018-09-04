@@ -254,20 +254,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             $("#note_update").click(function (e) {
                 e.preventDefault();
                 $('#ibox_panel').block({ message: null });
@@ -523,8 +509,6 @@
 
             $("#more").click(function (e) {
                 e.preventDefault();
-
-
 
                 tab = 'more';
 

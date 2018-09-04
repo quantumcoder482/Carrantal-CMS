@@ -5,7 +5,7 @@
 <div class="row" style="margin-bottom:10px">
     <div class="col-md-12">
 
-        <a href="#" class="btn btn-primary add_loan waves-effect waves-light" id="add_company">
+        <a href="#" class="btn btn-primary add_contract waves-effect waves-light" id="add_company">
             <i class="fa fa-plus"></i> {$_L['Add New Contract']}</a>
 
     </div>
@@ -49,45 +49,49 @@
                     </thead>
                     <tbody>
 
-                        {*foreach $d as $ds*}
+                        {foreach $d as $ds}
                         <tr>
                             <td>
-                                <a href="#" data-value="1" >1</a>
+                                <a href="#" data-value="1" >{$ds['id']}</a>
                             </td>
-                            <td data-value="{*strtotime($ds['purchase_date'])*}">
-                                {*date( $config['df'], strtotime($ds['purchase_date']))*}
+                            <td data-value="{strtotime($ds['create_date'])}">
+                                {date( $config['df'], strtotime($ds['create_date']))}
                             </td>
-                            <td data-value="{*strtotime($ds['expiry_date'])*}">
-                                {*date( $config['df'], strtotime($ds['expiry_date']))*}
+                            {if $ds['modified_date'] neq ''}
+                            <td data-value="{strtotime($ds['update_date'])}">
+                                {date( $config['df'], strtotime($ds['modified_date']))}
+                            </td>
+                            {else}
+                            <td>&nbsp;</td>
+                            {/if}
+                            <td>
+                                <a href="#" class="generate_contract" id="{$ds['id']}">{$ds['title']}</a>
                             </td>
                             <td>
-                                title
-                            </td>
-                            <td>
-                                4/10
+                                {$s_count[$ds['id']]} / {$g_count[$ds['id']]}
                             </td>
                             <td class="text-right">
-                                <a href="#" class="btn btn-primary btn-xs" id="{*$ds['id']*}" data-toggle="tooltip" data-placement="top" title="{$_L['View']}">
+                                <a href="#" class="btn btn-primary btn-xs generate_contract" id="{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['View']}">
                                     <i class="fa fa-file-text-o"></i>
                                 </a>
-                                <a href="#" class="btn btn-info btn-xs" id="{*$ds['id']*}" data-toggle="tooltip" data-placement="top" title="{$_L['Edit']}">
+                                <a href="#" class="btn btn-info btn-xs edit_contract" id="{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['Edit']}">
                                     <i class="fa fa-pencil"></i>
                                 </a>
-                                <a href="#" class="btn btn-danger btn-xs" id="{*$ds['id']*}" data-toggle="tooltip" data-placement="top" title="{$_L['Delete']}">
+                                <a href="#" class="btn btn-danger btn-xs cdelete" id="{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['Delete']}">
                                     <i class="fa fa-trash"></i>
                                 </a>
 
 
                             </td>
                         </tr>
-                        {*/foreach*}
+                        {/foreach}
 
                     </tbody>
 
                     {if $view_type == 'filter'}
                     <tfoot>
                         <tr>
-                            <td style="text-align: left;" colspan="10">
+                            <td style="text-align: left;" colspan="6">
                                 <ul class="pagination">
                                 </ul>
                             </td>

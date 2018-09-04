@@ -1,5 +1,4 @@
-input[type="text"],
-select.form-control {
+input[id="title"]{
   background: transparent;
   border: none;
   border-bottom: 1px solid #000000;
@@ -8,8 +7,7 @@ select.form-control {
   border-radius: 0;
 }
 
-input[type="text"]:focus,
-select.form-control:focus {
+input[id="title"]:focus {
   -webkit-box-shadow: none;
   box-shadow: none;
 }

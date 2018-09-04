@@ -127,9 +127,25 @@ License: You must have a valid license purchased only from cloudonex.com in orde
                     {/if}
 
 
+                        {$client_extra_nav[3]} 
+                    
+                    {if ($config['contracts_deposit'] eq '1')}
+                    
+                    
+                    <li {if $_application_menu eq 'contracts_deposit'} class="active" {/if}><a href="#"><i class="fa fa-certificate"></i> <span class="nav-label">{$_L['Contracts n Deposit']}</span><span
+                                class="fa arrow"></span></a>
+                    
+                        <ul class="nav nav-second-level">
+                            <li><a href="{$_url}client/contracts/">{$_L['Contracts']}</a></li>
+                             <li><a href="#">{$_L['Deposit']}</a></li>  <!-- {$_url}client/deposit/ -->
+                        </ul>
+                    </li>
+                    
+                    {/if}
 
 
-                    {$client_extra_nav[3]}
+
+                    {$client_extra_nav[4]}
 
 
                         <li {if $_application_menu eq 'transactions'}class="active"{/if}><a href="{$_url}client/transactions/"><i class="icon-database"></i> <span class="nav-label">{$_L['Transactions']}</span></a></li>
@@ -159,7 +175,7 @@ License: You must have a valid license purchased only from cloudonex.com in orde
                         <li {if $_application_menu eq 'downloads'}class="active"{/if}><a href="{$_url}client/downloads/"><i class="fa fa-file-o"></i> <span class="nav-label">{$_L['Downloads']}</span></a></li>
                     {/if}
 
-                    {$client_extra_nav[4]}
+                    {$client_extra_nav[5]}
 
 
 

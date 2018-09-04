@@ -19,27 +19,24 @@ switch ($action) {
 
     case 'add_contract': 
 
-        $vehicle_types=ORM::for_table('sys_vehicle_type')->order_by_asc('id')->find_array();
-
-        $v_types=array();
-
-        foreach ($vehicle_types as $v) {
-            array_push($v_types,$v['make']." ".$v['model']." ".$v['engine_capacity']." (".$v['transmission'].")");
+        $id=$routes['2'];
+        
+        if($id){
+            $d=ORM::for_table('sys_vehicle_contract')->where('id',$id)->find_one();
+            $title=$d['title'];
+            $content=$d['content'];
+        }else{
+            $title="";
+            $content="";
         }
-        $fs = ORM::for_table('sys_vehicle_customfields')->order_by_asc('id')->find_many();
-        $ui->assign('fs',$fs);
-
-        $ui->assign('vehicle_types',$vehicle_types);
-        $ui->assign('v_types',$v_types);
+        
+        $ui->assign('title',$title);
+        $ui->assign('content', $content);
+        $ui->assign('id', $id);
         $ui->assign('xheader', Asset::css(array('modal','dp/dist/datepicker.min','dropzone/dropzone','s2/css/select2.min','cd/cd_contract_add')));
         $ui->assign('xfooter', Asset::js(array('modal','dp/dist/datepicker.min','dropzone/dropzone','numeric','s2/js/select2.min',
             's2/js/i18n/'.lan(), 'tinymce/tinymce.min','js/editor','cd/cd_contract_add')));
         $ui->assign('xjq', '$(\'.amount\').autoNumeric(\'init\');');
-
-        //$max = ORM::for_table('sys_vehicles')->max('id');
-        //$nxt = $max+1;
-        //$ui->assign('nxt',$nxt);
-        //$vehicle_type['make'].' '.$vehicle_type['make'].' '.$vehicle_type['engine_capacity'].' '.$vehicle_type['transmission'];
 
         view('cd_contract_add');
 
@@ -63,75 +60,32 @@ switch ($action) {
         $mode_js = '';
         $view_type = 'default';
         $view_type = 'filter';
-        $mode_css = Asset::css(array('modal','dropzone/dropzone','dp/dist/datepicker.min','footable/css/footable.core.min','redactor/redactor','s2/css/select2.min','cd/cd'));
-        $mode_js = Asset::js(array('modal','dropzone/dropzone','dp/dist/datepicker.min','footable/js/footable.all.min','contacts/mode_search','redactor/redactor.min','numeric','s2/js/select2.min',
+        $mode_css = Asset::css(array('modal','dropzone/dropzone','dp/dist/datepicker.min','footable/css/footable.core.min','s2/css/select2.min','cd/cd'));
+        $mode_js = Asset::js(array('modal','dropzone/dropzone','dp/dist/datepicker.min','footable/js/footable.all.min','contacts/mode_search','numeric','s2/js/select2.min',
             's2/js/i18n/'.lan(), 'cd/cd_contract_list'
         ));
 
         $baseUrl=APP_URL;
 
-
-        $total_vehicles = ORM::for_table('sys_vehicles');
-
-        if(!$all_data)
-        {
-            $total_vehicles->where('aid',$user->id);
-        }
-
-        $total_vehicles = $total_vehicles->count();
-
-        $f = ORM::for_table('sys_vehicles');
+        $f = ORM::for_table('sys_vehicle_contract');
         $d = $f->order_by_desc('id')->find_many();
-
-
-
-        // Expiry Status
-
-        $ex_status=array();
-
-        foreach($d as $data){
-
-            $expiry_id=$data['id'];
-
-            $expiry_status=$data['expiry_status'];
-
-            $expiry_date=$data['expiry_date'];
-
-            $today = date("Y-m-d");
-
-            $date1 = date_create($today);
-
-            $date2 = date_create($expiry_date);
-
-            $rest= date_diff($date1,$date2);
-
-            $rest= intval($rest->format("%a"));
-
-            if($date2<$date1){
-
-                $ex_status[$expiry_id]="Expired";
-
-
-            }elseif($rest>$expiry_status){
-
-                $ex_status[$expiry_id]="Active";
-
-            }else {
-
-                $ex_status[$expiry_id]=$rest."-Day to Expiry";
-            };
-
+        $s_count=array();
+        $g_count=array();
+        foreach($d as $ds){
+            $g_count[$ds['id']]=ORM::for_table('sys_vehicle_generatedcontract')->where('contract_id', $ds['id'])->count();
+            $s_count[$ds['id']]=ORM::for_table('sys_vehicle_generatedcontract')->where('contract_id', $ds['id'])->where('status','1')->count();
         }
 
+        $ui->assign('g_count', $g_count);
+        $ui->assign('s_count', $s_count);
 
         $paginator['contents'] = '';
 
-        $ui->assign('total_vehicles', $total_vehicles);
+       
         $ui->assign('xheader', $mode_css);
         $ui->assign('xfooter', $mode_js);
         $ui->assign('view_type', $view_type);
         $ui->assign('d', $d);
-        $ui->assign('ex_status',$ex_status);
         $ui->assign('baseUrl',$baseUrl);
         $ui->assign('paginator', $paginator);
         $ui->assign('xjq', '
@@ -154,6 +108,277 @@ switch ($action) {
 
         break;
 
+
+    case 'generate_contract':
+        
+        $contract_id=$routes['2'];
+        @$customer_id=$routes['3']; //_post('customer_id')
+        @$vehicle_id=$routes['4']; //_post('vehicle_id')
+
+        
+        if(has_access($user->roleid,'sales','all_data')){
+
+            $all_data = true;
+
+        }
+        else{
+            $all_data = false;
+        }
+
+
+        $paginator = array();
+        $mode_css = '';
+        $mode_js = '';
+        $view_type = 'default';
+        $view_type = 'filter';
+        $mode_css = Asset::css(array('modal','dropzone/dropzone','dp/dist/datepicker.min','footable/css/footable.core.min','s2/css/select2.min','cd/cd'));
+        $mode_js = Asset::js(array('modal','dropzone/dropzone','dp/dist/datepicker.min','footable/js/footable.all.min','contacts/mode_search','numeric','s2/js/select2.min',
+            's2/js/i18n/'.lan(), 'cd/cd_generate_contract'
+        ));
+
+        $baseUrl=APP_URL;
+
+        $contract=ORM::for_table('sys_vehicle_contract')->find_one($contract_id);
+
+        $f = ORM::for_table('sys_vehicle_generatedcontract');
+        $d = $f->where('contract_id',$contract_id)->order_by_desc('id')->find_many();
+               
+        $val=array();
+        
+        if($d){
+            foreach($d as $ds){
+                $c=ORM::for_table('crm_accounts')->find_one($ds['customer_id']);               
+                $val[$ds['id']]['customer']=$c['account'];
+                
+                $v=ORM::for_table('sys_vehicles')->find_one($ds['vehicle_id']);
+                $val[$ds['id']]['vehicle']=$v['vehicle_num'];
+
+                $deposit=ORM::for_table('sys_vehicle_deposit')->find_one($ds['deposit_id']);
+                $val[$ds['id']]['deposit_amount']=$deposit['deposit_amount'];
+                $val[$ds['id']]['first_deposit']=$deposit['first_deposit'];
+
+                $invoice=ORM::for_table('sys_invoices')->find_one($ds['invoice_id']);
+                $val[$ds['id']]['invoicenum']=$invoice['invoicenum'];
+                $val[$ds['id']]['invoice_cn']=$invoice['cn'];
+            }
+        }
+        $ui->assign('val', $val);
+
+        $customers=ORM::for_table('crm_accounts')->order_by_asc('id')->find_many();
+        //$vehicles=ORM::for_table('sys_vehicles')->order_by_asc('id')->find_many();
+        $deposits=ORM::for_table('sys_vehicle_deposit');
+        $invoices=ORM::for_table('sys_invoices');
+       
+        $selected_customer=null;
+        $selected_vehicle=null;
+        $vehicles=array();
+        $v_i=array();
+        if($customer_id){
+            $selected_customer=ORM::for_table('crm_accounts')->find_one($customer_id);
+            
+            $d1=ORM::for_table('sys_vehicle_deposit')->where('customerid', $customer_id)->select('vehicle_num')->find_array();
+            if($d1){
+                foreach ($d1 as $ds) {
+                    array_push($v_i, $ds['vehicle_num']); // $vehicles.push($ds['vehicle_num']);
+                }
+                $v_i=array_unique($v_i);
+                foreach ($v_i as $value) {
+                    $vehicle=ORM::for_table('sys_vehicles')->where('vehicle_num', $value)->find_one();
+                    array_push($vehicles,$vehicle);
+                }
+            }
+                       
+            $deposits=$deposits->where('customerid', $customer_id);
+            $invoices=$invoices->where('userid', $customer_id);
+        }
+        if($vehicle_id){
+            $selected_vehicle=ORM::for_table('sys_vehicles')->where('id', $vehicle_id)->find_one();
+            $deposits=$deposits->where('vehicle_num', $selected_vehicle['vehicle_num']);
+        }
+        $deposits=$deposits->order_by_asc('id')->find_many();
+        $invoices=$invoices->order_by_asc('id')->find_many();
+   
+
+
+        $ui->assign('contract', $contract);
+        $ui->assign('selected_customer', $selected_customer);
+        $ui->assign('selected_vehicle', $selected_vehicle);
+        $ui->assign('customers', $customers);
+        $ui->assign('vehicles', $vehicles);
+        $ui->assign('deposits', $deposits);
+        $ui->assign('invoices', $invoices);
+
+
+        $paginator['contents'] = '';
+
+       
+        $ui->assign('xheader', $mode_css);
+        $ui->assign('xfooter', $mode_js);
+        $ui->assign('view_type', $view_type);
+        $ui->assign('d', $d);
+        $ui->assign('baseUrl',$baseUrl);
+        $ui->assign('paginator', $paginator);
+        $ui->assign('xjq', '
+            $(\'.amount\').autoNumeric(\'init\', {
+            dGroup: ' . $config['thousand_separator_placement'] . ',
+            aPad: ' . $config['currency_decimal_digits'] . ',
+            pSign: \'' . $config['currency_symbol_position'] . '\',
+            aDec: \'' . $config['dec_point'] . '\',
+            aSep: \'' . $config['thousands_sep'] . '\',
+            vMax: \'9999999999999999.00\',
+                        vMin: \'-9999999999999999.00\'
+
+            });
+            $(\'[data-toggle="tooltip"]\').tooltip();
+
+        ');
+
+
+        view('cd_generate_contract');
+        
+
+        break;
+
+
+    case 'getdata':
+        $customer_id=_post('customer_id');
+        $vehicle_id=_post('vehicle_id');
+
+
+        break;
+
+    case 'modal_edit_contract':
+
+        $id=$routes['2'];
+
+        $d=ORM::for_table('sys_vehicle_generatedcontract')->find_one($id);
+        $contract_id=$d['contract_id'];
+        $customer_id=$d['customer_id'];
+        $vehicle_id=$d['vehicle_id'];
+        $deposit_id=$d['deposit_id'];
+        $invoice_id=$d['invoice_id'];
+        $ui->assign('id', $id);
+        $ui->assign('contract_id', $contract_id);
+        $ui->assign('customer_id', $customer_id);
+        $ui->assign('vehicle_id', $vehicle_id);
+        $ui->assign('deposit_id', $deposit_id);
+        $ui->assign('invoice_id', $invoice_id);
+
+
+        $contracts=ORM::for_table('sys_vehicle_contract')->order_by_asc('id')->find_many();
+        $customers=ORM::for_table('crm_accounts')->order_by_asc('id')->find_many();
+        $vehicles=ORM::for_table('sys_vehicles')->order_by_asc('id')->find_many();
+        $deposits=ORM::for_table('sys_vehicle_deposit')->order_by_asc('id')->find_many();
+        $invoices=ORM::for_table('sys_invoices')->order_by_asc('id')->find_many();
+
+        $ui->assign('contracts', $contracts);
+        $ui->assign('customers', $customers);
+        $ui->assign('vehicles', $vehicles);
+        $ui->assign('deposits', $deposits);
+        $ui->assign('invoices', $invoices);
+        
+        view('modal_edit_contract');
+
+
+        break;
+    
+    case 'post_contract':
+    
+        $id=_post('id');
+        $title=_post('title');
+        $content=_post('content');
+
+        $msg='';
+
+        if($title==''){
+            $msg.="Title is required"."<br/>";
+        }
+        if($content==''){
+            $msg.="Content is required"."<br/>";
+        }
+
+
+        if($msg==''){
+            if($id){
+                $contract=ORM::for_table('sys_vehicle_contract')->find_one($id);
+                _msglog('s',$_L['Item Updated Successfully']);
+
+                $today=date('Y-m-d');
+                $contract->modified_date=$today;
+            }else{
+                $contract=ORM::for_table('sys_vehicle_contract')->create();
+                _msglog('s',$_L['Item Added Successfully']);    
+                
+                $today=date('Y-m-d');
+                $contract->create_date=$today;
+            }
+
+            $contract->title=$title;
+            $contract->content=$content;
+            $contract->save();
+
+            echo $contract->id();
+            
+
+        }else{
+            echo $msg;
+        }
+
+
+
+        break;        
+
+    case 'post_generate_contract':
+    
+        $id=_post('id');
+
+        $contract=_post('contract_id');
+        $contact=_post('contact');
+        $vehicle=_post('vehicle');
+        $deposit=_post('deposit');
+        $invoice=_post('invoice');
+        
+
+        $msg='';
+
+        if($contact==''){
+            $msg.="Contact is required"."<br/>";
+        }
+        if($vehicle==''){
+            $msg.="Vehicle is required"."<br/>";
+        }
+        if($deposit==''){
+            $msg.="Deposit is required"."<br/>";
+        }
+        if($invoice==''){
+            $msg.="Invoice is required"."<br/>";
+        }
+
+        if($msg==''){
+            if($id){
+                $d=ORM::for_table('sys_vehicle_generatedcontract')->find_one($id);
+                _msglog('s',$_L['Item Updated Successfully']);
+            }else{
+                $d=ORM::for_table('sys_vehicle_generatedcontract')->create();
+                _msglog('s',$_L['Item Added Successfully']);
+                $today=date('Y-m-d');
+                $d->created_date=$today;
+            }
+            $d->contract_id=$contract;
+            $d->customer_id=$contact;
+            $d->deposit_id=$deposit;
+            $d->vehicle_id=$vehicle;
+            $d->invoice_id=$invoice;
+            $d->save();
+
+            echo $d->id();
+            
+            
+        }else{
+            echo $msg;
+        }
+
+        break;  
 
     case 'deposit_list':
 
@@ -820,7 +1045,35 @@ switch ($action) {
         }
 
         break;
+    
+    case 'del_contract':
+        
+        Event::trigger('vehicle/del_contract/');
+        $id = $routes['2'];
 
+        $d = ORM::for_table('sys_vehicle_contract')->find_one($id);
+
+        if ($d) {
+            $d->delete();
+            r2(U . 'cd/contract_list', 's', $_L['Contract Delete Successful']);
+        }
+
+        break;
+
+
+    case 'del_generated_contract':
+        
+        Event::trigger('cd/del_generated_contract');
+        $id = $routes['2'];
+
+        $d = ORM::for_table('sys_vehicle_generatedcontract')->find_one($id);
+
+        if ($d) {
+            $d->delete();
+            r2(U . 'cd/generate_contract/'.$id, 's', $_L['Contract Delete Successful']);
+        }
+
+        break;
     
     
     case 'upload':  

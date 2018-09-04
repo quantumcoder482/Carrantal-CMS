@@ -30,7 +30,7 @@ _L[\'Submit\'] = \''.$_L['Submit'].'\';
 
 
 switch ($action) {
-    case 'add':
+    case 'add': 
 
         Event::trigger('contacts/add/');
 
@@ -92,9 +92,9 @@ switch ($action) {
 
 
 
-//        $ui->assign('xheader', '
-//<link rel="stylesheet" type="text/css" href="ui/lib/s2/css/select2.min.css"/>
-//');
+        //        $ui->assign('xheader', '
+        //<link rel="stylesheet" type="text/css" href="ui/lib/s2/css/select2.min.css"/>
+        //');
 
         $ui->assign('xheader', Asset::css(array(
             'modal',
@@ -113,10 +113,10 @@ switch ($action) {
 
 
         $ui->assign('jsvar', '
-_L[\'Working\'] = \''.$_L['Working'].'\';
-_L[\'Company Name\'] = \''.$_L['Company Name'].'\';
-_L[\'New Company\'] = \''.$_L['New Company'].'\';
- ');
+        _L[\'Working\'] = \''.$_L['Working'].'\';
+        _L[\'Company Name\'] = \''.$_L['Company Name'].'\';
+        _L[\'New Company\'] = \''.$_L['New Company'].'\';
+        ');
 
 
         $currencies = M::factory('Models_Currency')->find_array();
@@ -131,13 +131,6 @@ _L[\'New Company\'] = \''.$_L['New Company'].'\';
             'title_type' => $title_type,
             'db_type' => $db_type
         ]);
-
-
-
-
-
-
-
 
         break;
 
@@ -240,7 +233,7 @@ _L[\'New Company\'] = \''.$_L['New Company'].'\';
         $ui->assign('cid',$cid);
         $d = ORM::for_table('crm_accounts')->find_one($cid);
         if($d){
-$i = ORM::for_table('sys_invoices')->where('userid',$cid)->find_many();
+            $i = ORM::for_table('sys_invoices')->where('userid',$cid)->find_many();
 
             $total_invoice_amount = Invoice::where('userid',$cid)->sum('total');
             $total_paid_amount = Invoice::where('userid',$cid)->paid()->sum('total');
@@ -394,19 +387,19 @@ $i = ORM::for_table('sys_invoices')->where('userid',$cid)->find_many();
 
             $ui->assign('currencies',$currencies);
 
-/*            $ui->assign('xheader', Asset::css(array(
-                'dp/dist/datepicker.min',
-            )));
-            $ui->assign('xfooter', Asset::js(array(
-                'dp/dist/datepicker.min'
-            )));
-*/
+        /*            $ui->assign('xheader', Asset::css(array(
+                        'dp/dist/datepicker.min',
+                    )));
+                    $ui->assign('xfooter', Asset::js(array(
+                        'dp/dist/datepicker.min'
+                    )));
+        */
             view('ajax.contact-edit');
 
 
         }
         else{
-
+            
         }
 
 
@@ -508,33 +501,21 @@ $i = ORM::for_table('sys_invoices')->where('userid',$cid)->find_many();
             $ui->assign('quote_count',$quote_count);
 
             //find all activity for this user
-//            $ac = ORM::for_table('sys_activity')->where('cid',$id)->limit(20)->order_by_desc('id')->find_many();
-//            $ui->assign('ac',$ac);
+        //            $ac = ORM::for_table('sys_activity')->where('cid',$id)->limit(20)->order_by_desc('id')->find_many();
+        //            $ui->assign('ac',$ac);
 
 
 
 
             $ui->assign('xheader', Asset::css(array('modal','dp/dist/datepicker.min', 's2/css/select2.min','imgcrop/assets/css/croppic')));
-
-
-
-
             $ui->assign('xfooter', Asset::js(array('modal','dp/dist/datepicker.min', 'js/filtertable','js/redirect','tinymce/tinymce.min','js/editor','s2/js/select2.min','s2/js/i18n/'.lan(),'imgcrop/croppic','numeric'),$file_build));
 
             $ui->assign('xjq', '
- var cid = $(\'#cid\').val();
-    var _url = $("#_url").val();
-    var cb = function cb (){
-
-
-
+            var cid = $(\'#cid\').val();
+            var _url = $("#_url").val();
+            var cb = function cb (){
             };
-
-
-
-
- '.
-                $extra_jq);
+            '.$extra_jq);
 
             $ui->assign('d',$d);
 
@@ -548,6 +529,7 @@ $i = ORM::for_table('sys_invoices')->where('userid',$cid)->find_many();
         }
 
         break;
+
 
     case 'add-post':
 
@@ -633,11 +615,6 @@ $i = ORM::for_table('sys_invoices')->where('userid',$cid)->find_many();
         }
 
 
-
-
-
-
-
         if($currency == ''){
             $currency = '0';
         }
@@ -652,7 +629,7 @@ $i = ORM::for_table('sys_invoices')->where('userid',$cid)->find_many();
 
         $msg = '';
 
-//check if tag is already exisit
+        //check if tag is already exisit
 
 
 
@@ -660,11 +637,11 @@ $i = ORM::for_table('sys_invoices')->where('userid',$cid)->find_many();
             $msg .= $_L['Account Name is required'].' <br>';
         }
 
-//check account is already exist
-//        $chk = ORM::for_table('crm_accounts')->where('account',$account)->find_one();
-//        if($chk){
-//            $msg .= 'Account already exist <br>';
-//        }
+        //check account is already exist
+        //        $chk = ORM::for_table('crm_accounts')->where('account',$account)->find_one();
+        //        if($chk){
+        //            $msg .= 'Account already exist <br>';
+        //        }
         if($nric != ''){
             $f=ORM::for_table('crm_accounts')->where('nric',$nric)->find_one();
             if($f){
@@ -880,69 +857,69 @@ $i = ORM::for_table('sys_invoices')->where('userid',$cid)->find_many();
 
         Event::trigger('contacts/list/');
 
-      //  $ui->assign('_st', $_L['Contacts'].'<span class="pull-right"><a href="'.U.'contacts/set_view_mode/card/'.'"><i class="fa fa-th"></i></a> <a href="'.U.'contacts/set_view_mode/tbl/'.'"><i class="fa fa-align-justify"></i></a> <a href="'.U.'contacts/set_view_mode/search/'.'"><i class="fa fa-search"></i></a></span>');
+        //  $ui->assign('_st', $_L['Contacts'].'<span class="pull-right"><a href="'.U.'contacts/set_view_mode/card/'.'"><i class="fa fa-th"></i></a> <a href="'.U.'contacts/set_view_mode/tbl/'.'"><i class="fa fa-align-justify"></i></a> <a href="'.U.'contacts/set_view_mode/search/'.'"><i class="fa fa-search"></i></a></span>');
 
-//        $ui->assign('_st', $_L['Contacts'].' <div class="btn-group pull-right" style="padding-right: 10px;">
-//  <a class="btn btn-success btn-xs" href="'.U.'contacts/set_view_mode/card/'.'" style="box-shadow: none;"><i class="fa fa-th"></i></a>
-//  <a class="btn btn-primary btn-xs" href="'.U.'contacts/set_view_mode/tbl/'.'" style="box-shadow: none;"><i class="fa fa-align-justify"></i></a>
-//  <a class="btn btn-success btn-xs" href="'.U.'contacts/set_view_mode/search/'.'" style="box-shadow: none;"><i class="fa fa-search"></i></a>
-//  <a class="btn btn-primary btn-xs" href="'.U.'contacts/export_csv/'.'" style="box-shadow: none;"><i class="fa fa-download"></i></a>
-//  <a class="btn btn-success btn-xs" href="'.U.'contacts/import_csv/'.'" style="box-shadow: none;"><i class="fa fa-upload"></i></a>
-//</div>');
+        //        $ui->assign('_st', $_L['Contacts'].' <div class="btn-group pull-right" style="padding-right: 10px;">
+        //  <a class="btn btn-success btn-xs" href="'.U.'contacts/set_view_mode/card/'.'" style="box-shadow: none;"><i class="fa fa-th"></i></a>
+        //  <a class="btn btn-primary btn-xs" href="'.U.'contacts/set_view_mode/tbl/'.'" style="box-shadow: none;"><i class="fa fa-align-justify"></i></a>
+        //  <a class="btn btn-success btn-xs" href="'.U.'contacts/set_view_mode/search/'.'" style="box-shadow: none;"><i class="fa fa-search"></i></a>
+        //  <a class="btn btn-primary btn-xs" href="'.U.'contacts/export_csv/'.'" style="box-shadow: none;"><i class="fa fa-download"></i></a>
+        //  <a class="btn btn-success btn-xs" href="'.U.'contacts/import_csv/'.'" style="box-shadow: none;"><i class="fa fa-upload"></i></a>
+        //</div>');
 
 
-//        $name = _post('name');
-//        //find all tags
-//        $t = ORM::for_table('sys_tags')->where('type','contacts')->find_many();
-//        $ui->assign('t',$t);
-//
-//        $mode_css = '';
-//        $mode_js = '';
-//
-//        if($config['contact_set_view_mode'] == 'search'){
-//
-//            // Foo Table
-//
-//            $mode_css = Asset::css('footable/css/footable.core.min');
-//
-//            $mode_js = Asset::js(array('footable/js/footable.all.min','contacts/mode_search'));
-//
-//            $d = ORM::for_table('crm_accounts')->order_by_desc('id')->find_many();
-//
-//            $paginator['contents'] = '';
-//
-//
-//        }
-//
-//        elseif($name != ''){
-//            $paginator = Paginator::bootstrap('crm_accounts','account','%'.$name.'%');
-//            $d = ORM::for_table('crm_accounts')->where_like('account','%'.$name.'%')->offset($paginator['startpoint'])->limit($paginator['limit'])->order_by_desc('id')->find_many();
-//        }
-//        elseif(isset($routes[2]) AND ($routes[2]) != '' AND (!is_numeric($routes[2]))){
-//        $tags = $routes[2];
-//            $paginator['contents'] = '';
-//            $d = ORM::for_table('crm_accounts')->where_like('tags','%'.$tags.'%')->order_by_desc('id')->find_many();
-//        }
-//        else{
-//            $paginator = Paginator::bootstrap('crm_accounts');
-//            $d = ORM::for_table('crm_accounts')->offset($paginator['startpoint'])->limit($paginator['limit'])->order_by_desc('id')->find_many();
-//        }
-//
-//        $ui->assign('d',$d);
-//        $ui->assign('paginator',$paginator);
-//
-//                $ui->assign('xheader', $mode_css);
-//
-//
-//        $ui->assign('xfooter', $mode_js.
-//            '
-//<script type="text/javascript" src="' . $_theme . '/lib/list-contacts.js"></script>
-//
-//');
-//        $ui->assign('jsvar', '
-//_L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
-// ');
-//        $ui->display('list-contacts.tpl');
+        //        $name = _post('name');
+        //        //find all tags
+        //        $t = ORM::for_table('sys_tags')->where('type','contacts')->find_many();
+        //        $ui->assign('t',$t);
+        //
+        //        $mode_css = '';
+        //        $mode_js = '';
+        //
+        //        if($config['contact_set_view_mode'] == 'search'){
+        //
+        //            // Foo Table
+        //
+        //            $mode_css = Asset::css('footable/css/footable.core.min');
+        //
+        //            $mode_js = Asset::js(array('footable/js/footable.all.min','contacts/mode_search'));
+        //
+        //            $d = ORM::for_table('crm_accounts')->order_by_desc('id')->find_many();
+        //
+        //            $paginator['contents'] = '';
+        //
+        //
+        //        }
+        //
+        //        elseif($name != ''){
+        //            $paginator = Paginator::bootstrap('crm_accounts','account','%'.$name.'%');
+        //            $d = ORM::for_table('crm_accounts')->where_like('account','%'.$name.'%')->offset($paginator['startpoint'])->limit($paginator['limit'])->order_by_desc('id')->find_many();
+        //        }
+        //        elseif(isset($routes[2]) AND ($routes[2]) != '' AND (!is_numeric($routes[2]))){
+        //        $tags = $routes[2];
+        //            $paginator['contents'] = '';
+        //            $d = ORM::for_table('crm_accounts')->where_like('tags','%'.$tags.'%')->order_by_desc('id')->find_many();
+        //        }
+        //        else{
+        //            $paginator = Paginator::bootstrap('crm_accounts');
+        //            $d = ORM::for_table('crm_accounts')->offset($paginator['startpoint'])->limit($paginator['limit'])->order_by_desc('id')->find_many();
+        //        }
+        //
+        //        $ui->assign('d',$d);
+        //        $ui->assign('paginator',$paginator);
+        //
+        //                $ui->assign('xheader', $mode_css);
+        //
+        //
+        //        $ui->assign('xfooter', $mode_js.
+        //            '
+        //<script type="text/javascript" src="' . $_theme . '/lib/list-contacts.js"></script>
+        //
+        //');
+        //        $ui->assign('jsvar', '
+        //_L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
+        // ');
+        //        $ui->display('list-contacts.tpl');
 
 
 
@@ -960,8 +937,8 @@ $i = ORM::for_table('sys_invoices')->where('userid',$cid)->find_many();
         $ui->assign('xfooter',Asset::js(array('popover/popover','js/redirect','select/select.min','s2/js/select2.min','s2/js/i18n/'.lan(),'dt/dt','modal', 'dp/dist/datepicker.min')));
 
         $ui->assign('jsvar', '
-_L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
- ');
+        _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
+        ');
 
 
         view('contacts_list',[
@@ -1036,19 +1013,19 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
             if($account == ''){
                 $msg .= $_L['Account Name is required']. ' <br>';
             }
-//            if($tags != ''){
-//                $pieces = explode(',', $tags);
-//                foreach($pieces as $element)
-//                {
-//                    $tg = ORM::for_table('sys_tags')->where('text',$element)->where('type','Contacts')->find_one();
-//                    if(!$tg){
-//                        $tc = ORM::for_table('sys_tags')->create();
-//                        $tc->text = $element;
-//                        $tc->type = 'Contacts';
-//                        $tc->save();
-//                    }
-//                }
-//            }
+        //            if($tags != ''){
+        //                $pieces = explode(',', $tags);
+        //                foreach($pieces as $element)
+        //                {
+        //                    $tg = ORM::for_table('sys_tags')->where('text',$element)->where('type','Contacts')->find_one();
+        //                    if(!$tg){
+        //                        $tc = ORM::for_table('sys_tags')->create();
+        //                        $tc->text = $element;
+        //                        $tc->type = 'Contacts';
+        //                        $tc->save();
+        //                    }
+        //                }
+        //            }
 
             // Sadia ================= From V 2.4
 
@@ -1060,24 +1037,24 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
 
 
 
-//            if($address == ''){
-//                $msg .= 'Address is required <br>';
-//            }
-//            if($city == ''){
-//                $msg .= 'City is required <br>';
-//            }
-//            if($state == ''){
-//                $msg .= 'State is required <br>';
-//            }
-//            if($zip == ''){
-//                $msg .= 'ZIP is required <br>';
-//            }
-//            if($country == ''){
-//                $msg .= 'Country is required <br>';
-//            }
+        //            if($address == ''){
+        //                $msg .= 'Address is required <br>';
+        //            }
+        //            if($city == ''){
+        //                $msg .= 'City is required <br>';
+        //            }
+        //            if($state == ''){
+        //                $msg .= 'State is required <br>';
+        //            }
+        //            if($zip == ''){
+        //                $msg .= 'ZIP is required <br>';
+        //            }
+        //            if($country == ''){
+        //                $msg .= 'Country is required <br>';
+        //            }
                 if($nric != ''){
                     if($nric != $d['nric']){
-                        $f=ORM::for_table('crm_account')->where('nric',$nric)->find_one();
+                        $f=ORM::for_table('crm_accounts')->where('nric',$nric)->find_one();
                         if($f){
                             $msg.=$_L['NRIC already exist'].' <br>';
                         }
@@ -1097,11 +1074,11 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
                     $msg .= $_L['Invalid Email'].' <br>';
                 }
             }
-//            if($phone != ''){
-//                if(!is_numeric($phone)){
-//                    $msg .= $_L['Invalid Phone'].' <br>';
-//                }
-//            }
+        //            if($phone != ''){
+        //                if(!is_numeric($phone)){
+        //                    $msg .= $_L['Invalid Phone'].' <br>';
+        //                }
+        //            }
 
             $gid = _post('group');
 
@@ -1179,9 +1156,9 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
 
                     // change invoice account
 
-//                    $inv = ORM::for_table('sys_invoices')->where('account',$old_account);
-//                    $inv->account = $account;
-//                    $inv->save();
+        //                    $inv = ORM::for_table('sys_invoices')->where('account',$old_account);
+        //                    $inv->account = $account;
+        //                    $inv->save();
 
                     $sql = "update sys_invoices set account='$account' where account='$old_account'";
 
@@ -1342,10 +1319,10 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
         $zip = $d['zip'];
         $country = $d['country'];
         echo "$address
-$city
-$state $zip
-$country
-";
+        $city
+        $state $zip
+        $country
+        ";
         break;
 
 
@@ -1358,14 +1335,14 @@ $country
         $d = ORM::for_table('crm_accounts')->find_one($cid);
         $email = $d['email'];
         $toname = $d['account'];
-$subject = _post('subject');
+        $subject = _post('subject');
         if($subject == ''){
             $msg .= $_L['Subject is Empty'].' <br>';
         }
         $message = $_POST['message'];
-if($message == ''){
-    $msg .= $_L['Message is Empty'].' <br>';
-}
+        if($message == ''){
+            $msg .= $_L['Message is Empty'].' <br>';
+        }
         if($msg == ''){
             //send email
             Notify_Email::_send($toname,$email,$subject,$message,$cid);
@@ -1394,12 +1371,12 @@ if($message == ''){
 
         Event::trigger('contacts/set_view_mode/');
 
-//        if(isset($routes['2']) AND ($routes['2'] != 'tbl')){
-//            $mode = 'card';
-//        }
-//        else{
-//            $mode = 'tbl';
-//        }
+        //        if(isset($routes['2']) AND ($routes['2'] != 'tbl')){
+        //            $mode = 'card';
+        //        }
+        //        else{
+        //            $mode = 'tbl';
+        //        }
 
         if(isset($routes[2]) AND ($routes[2] != '')){
             $mode = $routes['2'];
@@ -1452,7 +1429,7 @@ if($message == ''){
             // Put the data into the stream
             fputcsv($fh, $data);
         }
-// Close the file
+        // Close the file
         fclose($fh);
 
 
@@ -1516,12 +1493,12 @@ if($message == ''){
 
           // _msglog('s',$uploaded);
 
-//            $csvData = file_get_contents('storage/temp/'.$uploaded);
-//            $lines = explode(PHP_EOL, $csvData);
-//            $contacts = array();
-//            foreach ($lines as $line) {
-//                $contacts[] = str_getcsv($line);
-//            }
+        //            $csvData = file_get_contents('storage/temp/'.$uploaded);
+        //            $lines = explode(PHP_EOL, $csvData);
+        //            $contacts = array();
+        //            foreach ($lines as $line) {
+        //                $contacts[] = str_getcsv($line);
+        //            }
 
 
 
@@ -1564,11 +1541,11 @@ if($message == ''){
 
             _msglog('s',$cn.' Contacts Imported');
 
-//            ob_start();
-//            var_dump($contacts);
-//            $result = ob_get_clean();
-//
-//            _msglog('s',$result);
+        //            ob_start();
+        //            var_dump($contacts);
+        //            $result = ob_get_clean();
+        //
+        //            _msglog('s',$result);
 
 
 
@@ -1594,8 +1571,8 @@ if($message == ''){
         $ui->assign('xfooter',Asset::js(array('contacts/groups')));
 
         $ui->assign('jsvar', '
-_L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
- ');
+        _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
+        ');
 
         view('crm_groups');
 
@@ -1676,8 +1653,8 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
                 $ui->assign('xfooter',Asset::js(array('js/redirect','js/group_email')));
 
                 $ui->assign('jsvar', '
-_L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
- ');
+        _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
+        ');
 
                 $ui->assign('xjq',' $(".cdelete").click(function (e) {
         e.preventDefault();
@@ -1688,14 +1665,14 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
                window.location.href = _url + "delete/crm-user/" + id + "/'.$gid.'/";
            }
         });
-    });
+            });
+            
+                $("#send_group_email").click(function(e){
+                e.preventDefault();
+                $.redirect(base_url + "handler/bulk_email/",{ type: "customers", ids: '.json_encode($ids).'});
+            });
     
-        $("#send_group_email").click(function(e){
-        e.preventDefault();
-        $.redirect(base_url + "handler/bulk_email/",{ type: "customers", ids: '.json_encode($ids).'});
-    });
-    
-');
+        ');
 
                 view('contacts_find_by_group');
 
@@ -1772,15 +1749,15 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
     case 'group_email_post':
 
 
-//        $recipients = array(
-//            'person1@domain.com' => 'Person One',
-//            'person2@domain.com' => 'Person Two',
-//            // ..
-//        );
-//        foreach($recipients as $email => $name)
-//        {
-//            $mail->AddAddress($email, $name);
-//        }
+        //        $recipients = array(
+        //            'person1@domain.com' => 'Person One',
+        //            'person2@domain.com' => 'Person Two',
+        //            // ..
+        //        );
+        //        foreach($recipients as $email => $name)
+        //        {
+        //            $mail->AddAddress($email, $name);
+        //        }
 
 
 
@@ -1794,17 +1771,17 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
         echo 'Mail Sent!';
 
 
-//       if(Ib_Email::bulk_email($emails,$subject,$msg,$user->username)){
-//
-//           echo 'Mail Sent!';
-//
-//       }
-//
-//        else{
-//
-//            echo 'An Error Occurred while sending email.';
-//
-//        }
+        //       if(Ib_Email::bulk_email($emails,$subject,$msg,$user->username)){
+        //
+        //           echo 'Mail Sent!';
+        //
+        //       }
+        //
+        //        else{
+        //
+        //            echo 'An Error Occurred while sending email.';
+        //
+        //        }
 
 
 
@@ -1818,14 +1795,14 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
         $ui->assign('_title', $_L['Companies'].' - '. $config['CompanyName']);
 
         $ui->assign('jsvar', '
-_L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
- ');
+            _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
+            ');
 
-      //  $ui->assign('_application_menu', 'companies');
+         //  $ui->assign('_application_menu', 'companies');
 
         $ui->assign('_st', $_L['Companies']);
 
-// find all companies
+        // find all companies
 
         $companies = Company::orderBy('id','desc')->get()->toArray();
 
@@ -1881,7 +1858,7 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
             $countries = Countries::all($company->country);
 
 
-//            $val[''] = $company->;
+        //            $val[''] = $company->;
         }
         else{
             $f_type = 'create';
@@ -2294,23 +2271,23 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
 
 
         echo '
-<h4>'.$_L['Customers'].'</h4>
-<hr>
-<a class="btn btn-primary" href="'.U.'contacts/add/0/'.$cid.'">'.$_L['Add Customer'].'</a>
-<hr>
-<table class="table table-bordered">
-   <thead>
-      <tr>
-         <th>#</th>
-         <th>'.$_L['Name'].'</th>
-         <th>'.$_L['Email'].'</th>
-         <th>'.$_L['Phone'].'</th>
-      </tr>
-   </thead>
-   <tbody>
-      '.$tr_customers.'
-   </tbody>
-</table>';
+        <h4>'.$_L['Customers'].'</h4>
+        <hr>
+        <a class="btn btn-primary" href="'.U.'contacts/add/0/'.$cid.'">'.$_L['Add Customer'].'</a>
+        <hr>
+        <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>'.$_L['Name'].'</th>
+                <th>'.$_L['Email'].'</th>
+                <th>'.$_L['Phone'].'</th>
+            </tr>
+        </thead>
+        <tbody>
+            '.$tr_customers.'
+        </tbody>
+        </table>';
 
 
         break;
@@ -2407,7 +2384,7 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
                 <a href="'.U.'invoices/view/'.$invoice['id'].'/" class="btn btn-primary btn-xs"><i class="fa fa-check"></i> </a>
                 <a href="'.U.'invoices/edit/'.$invoice['id'].'/" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> </a>
             </td>
-        </tr>';
+            </tr>';
                 }
 
                 if($dt == ''){
@@ -2428,25 +2405,25 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
             }
 
             echo '<table class="table table-bordered table-hover sys_table">
-    <thead>
-    <tr>
-        <th>#</th>
-        <th>'.$_L['Customer'].'</th>
-        <th>'.$_L['Amount'].'</th>
-        <th>'.$_L['Invoice Date'].'</th>
-        <th>'.$_L['Due Date'].'</th>
-        <th>'.$_L['Status'].'</th>
-        <th class="text-right">'.$_L['Manage'].'</th>
-    </tr>
-    </thead>
-    <tbody>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>'.$_L['Customer'].'</th>
+                <th>'.$_L['Amount'].'</th>
+                <th>'.$_L['Invoice Date'].'</th>
+                <th>'.$_L['Due Date'].'</th>
+                <th>'.$_L['Status'].'</th>
+                <th class="text-right">'.$_L['Manage'].'</th>
+            </tr>
+            </thead>
+            <tbody>
 
             
            '.$tds.' 
     
 
-    </tbody>
-</table>';
+            </tbody>
+        </table>';
 
 
         }
@@ -2490,7 +2467,7 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
                 <a href="'.U.'quotes/view/'.$quote['id'].'/" class="btn btn-primary btn-xs"><i class="fa fa-check"></i></a>
                 <a href="'.U.'quotes/edit/'.$quote['id'].'/" class="btn btn-info btn-xs"><i class="fa fa-repeat"></i></a>
             </td>
-        </tr>';
+            </tr>';
                 }
 
                 if($dt == ''){
@@ -2511,26 +2488,26 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
             }
 
             echo '<table class="table table-bordered table-hover sys_table">
-    <thead>
-    <tr>
-        <th>#</th>
-        <th>'.$_L['Customer'].'</th>
-        <th>'.$_L['Subject'].'</th>
-        <th>'.$_L['Amount'].'</th>
-        <th>'.$_L['Date Created'].'</th>
-        <th>'.$_L['Expiry Date'].'</th>
-        <th>'.$_L['Stage'].'</th>
-        <th class="text-right">'.$_L['Manage'].'</th>
-    </tr>
-    </thead>
-    <tbody>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>'.$_L['Customer'].'</th>
+                <th>'.$_L['Subject'].'</th>
+                <th>'.$_L['Amount'].'</th>
+                <th>'.$_L['Date Created'].'</th>
+                <th>'.$_L['Expiry Date'].'</th>
+                <th>'.$_L['Stage'].'</th>
+                <th class="text-right">'.$_L['Manage'].'</th>
+            </tr>
+            </thead>
+            <tbody>
 
             
            '.$tds.' 
     
 
-    </tbody>
-</table>';
+            </tbody>
+        </table>';
 
 
         }
@@ -2596,25 +2573,25 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
             }
 
             echo '<table class="table table-bordered table-hover sys_table">
-    <thead>
-    <tr>
-        
-                        <th>'.$_L['Order'].' #</th>
-                        <th>'.$_L['Date'].'</th>
-                        <th>'.$_L['Customer'].'</th>
-                        <th>'.$_L['Total'].'</th>
-                        <th>'.$_L['Status'].'</th>
-                        
-    </tr>
-    </thead>
-    <tbody>
+        <thead>
+        <tr>
+            
+                            <th>'.$_L['Order'].' #</th>
+                            <th>'.$_L['Date'].'</th>
+                            <th>'.$_L['Customer'].'</th>
+                            <th>'.$_L['Total'].'</th>
+                            <th>'.$_L['Status'].'</th>
+                            
+        </tr>
+        </thead>
+        <tbody>
 
             
            '.$tds.' 
     
 
-    </tbody>
-</table>';
+            </tbody>
+        </table>';
 
 
         }
@@ -2699,28 +2676,28 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
             }
 
             echo '<table class="table table-bordered table-hover sys_table">
-    <thead>
-    <tr>
-        <th>#</th>
-        <th>'.$_L['Date'].'</th>
-        <th>'.$_L['Account'].'</th>
-        <th>'.$_L['Type'].'</th>
-        <th>'.$_L['Amount'].'</th>
-        <th>'.$_L['Description'].'</th>
-        <th>'.$_L['Dr'].'</th>
-        <th>'.$_L['Cr'].'</th>
-        <th>'.$_L['Balance'].'</th>
-        <th class="text-right">'.$_L['Manage'].'</th>
-    </tr>
-    </thead>
-    <tbody>
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>'.$_L['Date'].'</th>
+            <th>'.$_L['Account'].'</th>
+            <th>'.$_L['Type'].'</th>
+            <th>'.$_L['Amount'].'</th>
+            <th>'.$_L['Description'].'</th>
+            <th>'.$_L['Dr'].'</th>
+            <th>'.$_L['Cr'].'</th>
+            <th>'.$_L['Balance'].'</th>
+            <th class="text-right">'.$_L['Manage'].'</th>
+        </tr>
+        </thead>
+        <tbody>
 
             
            '.$tds.' 
     
 
-    </tbody>
-</table>';
+            </tbody>
+        </table>';
 
 
         }
@@ -2733,9 +2710,9 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
     case 'json_list':
 
 
-//        var_dump($_POST);
-//
-//        exit;
+        //        var_dump($_POST);
+        //
+        //        exit;
 
 
         $columns = array();
@@ -3046,18 +3023,18 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
 
         if($customer){
 
-//            if(v::numeric()->between(0, 999999999999)->validate($amount)){
-//
-//                $prev_balance = $customer->balance;
-//
-//                $new_balance = $prev_balance+$amount;
-//
-//                $customer->balance = $new_balance;
-//                $customer->save();
-//
-//                _log('Amount '.$amount.' Added by Admin ['.$user->fullname.']'.' Customer - '.$customer->account.' Previous Balance: '.$prev_balance.' New Balance: '.$new_balance,'Client',$customer->id);
-//
-//            }
+        //            if(v::numeric()->between(0, 999999999999)->validate($amount)){
+        //
+        //                $prev_balance = $customer->balance;
+        //
+        //                $new_balance = $prev_balance+$amount;
+        //
+        //                $customer->balance = $new_balance;
+        //                $customer->save();
+        //
+        //                _log('Amount '.$amount.' Added by Admin ['.$user->fullname.']'.' Customer - '.$customer->account.' Previous Balance: '.$prev_balance.' New Balance: '.$new_balance,'Client',$customer->id);
+        //
+        //            }
 
 
 
@@ -3151,22 +3128,22 @@ _L[\'are_you_sure\'] = \''.$_L['are_you_sure'].'\';
         }
 
         echo '<table class="table table-bordered table-hover sys_table">
-    <thead>
-    <tr>
-        <th width="150px">'.$_L['Time'].'</th>
-        <th width="150px">'.$_L['IP'].'</th>
-        <th>'.$_L['Description'].'</th>
-        
-    </tr>
-    </thead>
-    <tbody>
+            <thead>
+            <tr>
+                <th width="150px">'.$_L['Time'].'</th>
+                <th width="150px">'.$_L['IP'].'</th>
+                <th>'.$_L['Description'].'</th>
+                
+            </tr>
+            </thead>
+            <tbody>
 
-        '.$tr.'
+                '.$tr.'
+                    
             
-    
 
-    </tbody>
-</table>';
+            </tbody>
+        </table>';
 
 
         break;

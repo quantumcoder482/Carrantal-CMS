@@ -2145,6 +2145,7 @@ vMax: \'9999999999999999.00\',
         break;
 
     case 'quotes':
+
         Event::trigger('client/quotes/');
         $ui->assign('_application_menu', 'quotes');
         $ui->assign('_st', $_L['Quotes']);
@@ -2177,6 +2178,223 @@ vMax: \'9999999999999999.00\',
 
 
         break;
+
+
+    case 'contracts':
+        
+        $ui->assign('_application_menu', 'contracts_deposit');
+        $ui->assign('_st', $_L['Contracts n Deposit']);
+        $ui->assign('_title', $config['CompanyName'].' - '.$_L['Contracts n Deposit']);
+
+        $c = Contacts::details();
+        $ui->assign('user',$c);
+            
+       
+        $paginator = array();
+        $mode_css = '';
+        $mode_js = '';
+        $view_type = 'default';
+        $view_type = 'filter';
+        $mode_css = Asset::css(array('dp/dist/datepicker.min','footable/css/footable.core.min','s2/css/select2.min','cd/cd'));
+        $mode_js = Asset::js(array('dp/dist/datepicker.min','footable/js/footable.all.min','contacts/mode_search','numeric','s2/js/select2.min',
+            's2/js/i18n/'.lan()
+        ));
+
+        $baseUrl=APP_URL;
+
+        $f = ORM::for_table('sys_vehicle_generatedcontract');
+        $d = $f->where('customer_id', $c['id'])->order_by_desc('id')->find_many();
+        
+        $val=array();
+        
+        if($d){
+            foreach($d as $ds){
+           
+                $contract=ORM::for_table('sys_vehicle_contract')->where('id',$ds['contract_id'])->find_one();
+                $val[$ds['id']]['contract']=$contract['title'];
+                
+                $vehicle=ORM::for_table('sys_vehicles')->where('id',$ds['vehicle_id'])->find_one();
+                $val[$ds['id']]['vehicle']=$vehicle['vehicle_num'];
+
+                $deposit=ORM::for_table('sys_vehicle_deposit')->where('id',$ds['deposit_id'])->find_one();
+                $val[$ds['id']]['deposit_amount']=$deposit['deposit_amount'];
+                $val[$ds['id']]['first_deposit']=$deposit['first_deposit'];
+
+                $invoice=ORM::for_table('sys_invoices')->where('id',$ds['invoice_id'])->find_one();
+                $val[$ds['id']]['invoice']=$invoice['invoicenum'];
+            }
+        }
+        $ui->assign('val', $val);
+
+        
+        $ui->assign('xjq',' $(\'.amount\').autoNumeric(\'init\', {
+
+            aSign: \''.$config['currency_code'].' \',
+            dGroup: '.$config['thousand_separator_placement'].',
+            aPad: '.$config['currency_decimal_digits'].',
+            pSign: \''.$config['currency_symbol_position'].'\',
+            aDec: \''.$config['dec_point'].'\',
+            aSep: \''.$config['thousands_sep'].'\',
+        vMax: \'9999999999999999.00\',
+                        vMin: \'-9999999999999999.00\'
+
+            });');
+       
+
+        $paginator['contents'] = '';
+        $ui->assign('view_type', $view_type);
+        $ui->assign('d', $d);
+        $ui->assign('paginator', $paginator);
+        $ui->assign('baseUrl', $baseUrl);
+        $ui->assign('xheader', $mode_css);
+        $ui->assign('xfooter', $mode_js);
+        view('client_contracts');
+        break;
+
+    case 'contract_view':
+
+        $cid=$routes['2'];
+            
+        $ui->assign('_application_menu', 'contracts_deposit');
+        $ui->assign('_st', $_L['Contracts n Deposit']);
+        $ui->assign('_title', $config['CompanyName'].' - '.$_L['Contracts n Deposit']);
+
+        $c = Contacts::details();
+        $ui->assign('user',$c);
+        
+            
+        $paginator = array();
+        $mode_css = '';
+        $mode_js = '';
+        $mode_css = Asset::css(array('dp/dist/datepicker.min','footable/css/footable.core.min','s2/css/select2.min','cd/cd'));
+        $mode_js = Asset::js(array('dp/dist/datepicker.min','footable/js/footable.all.min','contacts/mode_search','numeric','s2/js/select2.min',
+            's2/js/i18n/'.lan()
+        ));
+        $ui->assign('xjq',' $(\'.amount\').autoNumeric(\'init\', {
+            
+            aSign: \''.$config['currency_code'].' \',
+            dGroup: '.$config['thousand_separator_placement'].',
+            aPad: '.$config['currency_decimal_digits'].',
+            pSign: \''.$config['currency_symbol_position'].'\',
+            aDec: \''.$config['dec_point'].'\',
+            aSep: \''.$config['thousands_sep'].'\',
+            vMax: \'9999999999999999.00\',
+            vMin: \'-9999999999999999.00\'
+            
+        });');
+        
+
+        $logo_url=APP_URL."/storage/system/".$config['logo_default'];
+        $company_name=$config['CompanyName'];
+        $caddress=$config['caddress'];
+        //$address=
+
+
+        
+
+        $baseUrl=APP_URL;
+
+        $d = ORM::for_table('sys_vehicle_generatedcontract')->find_one($cid);
+        $contract=ORM::for_table('sys_vehicle_contract')->find_one($d['contract_id']);
+
+        $vehicle=ORM::for_table('sys_vehicles')->find_one($d['vehicle_id']);
+        $invoice=ORM::for_table('sys_invoices')->find_one($d['invoice_id']);
+        $deposit=ORM::for_table('sys_vehicle_deposit')->find_one($d['deposit_id']);
+        
+        
+
+        // Contents
+
+        $content = new Template($contract['content']);
+        
+        $content->set('name', $c['account']);
+        $content->set('nric', $c['nric']);
+        $content->set('contact', $c['phone']);
+        $content->set('address', $c['address']);
+        $content->set('pass_date', date($config['df'], strtotime( $c['lic_passdate'])));
+        $content->set('v_start_date', date($config['df'], strtotime($invoice['date'])));
+        $content->set('v_end_date', date($config['df'], strtotime($invoice['duedate'])));
+        $content->set('v_duration', 5);                              //require fix
+        $content->set('v_make_model', $vehicle['vehicle_type']);
+        $content->set('vehicle_no', $vehicle['vehicle_num']);
+        $content->set('invoice_amount', number_format($invoice['total'], 2, $config['dec_point'], $config['thousands_sep']));
+        $content->set('deposit_amount', number_format($deposit['deposit_amount'], 2, $config['dec_point'], $config['thousands_sep']));        
+        $content->set('deposit', number_format($deposit['first_deposit'], 2, $config['dec_point'], $config['thousands_sep']));
+        $content->set('deposit_balance', number_format($deposit['balance'], 2, $config['dec_point'], $config['thousands_sep']));
+        $content->set('deposit_duration', $deposit['duration']);
+        $content->set('deposit_repay_amount', number_format($deposit['balance']/$deposit['duration'], 2, $config['dec_point'], $config['thousands_sep']));
+        $content->set('date', $deposit['expire_date']);
+        $content=$content->output();
+
+        $ui->assign('content', $content);
+
+
+        $today=date('Y-m-d');
+
+        $ui->assign('id', $cid);
+        $ui->assign('d', $d);
+        $ui->assign('today', $today);
+        $ui->assign('company_name', $company_name);
+        $ui->assign('logo_url', $logo_url);
+        $ui->assign('caddress', $caddress);
+        $ui->assign('contract', $contract);
+        $ui->assign('vehicle',$vehicle);
+        $ui->assign('invoice', $invoice);
+        $ui->assign('deposit', $deposit);
+        $ui->assign('baseUrl', $baseUrl);
+        $ui->assign('xheader', $mode_css);
+        $ui->assign('xfooter', $mode_js);
+        
+        view('client_contract_view');
+
+
+        break;
+
+    case 'contract_agree':
+        $id=_post('id');
+        $name=_post('name');
+        $date=_post('date');
+        $agree=_post('agree');
+        
+        if($agree == 'on' && $name != ""){
+           $g_contract=ORM::for_table('sys_vehicle_generatedcontract')->find_one($id);
+           $g_contract->submit_date=$date;
+           $g_contract->submit_name=$name;
+           $g_contract->status=1;
+           $g_contract->save();
+           echo $g_contract->id();
+        }else{
+           echo "error"; 
+        }
+
+
+        break;
+
+    case 'deposit':
+
+        $ui->assign('_application_menu', 'contracts_deposit');
+        $ui->assign('_st', $_L['Contracts n Deposit']);
+        $ui->assign('_title', $config['CompanyName'].' - '.$_L['Contracts n Deposit']);
+        
+        $c = Contacts::details();
+        $ui->assign('user',$c);
+            
+        $ui->assign('xjq',' $(\'.amount\').autoNumeric(\'init\', {
+
+            aSign: \''.$config['currency_code'].' \',
+            dGroup: '.$config['thousand_separator_placement'].',
+            aPad: '.$config['currency_decimal_digits'].',
+            pSign: \''.$config['currency_symbol_position'].'\',
+            aDec: \''.$config['dec_point'].'\',
+            aSep: \''.$config['thousands_sep'].'\',
+        vMax: \'9999999999999999.00\',
+                        vMin: \'-9999999999999999.00\'
+
+            });');
+       
+        echo "Deposit";
+        break;
+
 
     case 'transactions':
         Event::trigger('client/transactions/');

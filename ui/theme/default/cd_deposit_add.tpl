@@ -228,11 +228,11 @@
                 first_deposit.disabled=true;
                 balance.val(0);
             }
-            if(duration.val() != 0){
-                first_deposit.disabled=false;
-                first_deposit.val(''); 
-                first_deposit.keyup();
-            }
+            // if(duration.val() != 0){
+            //     first_deposit.disabled=false;
+            //     first_deposit.val(''); 
+            //     first_deposit.keyup();
+            // }
         });
 
 
