@@ -428,8 +428,7 @@
     <?php
     }
     ?>
-
-
+    
     <button class='button -dark center no-print'  onClick="window.print();">Click Here to Print</button>
 </div>
 

@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 3.1.32, created on 2018-08-30 10:01:18
+/* Smarty version 3.1.32, created on 2018-09-05 05:29:03
   from 'D:\xampp\htdocs\demo1\ui\theme\default\add_invoice_v2.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '3.1.32',
-  'unifunc' => 'content_5b87f8ae940770_37608541',
+  'unifunc' => 'content_5b8fa1dfc4d3e6_11301924',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '8f79199025fea6515180ce255081f10c7770c9c1' => 
     array (
       0 => 'D:\\xampp\\htdocs\\demo1\\ui\\theme\\default\\add_invoice_v2.tpl',
-      1 => 1535632521,
+      1 => 1536139742,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_5b87f8ae940770_37608541 (Smarty_Internal_Template $_smarty_tpl) {
+function content_5b8fa1dfc4d3e6_11301924 (Smarty_Internal_Template $_smarty_tpl) {
 $_smarty_tpl->_loadInheritance();
 $_smarty_tpl->inheritance->init($_smarty_tpl, true);
 ?>
@@ -28,28 +28,28 @@ $_smarty_tpl->inheritance->init($_smarty_tpl, true);
 
 
 <?php 
-$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_7241706595b87f8ae906765_80905083', "style");
+$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_15388935195b8fa1dfc142c5_12774365', "style");
 ?>
 
 
 
 <?php 
-$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_18870618065b87f8ae90c6d8_39961617', "content");
+$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_2160695b8fa1dfc1a008_67337418', "content");
 ?>
 
 
 
 <?php 
-$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_15764640695b87f8ae933744_97514739', "script");
+$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_18492544835b8fa1dfc40a63_64962815', "script");
 $_smarty_tpl->inheritance->endChild($_smarty_tpl, ((string)$_smarty_tpl->tpl_vars['layouts_admin']->value));
 }
 /* {block "style"} */
-class Block_7241706595b87f8ae906765_80905083 extends Smarty_Internal_Block
+class Block_15388935195b8fa1dfc142c5_12774365 extends Smarty_Internal_Block
 {
 public $subBlocks = array (
   'style' => 
   array (
-    0 => 'Block_7241706595b87f8ae906765_80905083',
+    0 => 'Block_15388935195b8fa1dfc142c5_12774365',
   ),
 );
 public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
@@ -96,12 +96,12 @@ ui/lib/clockpicker/bootstrap-clockpicker.min.css" rel="stylesheet">
 }
 /* {/block "style"} */
 /* {block "content"} */
-class Block_18870618065b87f8ae90c6d8_39961617 extends Smarty_Internal_Block
+class Block_2160695b8fa1dfc1a008_67337418 extends Smarty_Internal_Block
 {
 public $subBlocks = array (
   'content' => 
   array (
-    0 => 'Block_18870618065b87f8ae90c6d8_39961617',
+    0 => 'Block_2160695b8fa1dfc1a008_67337418',
   ),
 );
 public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
@@ -254,8 +254,23 @@ $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
                                         <div class="form-group">
                                             <label for="invoicenum"><?php echo $_smarty_tpl->tpl_vars['_L']->value['Invoice Prefix'];?>
 </label>
-
-                                            <input type="text" class="form-control" id="invoicenum" name="invoicenum">
+                                            <!-- <input type="text" class="form-control" id="invoicenum" name="invoicenum"> -->
+                                            <select class="form-control"  style="width:100%" name="invoicenum" id="invoicenum" name="invoicenum">
+                                                <option value=""></option>
+                                                <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['vehicles']->value, 'vehicle');
+if ($_from !== null) {
+foreach ($_from as $_smarty_tpl->tpl_vars['vehicle']->value) {
+?>
+                                                    <option value="<?php echo $_smarty_tpl->tpl_vars['vehicle']->value['vehicle_num'];?>
+"><?php echo $_smarty_tpl->tpl_vars['vehicle']->value['vehicle_num'];?>
+ - <?php echo $_smarty_tpl->tpl_vars['vehicle']->value['vehicle_type'];?>
+</option>
+                                                <?php
+}
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
+                                            </select>
                                         </div>
 
                                         <div class="form-group">
@@ -674,12 +689,12 @@ $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?> </select></td>
 }
 /* {/block "content"} */
 /* {block "script"} */
-class Block_15764640695b87f8ae933744_97514739 extends Smarty_Internal_Block
+class Block_18492544835b8fa1dfc40a63_64962815 extends Smarty_Internal_Block
 {
 public $subBlocks = array (
   'script' => 
   array (
-    0 => 'Block_15764640695b87f8ae933744_97514739',
+    0 => 'Block_18492544835b8fa1dfc40a63_64962815',
   ),
 );
 public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
@@ -865,7 +880,9 @@ ui/lib/mselect/multiple-select.js"><?php echo '</script'; ?>
 
             calculateTotal();
 
-
+            $('#invoicenum').select2({
+                theme:"bootstrap"
+            })
 
 
 

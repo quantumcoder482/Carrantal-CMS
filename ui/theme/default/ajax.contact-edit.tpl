@@ -266,4 +266,4 @@
     </div>
     <input type="hidden" name="fcid" id="fcid" value="{$d['id']}">
 </form>
-<!-- <script type="text/javascript" src="ui/lib/dp/dist/datepicker.min.js?ver=19"></script> -->
+<script type="text/javascript" src="ui/lib/dp/dist/datepicker.min.js?ver=19"></script>

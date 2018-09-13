@@ -128,7 +128,8 @@ switch ($action) {
         }
 
 
-        $tags = $_POST['tags'];
+        @$tags = $_POST['tags'];
+        
         /* @since Build 4560. added support file attachments */
         $attachments = _post('attachments');
         if ($payerid == '') {

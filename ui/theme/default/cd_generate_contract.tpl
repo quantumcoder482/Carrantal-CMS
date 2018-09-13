@@ -134,6 +134,7 @@
                 
                         </div>
                         <input type="hidden" id="sure_msg" value="{$_L['are_you_sure']}" />
+                       
                     </form>
                     {/if}
                 

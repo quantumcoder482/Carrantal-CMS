@@ -831,7 +831,7 @@ switch ($action) {
             $balance_due[$i]=$balance_due[$i-1]-$val['balance_amount'];
         }
 
-        $deposit_log=ORM::for_table('sys_vehicle_depositlog')->where('deposit_id',$val['id'])->find_array();
+        $deposit_log=ORM::for_table('sys_vehicle_depositlog')->where('deposit_id',$val['id'])->where_not_null('transaction_id')->find_array();
         if($deposit_log){
             $deposit_log_count=count($deposit_log);
         }else{
@@ -1065,12 +1065,12 @@ switch ($action) {
         
         Event::trigger('cd/del_generated_contract');
         $id = $routes['2'];
-
+        $contract_id=$routes['3'];
         $d = ORM::for_table('sys_vehicle_generatedcontract')->find_one($id);
 
         if ($d) {
             $d->delete();
-            r2(U . 'cd/generate_contract/'.$id, 's', $_L['Contract Delete Successful']);
+            r2(U . 'cd/generate_contract/'.$contract_id, 's', $_L['Contract Delete Successful']);
         }
 
         break;

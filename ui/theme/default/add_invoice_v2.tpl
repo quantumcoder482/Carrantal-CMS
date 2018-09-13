@@ -150,8 +150,13 @@
                                     <div class='col-sm-4'>
                                         <div class="form-group">
                                             <label for="invoicenum">{$_L['Invoice Prefix']}</label>
-
-                                            <input type="text" class="form-control" id="invoicenum" name="invoicenum">
+                                            <!-- <input type="text" class="form-control" id="invoicenum" name="invoicenum"> -->
+                                            <select class="form-control"  style="width:100%" name="invoicenum" id="invoicenum" name="invoicenum">
+                                                <option value=""></option>
+                                                {foreach $vehicles as $vehicle}
+                                                    <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']}</option>
+                                                {/foreach}
+                                            </select>
                                         </div>
 
                                         <div class="form-group">
@@ -689,7 +694,9 @@
 
             calculateTotal();
 
-
+            $('#invoicenum').select2({
+                theme:"bootstrap"
+            })
 
 
 

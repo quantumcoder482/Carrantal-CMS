@@ -120,6 +120,7 @@ $(document).ready(function () {
 
         e.preventDefault();
         id = this.id;
+        contract_id=$('#contract_id').val();
         var sure_msg = $('#sure_msg').val();
 
         bootbox.confirm(sure_msg, function (result) {
@@ -128,7 +129,7 @@ $(document).ready(function () {
 
                 var _url = $("#_url").val();
 
-                window.location.href = _url + "cd/del_generated_contract/" + id;
+                window.location.href = _url + "cd/del_generated_contract/" + id+"/"+contract_id;
             }
         });
     });

@@ -10,8 +10,28 @@
                     <h5>
                         {$_L['Contract']} - {$contract['title']} 
                     </h5>
+                    {if $d['status'] neq 0}
+                    <div class="text-right">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn  btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i
+                                    class="fa fa-file-pdf-o"></i>
+                                {$_L['PDF']}
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{$_url}client/contract_pdf/{$d['id']}/view/" target="_blank">{$_L['View PDF']}</a></li>
+                                <li><a href="{$_url}client/contract_pdf/{$d['id']}/dl/">{$_L['Download PDF']}</a></li>
+                            </ul>
+                        </div>
+                        <a href="{$_url}client/contract_print/{$d['id']}" target="_blank" class="btn btn-inverse btn-sm"><i
+                                class="fa fa-print"></i> {$_L['Print']}</a>
+                    </div>
+                    {/if}
                 </div>
                 <div class="ibox-content">
+                    <div class="alert alert-danger" id="emsg">
+                        <span id="emsgbody"></span>
+                    </div>
                                         
                     <form class="form-horizontal" id="rform">
                         
@@ -20,7 +40,7 @@
                                 <!-- <textarea id="content" name="content" class="form-control sysedit" rows="20"></textarea> -->
                                 <p></p>
                                 <div style="text-align:center" ><img src="{$logo_url}" width="270px" /></div> 
-                                <p style="text-align:center">{$company_name}</p>
+                                <p style="text-align:center; margin-top:15px;"><strong>{$company_name}</strong></p>
                                 <div style="text-align:center">{$caddress}</div>
                                 <hr>
                                 <p><h1 style="text-align:center">{$contract['title']}</h1></p>
@@ -64,7 +84,7 @@
                             
                             <div class="col-lg-4">
                                 {if $d['status'] eq 1}
-                                <button class="btn btn-lg" type="button" id="submit_agree" style="width:100%" disabled>{$_L['Send Confirmation']}</button>
+                                <button class="btn btn-lg" type="button" id="submit_agree" style="width:100%" disabled>{$_L['Agreement Signed']}</button>
                                 {else}
                                 <button class="btn btn-primary btn-lg" type="button" id="submit_agree" style="width:100%">{$_L['Send Confirmation']}</button>
                                 {/if}
@@ -141,6 +161,7 @@
  
         var _url = $("#_url").val();
         var ib_submit=$('#submit_agree');
+        $("#emsg").hide();
 
         var i_checks = $('.i-checks');
         i_checks.iCheck({
@@ -151,13 +172,19 @@
 
             e.preventDefault();
             $('#date').prop('disabled', false);
-       
+            $('#rform').block({ message: null });
+
             $.post(_url+'client/contract_agree/', $('#rform').serialize())
             .done(function(data){
                 if($.isNumeric(data)){
                     location.reload();
+
                 }else {
-                     location.reload();
+                    $('#rform').unblock();
+                    // $("#emsgbody").html(data);
+                    // $("#emsg").show("slow");
+                    toastr.error(data)
+                   
                 }
             });
         });

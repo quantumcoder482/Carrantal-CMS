@@ -137,7 +137,7 @@ License: You must have a valid license purchased only from cloudonex.com in orde
                     
                         <ul class="nav nav-second-level">
                             <li><a href="{$_url}client/contracts/">{$_L['Contracts']}</a></li>
-                             <li><a href="#">{$_L['Deposit']}</a></li>  <!-- {$_url}client/deposit/ -->
+                            <li><a href="{$_url}client/deposit/">{$_L['Deposit']}</a></li> 
                         </ul>
                     </li>
                     

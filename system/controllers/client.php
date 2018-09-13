@@ -186,6 +186,10 @@ switch ($action) {
 
 
             //
+            
+            @$deposit_id=$routes['4'];
+
+            $ui->assign('deposit_id', $deposit_id);
 
            view('client-iview',[
                'company' => $company,
@@ -2184,7 +2188,7 @@ vMax: \'9999999999999999.00\',
         
         $ui->assign('_application_menu', 'contracts_deposit');
         $ui->assign('_st', $_L['Contracts n Deposit']);
-        $ui->assign('_title', $config['CompanyName'].' - '.$_L['Contracts n Deposit']);
+        $ui->assign('_title', $config['CompanyName'].' - '.$_L['Contracts']);
 
         $c = Contacts::details();
         $ui->assign('user',$c);
@@ -2257,7 +2261,7 @@ vMax: \'9999999999999999.00\',
             
         $ui->assign('_application_menu', 'contracts_deposit');
         $ui->assign('_st', $_L['Contracts n Deposit']);
-        $ui->assign('_title', $config['CompanyName'].' - '.$_L['Contracts n Deposit']);
+        $ui->assign('_title', $config['CompanyName'].' - '.$_L['Contract']);
 
         $c = Contacts::details();
         $ui->assign('user',$c);
@@ -2351,48 +2355,560 @@ vMax: \'9999999999999999.00\',
         break;
 
     case 'contract_agree':
+
         $id=_post('id');
         $name=_post('name');
         $date=_post('date');
         $agree=_post('agree');
-        
-        if($agree == 'on' && $name != ""){
+        $msg='';
+        if($name == ''){
+            $msg.='Name is required'.'<br/>';
+        }
+        if($agree != 'on'){
+            $msg.='Agree is required'.'<br/>';
+        }
+        if($msg == '' ){
            $g_contract=ORM::for_table('sys_vehicle_generatedcontract')->find_one($id);
            $g_contract->submit_date=$date;
            $g_contract->submit_name=$name;
            $g_contract->status=1;
            $g_contract->save();
+           _msglog('s',$_L['Agreement Successed']);
            echo $g_contract->id();
         }else{
-           echo "error"; 
+
+           echo $msg;
         }
 
 
         break;
 
+    case 'contract_pdf':
+
+        $ui->assign('_title', $config['CompanyName'].' - '.$_L['Contract']);
+        Event::trigger('invoice/contract_pdf/');
+        $cid=$routes['2'];
+        $user = Contacts::details();
+        
+
+        $logo_url=APP_URL."/storage/system/".$config['logo_default'];
+        $company_name=$config['CompanyName'];
+        $caddress=$config['caddress'];
+
+
+        $baseUrl=APP_URL;
+
+        $d = ORM::for_table('sys_vehicle_generatedcontract')->find_one($cid);
+        $contract=ORM::for_table('sys_vehicle_contract')->find_one($d['contract_id']);
+
+        $vehicle=ORM::for_table('sys_vehicles')->find_one($d['vehicle_id']);
+        $invoice=ORM::for_table('sys_invoices')->find_one($d['invoice_id']);
+        $deposit=ORM::for_table('sys_vehicle_deposit')->find_one($d['deposit_id']);
+        
+        
+
+        // Contents
+
+        $content = new Template($contract['content']);
+        
+        $content->set('name', $user['account']);
+        $content->set('nric', $user['nric']);
+        $content->set('contact', $user['phone']);
+        $content->set('address', $user['address']);
+        $content->set('pass_date', date($config['df'], strtotime( $user['lic_passdate'])));
+        $content->set('v_start_date', date($config['df'], strtotime($invoice['date'])));
+        $content->set('v_end_date', date($config['df'], strtotime($invoice['duedate'])));
+        $content->set('v_duration', 5);                              //require fix
+        $content->set('v_make_model', $vehicle['vehicle_type']);
+        $content->set('vehicle_no', $vehicle['vehicle_num']);
+        $content->set('invoice_amount', number_format($invoice['total'], 2, $config['dec_point'], $config['thousands_sep']));
+        $content->set('deposit_amount', number_format($deposit['deposit_amount'], 2, $config['dec_point'], $config['thousands_sep']));        
+        $content->set('deposit', number_format($deposit['first_deposit'], 2, $config['dec_point'], $config['thousands_sep']));
+        $content->set('deposit_balance', number_format($deposit['balance'], 2, $config['dec_point'], $config['thousands_sep']));
+        $content->set('deposit_duration', $deposit['duration']);
+        $content->set('deposit_repay_amount', number_format($deposit['balance']/$deposit['duration'], 2, $config['dec_point'], $config['thousands_sep']));
+        $content->set('date', $deposit['expire_date']);
+        $content=$content->output();
+
+        $in = $contract['title'] . $cid;
+
+
+        $pdf_c = '';
+        $ib_w_font = 'dejavusanscondensed';
+        if ($config['pdf_font'] == 'default') {
+            $pdf_c = 'c';
+            $ib_w_font = 'Helvetica';
+        }
+        $mpdf = new \Mpdf\Mpdf([
+            'mode' => 'utf-8', 
+            'format' => 'A4',
+            'setAutoTopMargin' => 'stretch',
+            'setAutoBottomMargin' => 'pad',
+            'autoMarginPadding' => 5,
+            'margin-footer'=>30
+
+        ]);
+       
+        $mpdf->SetProtection(array(
+            'print'
+        ));
+
+        $mpdf->SetTitle($config['CompanyName'] . ' Invoice');
+        $mpdf->SetAuthor($config['CompanyName']);
+        
+        $mpdf->SetHTMLHeader('<div>
+         <div style="text-align:center"><img src="'.$logo_url.'" width="270px" /></div> 
+         <div style="text-align:center; font: 14px Helvetica, Arial, sans-serif"><strong>'.$company_name.'</strong></div>
+         <div style="text-align:center; font: 14px Helvetica, Arial, sans-serif">'.$caddress.'</div>
+         <hr></div>');
+        $mpdf->defaultfooterline = 0;
+
+        $mpdf->SetHTMLFooter('
+        <span style="font: 12px Helvetica, Arial, sans-serif; color:#808080;">This is a computer-generated document. No signature is required</span></td>
+        <span style="width:200px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span style="text-align:right; font:12px Helvetica, Arial, sans-serif;">{PAGENO}/{nbpg}</span>');
+        
+
+        $mpdf->SetDisplayMode('fullpage');
+        if ($config['pdf_font'] == 'AdobeCJK') {
+            $mpdf->useAdobeCJK = true;
+            $mpdf->autoScriptToLang = true;
+            $mpdf->autoLangToFont = true;
+        }
+
+        ob_start();
+        require 'system/lib/contracts/client_contract_pdf.php';
+
+        $html = ob_get_contents();
+        ob_end_clean();
+        $mpdf->WriteHTML($html);
+        $pdf_return = 'inline';
+        if (isset($routes[3])) {
+            $r_type = $routes[3];
+        }
+        else {
+            $r_type = 'inline';
+        }
+
+        if ($r_type == 'dl') {
+            $mpdf->Output(date('Y-m-d') . _raid(4) . '.pdf', 'D'); // D
+        }
+        elseif ($r_type == 'inline') {
+            $mpdf->Output(date('Y-m-d') . _raid(4) . '.pdf', 'I'); // D
+        }
+        elseif ($r_type == 'store') {
+            $mpdf->Output('storage/temp/Contract_' . $in . '.pdf', 'F'); // D
+        }
+        else {
+            $mpdf->Output(date('Y-m-d') . _raid(4) . '.pdf', 'I'); // D
+        }
+        
+
+        break;
+
+    case 'contract_print':
+
+        Event::trigger('invoice/contract_print/');
+        $cid=$routes['2'];
+        $user = Contacts::details();
+        
+
+        $logo_url=APP_URL."/storage/system/".$config['logo_default'];
+        $company_name=$config['CompanyName'];
+        $caddress=$config['caddress'];
+
+
+        $baseUrl=APP_URL;
+
+        $d = ORM::for_table('sys_vehicle_generatedcontract')->find_one($cid);
+        $contract=ORM::for_table('sys_vehicle_contract')->find_one($d['contract_id']);
+
+        $vehicle=ORM::for_table('sys_vehicles')->find_one($d['vehicle_id']);
+        $invoice=ORM::for_table('sys_invoices')->find_one($d['invoice_id']);
+        $deposit=ORM::for_table('sys_vehicle_deposit')->find_one($d['deposit_id']);
+        
+        
+
+        // Contents
+
+        $content = new Template($contract['content']);
+        
+        $content->set('name', $user['account']);
+        $content->set('nric', $user['nric']);
+        $content->set('contact', $user['phone']);
+        $content->set('address', $user['address']);
+        $content->set('pass_date', date($config['df'], strtotime( $user['lic_passdate'])));
+        $content->set('v_start_date', date($config['df'], strtotime($invoice['date'])));
+        $content->set('v_end_date', date($config['df'], strtotime($invoice['duedate'])));
+        $content->set('v_duration', 5);                              //require fix
+        $content->set('v_make_model', $vehicle['vehicle_type']);
+        $content->set('vehicle_no', $vehicle['vehicle_num']);
+        $content->set('invoice_amount', number_format($invoice['total'], 2, $config['dec_point'], $config['thousands_sep']));
+        $content->set('deposit_amount', number_format($deposit['deposit_amount'], 2, $config['dec_point'], $config['thousands_sep']));        
+        $content->set('deposit', number_format($deposit['first_deposit'], 2, $config['dec_point'], $config['thousands_sep']));
+        $content->set('deposit_balance', number_format($deposit['balance'], 2, $config['dec_point'], $config['thousands_sep']));
+        $content->set('deposit_duration', $deposit['duration']);
+        $content->set('deposit_repay_amount', number_format($deposit['balance']/$deposit['duration'], 2, $config['dec_point'], $config['thousands_sep']));
+        $content->set('date', $deposit['expire_date']);
+        $content=$content->output();
+
+        $in = $contract['title'] . $cid;
+
+        require 'system/lib/contracts/client_contract_print.php';
+
+        break;
+
+
     case 'deposit':
 
         $ui->assign('_application_menu', 'contracts_deposit');
         $ui->assign('_st', $_L['Contracts n Deposit']);
-        $ui->assign('_title', $config['CompanyName'].' - '.$_L['Contracts n Deposit']);
+        $ui->assign('_title', $config['CompanyName'].' - '.$_L['Deposits']);
         
         $c = Contacts::details();
         $ui->assign('user',$c);
             
-        $ui->assign('xjq',' $(\'.amount\').autoNumeric(\'init\', {
+        $paginator = array();
+        $mode_css = '';
+        $mode_js = '';
+        $view_type = 'default';
+        $view_type = 'filter';
+        $mode_css = Asset::css(array('modal','dropzone/dropzone','dp/dist/datepicker.min','footable/css/footable.core.min','redactor/redactor','s2/css/select2.min','cd/cd'));
+        $mode_js = Asset::js(array('modal','dropzone/dropzone','dp/dist/datepicker.min','footable/js/footable.all.min','contacts/mode_search','redactor/redactor.min','numeric','s2/js/select2.min',
+            's2/js/i18n/'.lan()
+        ));
 
-            aSign: \''.$config['currency_code'].' \',
-            dGroup: '.$config['thousand_separator_placement'].',
-            aPad: '.$config['currency_decimal_digits'].',
-            pSign: \''.$config['currency_symbol_position'].'\',
-            aDec: \''.$config['dec_point'].'\',
-            aSep: \''.$config['thousands_sep'].'\',
-        vMax: \'9999999999999999.00\',
+        $baseUrl=APP_URL;
+
+
+        $total_items = ORM::for_table('sys_vehicle_deposit')->where('customerid', $c['id']);
+
+        $total_items = $total_items->count();
+
+        $f = ORM::for_table('sys_vehicle_deposit')->where('customerid', $c['id']);
+        $d = $f->order_by_desc('id')->find_many();
+
+
+        // Expiry Status
+
+        
+        $pay_status_string=array();
+        $next_duedate=array();
+        $expire_date=array();
+     
+        foreach($d as $data){
+
+            // Expiry status calculation
+            $expiry_id=$data['id'];
+            $expiry_todate=$data['expiry_todate'];
+            $pay_status=$data['pay_status'];
+            $duration=$data['duration'];
+            $first_paystatus=$data['first_paystatus'];
+            $repay_cycle_type=$data['repay_cycle_type'];
+
+            switch ($repay_cycle_type) {
+                case 'weekly':
+                    $expire_date_interval=new DateInterval('P'.($duration*7).'D');
+                    $interval = new DateInterval('P'.(($pay_status+1)*7).'D');
+                    break;
+                case 'monthly':
+                    $expire_date_interval=new DateInterval('P'.$duration.'M');
+                    $interval = new DateInterval('P'.($pay_status+1).'M');
+                    break;
+                case 'yearly':
+                    $expire_date_interval=new DateInterval('P'.$duration.'Y');
+                    $interval = new DateInterval('P'.($pay_status+1).'Y');
+                    break;
+                default:
+                    break;
+            }
+
+            $expire_date[$expiry_id]=date_create($data['deposit_date'])->add($expire_date_interval);
+            $expire_date[$expiry_id]=$expire_date[$expiry_id]->format('Y-m-d');
+            $next_duedate[$expiry_id]=date_create($data['deposit_date'])->add($interval);
+            $next_duedate[$expiry_id]=$next_duedate[$expiry_id]->format('Y-m-d');
+            
+            $today = date("Y-m-d");
+            $date1 = date_create($today);
+            $date2 = date_create($next_duedate[$expiry_id]);
+            $date3 = date_create($expire_date[$expiry_id]);
+            $rest= date_diff($date1,$date3);
+            $rest= intval($rest->format("%a"));
+
+            if(!$first_paystatus|| !$pay_status || $date1>$date2){
+
+                $pay_status_string[$expiry_id]="unPaid";
+
+            }
+            if($first_paystatus && $pay_status && $date1<=$date2 && $rest>$expiry_todate){
+
+                $pay_status_string[$expiry_id]="Paid";
+
+            }
+            if($rest<=$expiry_todate && $duration>$pay_status) {
+
+                $pay_status_string[$expiry_id]=$rest." - Day Due";
+
+            };
+
+                        
+            // next due date overflow expire date
+            if($first_paystatus && $next_duedate[$expiry_id]>$expire_date[$expiry_id]) {
+                $next_duedate[$expiry_id]=$expire_date[$expiry_id];
+                $pay_status_string[$expiry_id]="Paid";
+            }
+
+        }
+
+
+
+        $transactions=ORM::for_table('sys_transactions')->where('type','Income')->where('category','Vehicle Deposit')->where('payerid', $c['id']);
+        $transactions=$transactions->where_not_null('vehicle_num')->order_by_desc('id')->find_array();
+        $transaction_customer=array();
+      
+        if(!$transactions){
+            $transactions="";
+        }
+
+        $ui->assign('transactions', $transactions);
+  
+        $paginator['contents'] = '';
+       
+        $ui->assign('total_items', $total_items);
+        $ui->assign('xheader', $mode_css);
+        $ui->assign('xfooter', $mode_js);
+        $ui->assign('view_type', $view_type);
+        $ui->assign('d', $d);
+        $ui->assign('pay_status_string',$pay_status_string);
+        $ui->assign('next_duedate', $next_duedate);
+        $ui->assign('expire_date', $expire_date);
+        $ui->assign('baseUrl',$baseUrl);
+        $ui->assign('paginator', $paginator);
+        $ui->assign('xjq', '
+            $(\'.amount\').autoNumeric(\'init\', {
+            dGroup: ' . $config['thousand_separator_placement'] . ',
+            aPad: ' . $config['currency_decimal_digits'] . ',
+            pSign: \'' . $config['currency_symbol_position'] . '\',
+            aDec: \'' . $config['dec_point'] . '\',
+            aSep: \'' . $config['thousands_sep'] . '\',
+            vMax: \'9999999999999999.00\',
+            vMin: \'-9999999999999999.00\'
+            });
+            $(\'[data-toggle="tooltip"]\').tooltip();
+
+        ');
+
+
+        view('client_deposit_list');
+
+        break;
+
+    case 'deposit_view':
+        
+        $ui->assign('_application_menu', 'contracts_deposit');
+        $ui->assign('_st', $_L['Contracts n Deposit']);
+        $ui->assign('_title', $config['CompanyName'].' - '.$_L['Deposit']);
+        
+        $c = Contacts::details();
+        $ui->assign('user',$c);
+    
+        $id=$routes['2'];
+        
+        $paginator = array();
+        $mode_css = '';
+        $mode_js = '';
+        $view_type = 'default';
+        $view_type = 'filter';
+        $mode_css = Asset::css(array('modal','dropzone/dropzone','dp/dist/datepicker.min','footable/css/footable.core.min','redactor/redactor','s2/css/select2.min','cd/cd'));
+        $mode_js = Asset::js(array('modal','dropzone/dropzone','dp/dist/datepicker.min','footable/js/footable.all.min','contacts/mode_search','redactor/redactor.min','numeric','s2/js/select2.min',
+            's2/js/i18n/'.lan(),'js/redirect'));
+
+        $baseUrl=APP_URL;
+
+
+        $deposit = ORM::for_table('sys_vehicle_deposit')->where('id',$id)->find_one();
+        $val=array();
+        $val['id']=$id;
+        $val['vehicle_num']=$deposit['vehicle_num'];
+        $val['date']=$deposit['deposit_date'];
+        $val['duration']=$deposit['duration'];
+        $repay_cycle_type=$deposit['repay_cycle_type'];
+        
+        // Expire Date
+        switch ($repay_cycle_type) {
+            case 'weekly':
+                $expire_date_interval=new DateInterval('P'.($val['duration']*7).'D');
+                break;
+            case 'monthly':
+                $expire_date_interval=new DateInterval('P'.$val['duration'].'M');
+                break;
+            case 'yearly':
+                $expire_date_interval=new DateInterval('P'.$val['duration'].'Y');
+                break;
+            default:
+                break;
+        }
+
+        $val['expire_date']=date_create($val['date'])->add($expire_date_interval);
+        $val['expire_date']=$val['expire_date']->format('Y-m-d');
+        
+        $val['repayment']=$deposit['repay_cycle_type'];
+        $val['amount']=$deposit['deposit_amount'];
+        $val['first_deposit']=$deposit['first_deposit'];
+        $val['total_due']=$val['amount']-$val['first_deposit'];
+        
+        $first_payinvoice="";
+        if($deposit['first_paystatus']){
+            $first_paystatus="Paid";
+        }else{
+            $first_paystatus="unPaid";
+            if($deposit['first_payinvoice']){
+                $first_payinvoice=$deposit['first_payinvoice'];
+            }
+        }
+
+
+        $next_duedate=array();
+
+        for($i=1;$i<=$val['duration'];$i++){
+            switch ($repay_cycle_type) {
+                case 'weekly':
+                    $interval = new DateInterval('P'.($i*7).'D');
+                    break;
+                case 'monthly':
+                    $interval = new DateInterval('P'.$i.'M');
+                    break;
+                case 'yearly':
+                    $interval = new DateInterval('P'.$i.'Y');
+                    break;
+                default:
+                    break;
+            }
+            
+            $next_duedate[$i]=date_create($deposit['deposit_date'])->add($interval);
+            $next_duedate[$i]=$next_duedate[$i]->format('Y-m-d');
+        }
+
+        if($val['total_due'] && $val['duration']){
+            $val['balance_amount']=$val['total_due']/$val['duration'];       
+        }
+
+        $balance_due=array();
+        $balance_due[0]=$val['total_due'];
+
+        for($i=1;$i<=$val['duration'];$i++){
+            $balance_due[$i]=$balance_due[$i-1]-$val['balance_amount'];
+        }
+
+        $deposit_log=ORM::for_table('sys_vehicle_depositlog')->where('deposit_id',$val['id'])->order_by_asc('id')->find_array();
+                     
+        $val['expiry_todate']=$deposit['expiry_todate'];
+        $pay_status_string=array();   
+        $invoice_id=array();
+        // Expiry Status
+
+        for($i=1;$i<=$val['duration'];$i++){
+
+            if($deposit_log[$i-1]['transaction_id']){
+                $pay_status_string[$i]="Paid";
+            }else{
+
+                $today = date("Y-m-d");
+                $date1 = date_create($today);
+                $date2 = date_create($next_duedate[$i]);
+                $rest= date_diff($date1,$date2);
+                $rest= intval($rest->format("%a"));
+
+                if($date1>=$date2 || $rest>$val['expiry_todate']){
+                 
+                    $pay_status_string[$i]="unPaid";
+                                 
+                }else{
+                      
+                    $pay_status_string[$i]=$rest." - Day Due";
+
+                }
+                if($deposit_log[$i-1]['invoice_id']){
+                    $invoice_id[$i]=$deposit_log[$i-1]['invoice_id'];
+                }
+            }
+
+        }
+
+
+        // Trasaction  data
+        $first_deposit_transaction="";
+        if($deposit['first_paystatus']){
+            $first_deposit_transaction=ORM::for_table('sys_transactions')->where('id',$deposit['first_paystatus'])->find_one();
+            $f_t_c=ORM::for_table('crm_accounts')->where('id',$first_deposit_transaction['payerid'])->find_one();
+            $f_t_c=$f_t_c['account'];
+        }else{
+            $f_t_c="";
+        }
+       
+
+        $transactions=ORM::for_table('sys_transactions')->select('sys_transactions.*')
+        ->inner_join('sys_vehicle_depositlog',array('sys_vehicle_depositlog.transaction_id','=','sys_transactions.id'))
+        ->where('sys_vehicle_depositlog.deposit_id',$id)->order_by_desc('id')->find_many();
+        //$transactions+=$first_deposit_transaction;
+        
+        $transaction_customer=array();
+        foreach($transactions as $t){
+            $tc=ORM::for_table('crm_accounts')->where('id',$t['payerid'])->find_one();
+            $transaction_customer[$t['id']]=$tc['account'];
+        }
+        
+        if(!$transactions){
+            $transactions="";
+        }
+
+        $ui->assign('transactions', $transactions);
+        $ui->assign('transaction_customer', $transaction_customer);
+
+        $ui->assign('f_d_t', $first_deposit_transaction);
+        $ui->assign('f_t_c', $f_t_c);
+        $paginator['contents'] = '';
+
+        // $ui->assign('total_items', $total_items);
+        $ui->assign('xheader', $mode_css);
+        $ui->assign('xfooter', $mode_js);
+        $ui->assign('val', $val);
+        $ui->assign('view_type',$view_type);
+        $ui->assign('next_duedate',$next_duedate);
+        $ui->assign('balance_due',$balance_due);
+        $ui->assign('pay_status_string',$pay_status_string);
+        $ui->assign('first_paystatus', $first_paystatus);
+        $ui->assign('first_payinvoice', $first_payinvoice);
+        $ui->assign('invoice_id', $invoice_id);
+        $ui->assign('transactions',$transactions);   
+        $ui->assign('baseUrl',$baseUrl);
+        $ui->assign('paginator', $paginator);
+        $ui->assign('xjq', '
+            $(\'.amount\').autoNumeric(\'init\', {
+            dGroup: ' . $config['thousand_separator_placement'] . ',
+            aPad: ' . $config['currency_decimal_digits'] . ',
+            pSign: \'' . $config['currency_symbol_position'] . '\',
+            aDec: \'' . $config['dec_point'] . '\',
+            aSep: \'' . $config['thousands_sep'] . '\',
+            vMax: \'9999999999999999.00\',
                         vMin: \'-9999999999999999.00\'
 
-            });');
-       
-        echo "Deposit";
+            });
+            $(\'[data-toggle="tooltip"]\').tooltip();
+
+        ');
+
+        view('client_deposit_view');
+
+        break;
+
+    case 'deposit_invoice':
+        $invoice_id=$routes['2'];
+        @$deposit_id=$routes['3'];
+        $invoice=ORM::for_table('sys_invoices')->find_one($invoice_id);
+
+        r2(U.'client/iview/'.$invoice['id'].'/token_'.$invoice['vtoken'].'/'.$deposit_id);
+
         break;
 
 
@@ -3139,6 +3655,7 @@ vMax: \'9999999999999999.00\',
 
         $user = Contacts::details();
         $ui->assign('user',$user);
+        
 
         $amount = _post('amount');
 
@@ -3156,6 +3673,55 @@ vMax: \'9999999999999999.00\',
             _msglog('e','Amount shoule be between- '. $config['add_fund_minimum_deposit'].' to '. $config['add_fund_maximum_deposit']);
 
             r2(U.'client/dashboard/');
+
+        }
+
+
+        break;
+
+    
+    case 'add_payment':
+
+        if($config['add_fund'] != '1'){
+            i_close('This feature is disabled');
+        }
+
+        $user = Contacts::details();
+        $ui->assign('user',$user);
+        
+        $deposit_id=$routes['2'];
+        @$first_deposit=$routes['3'];
+
+        $amount = _post('amount');
+
+        if(v::numeric()->between($config['add_fund_minimum_deposit'], $config['add_fund_maximum_deposit'])->validate($amount)){
+
+           $invoice =  Invoice::forSingleItem($user->id,'Credit',$amount);
+
+            if($invoice){
+               
+                $deposit=ORM::for_table('sys_vehicle_deposit')->find_one($deposit_id);
+                if($first_deposit){
+                    $deposit->first_payinvoice=$invoice['id'];
+                    $deposit->save();
+                }else{
+                    $deposit->create_invoice_count++;
+                    $deposit_log=ORM::for_table('sys_vehicle_depositlog')->create();
+                    $deposit_log->deposit_id=$deposit_id;
+                    $deposit_log->invoice_id=$invoice['id'];
+                    $deposit->save();
+                    $deposit_log->save();
+                }
+
+                r2(U.'client/iview/'.$invoice['id'].'/token_'.$invoice['vtoken'].'/'.$deposit_id);
+            }
+
+        }
+        else{
+
+            _msglog('e','Amount shoule be between- '. $config['add_fund_minimum_deposit'].' to '. $config['add_fund_maximum_deposit']);
+
+            r2(U.'client/deposit_view/'.$deposit_id);
 
         }
 
@@ -3309,7 +3875,7 @@ vMax: \'9999999999999999.00\',
                 $d->save();
                 $tid = $d->id();
                 _log('New Deposit: ' . $description . ' [TrID: ' . $tid . ' | Amount: ' . $amount . ']', 'Client', $a->id);
-               // _msglog('s', 'Transaction Added Successfully');
+                // _msglog('s', 'Transaction Added Successfully');
                 //now work with invoice
 
                 if ($i) {
@@ -3327,13 +3893,44 @@ vMax: \'9999999999999999.00\',
                     $i->save();
 
                 }
+
+                //  **************  Deposit   **************//
+                $deposit=ORM::for_table('sys_vehicle_deposit')->where('first_payinvoice', $id)->find_one();
+                $deposit_log=ORM::for_table('sys_vehicle_depositlog')->where('invoice_id', $id)->find_one();
+               
+                if($deposit){
+
+                    $deposit->first_paystatus=$tid;
+                    $did=$deposit->id;
+                    $deposit->save();
+                    $tr=ORM::for_table('sys_transactions')->find_one($tid);
+                    $tr->category="Vehicle Deposit";
+                    $tr->vehicle_num=$deposit->vehicle_num;
+                    $tr->save();
+
+                }elseif($deposit_log){
+                    $date=date('Y-m-d');
+                    $deposit_log->transaction_id=$tid;
+                    $deposit_log->transaction_date=$date;
+                    $deposit_log->transaction_amount=$amount;
+                    $deposit_log->save();
+                    $deposit=ORM::for_table('sys_vehicle_deposit')->where('id', $deposit_log->deposit_id)->find_one();
+                    $deposit->pay_status++;
+                    $did=$deposit->id;
+                    $deposit->save();
+                    $tr=ORM::for_table('sys_transactions')->find_one($tid);
+                    $tr->category="Vehicle Deposit";
+                    $tr->vehicle_num=$deposit->vehicle_num;
+                    $tr->save();
+                }
+                
                // echo $tid;
             } else {
                // echo '<div class="alert alert-danger fade in">' . $msg . '</div>';
             }
 
 
-            r2(U.'client/iview/'.$i->id.'/token_'.$i->vtoken,'s',$_L['Payment Successful']);
+            r2(U.'client/iview/'.$i->id.'/token_'.$i->vtoken.'/'.$did,'s',$_L['Payment Successful']);
 
 
         }

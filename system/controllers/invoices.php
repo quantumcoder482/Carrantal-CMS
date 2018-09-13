@@ -101,6 +101,9 @@ switch ($action) {
 
         }
 
+        $vehicles=ORM::for_table('sys_vehicles')->order_by_asc('id')->find_many();
+        $ui->assign('vehicles', $vehicles);
+
 
         $css_arr = array(
             's2/css/select2.min',
@@ -1419,7 +1422,6 @@ $(".cdelete").click(function (e) {
         $id = $routes['2'];
         $d = ORM::for_table('sys_invoices')->find_one($id);
         if ($d) {
-
             // find all activity for this user
 
             $items = ORM::for_table('sys_invoiceitems')->where('invoiceid', $id)->order_by_asc('id')->find_many();
@@ -1993,6 +1995,37 @@ data-d-group="2" value="">
                 $i->save();
 
             }
+
+            //  **************  Deposit   **************//
+                $deposit=ORM::for_table('sys_vehicle_deposit')->where('first_payinvoice', $iid)->find_one();
+                $deposit_log=ORM::for_table('sys_vehicle_depositlog')->where('invoice_id', $iid)->find_one();
+               
+                if($deposit){
+
+                    $deposit->first_paystatus=$tid;
+                    $did=$deposit->id;
+                    $deposit->save();
+                    $tr=ORM::for_table('sys_transactions')->find_one($tid);
+                    $tr->category="Vehicle Deposit";
+                    $tr->vehicle_num=$deposit->vehicle_num;
+                    $tr->save();
+
+                }elseif($deposit_log){
+                    $date=date('Y-m-d');
+                    $deposit_log->transaction_id=$tid;
+                    $deposit_log->transaction_date=$date;
+                    $deposit_log->transaction_amount=$amount;
+                    $deposit_log->save();
+                    $deposit=ORM::for_table('sys_vehicle_deposit')->where('id', $deposit_log->deposit_id)->find_one();
+                    $deposit->pay_status++;
+                    $did=$deposit->id;
+                    $deposit->save();
+                    $tr=ORM::for_table('sys_transactions')->find_one($tid);
+                    $tr->category="Vehicle Deposit";
+                    $tr->vehicle_num=$deposit->vehicle_num;
+                    $tr->save();
+                }
+
 
             echo $tid;
         }

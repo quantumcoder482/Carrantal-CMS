@@ -73,6 +73,7 @@ $(document).ready(function () {
 
                     $("#emsgbody").html(data);
                     $("#emsg").show("slow");
+                    toastr.error(data)
                 }
             });
     });
