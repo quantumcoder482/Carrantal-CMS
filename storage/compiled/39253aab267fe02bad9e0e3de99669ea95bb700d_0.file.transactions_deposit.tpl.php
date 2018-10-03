@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 3.1.32, created on 2018-08-11 07:35:43
+/* Smarty version 3.1.32, created on 2018-10-03 06:41:16
   from 'D:\xampp\htdocs\demo1\ui\theme\default\transactions_deposit.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '3.1.32',
-  'unifunc' => 'content_5b6eca0fe04c46_14649062',
+  'unifunc' => 'content_5bb49ccc57c408_65561623',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '39253aab267fe02bad9e0e3de99669ea95bb700d' => 
     array (
       0 => 'D:\\xampp\\htdocs\\demo1\\ui\\theme\\default\\transactions_deposit.tpl',
-      1 => 1532317432,
+      1 => 1538563132,
       2 => 'file',
     ),
   ),
@@ -20,30 +20,30 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_5b6eca0fe04c46_14649062 (Smarty_Internal_Template $_smarty_tpl) {
+function content_5bb49ccc57c408_65561623 (Smarty_Internal_Template $_smarty_tpl) {
 $_smarty_tpl->_loadInheritance();
 $_smarty_tpl->inheritance->init($_smarty_tpl, true);
 ?>
 
 
 <?php 
-$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_4291449655b6eca0fde94f9_11267668', "content");
+$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_13362198075bb49ccc55eaf1_68592805', "content");
 ?>
 
 
 <?php 
-$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_8508349475b6eca0fe01eb6_86122802', "script");
+$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_8477965675bb49ccc579415_12122644', "script");
 ?>
 
 <?php $_smarty_tpl->inheritance->endChild($_smarty_tpl, ((string)$_smarty_tpl->tpl_vars['layouts_admin']->value));
 }
 /* {block "content"} */
-class Block_4291449655b6eca0fde94f9_11267668 extends Smarty_Internal_Block
+class Block_13362198075bb49ccc55eaf1_68592805 extends Smarty_Internal_Block
 {
 public $subBlocks = array (
   'content' => 
   array (
-    0 => 'Block_4291449655b6eca0fde94f9_11267668',
+    0 => 'Block_13362198075bb49ccc55eaf1_68592805',
   ),
 );
 public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
@@ -82,17 +82,40 @@ foreach ($_from as $_smarty_tpl->tpl_vars['ds']->value) {
 }
 }
 $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
-
-
                                 </select>
                             </div>
                         </div>
+                        
                         <div class="form-group">
                             <label for="date" class="col-sm-3 control-label"><?php echo $_smarty_tpl->tpl_vars['_L']->value['Date'];?>
 </label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control"  value="<?php echo $_smarty_tpl->tpl_vars['mdate']->value;?>
 " name="date" id="date" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="vehicle_num"><?php echo $_smarty_tpl->tpl_vars['_L']->value['Vehicle No'];?>
+</label>
+                            <div class="col-md-9">
+                                <select id="vehicle_num" name="vehicle_num" class="form-control" style="width:100%">
+                                    <option value="" selected><?php echo $_smarty_tpl->tpl_vars['_L']->value['Select vehicle number'];?>
+</option>
+                                    <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['vehicles']->value, 'vehicle');
+if ($_from !== null) {
+foreach ($_from as $_smarty_tpl->tpl_vars['vehicle']->value) {
+?>
+                                    <option value="<?php echo $_smarty_tpl->tpl_vars['vehicle']->value['vehicle_num'];?>
+"><?php echo $_smarty_tpl->tpl_vars['vehicle']->value['vehicle_num'];?>
+ - <?php echo $_smarty_tpl->tpl_vars['vehicle']->value['vehicle_type'];?>
+</option>
+                                    <?php
+}
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
+                                </select>
                             </div>
                         </div>
 
@@ -383,12 +406,12 @@ $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
 }
 /* {/block "content"} */
 /* {block "script"} */
-class Block_8508349475b6eca0fe01eb6_86122802 extends Smarty_Internal_Block
+class Block_8477965675bb49ccc579415_12122644 extends Smarty_Internal_Block
 {
 public $subBlocks = array (
   'script' => 
   array (
-    0 => 'Block_8508349475b6eca0fe01eb6_86122802',
+    0 => 'Block_8477965675bb49ccc579415_12122644',
   ),
 );
 public function callBlock(Smarty_Internal_Template $_smarty_tpl) {

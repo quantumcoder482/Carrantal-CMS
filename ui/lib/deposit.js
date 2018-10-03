@@ -12,6 +12,18 @@ $(document).ready(function () {
             }
         }
     );
+
+    $("#vehicle_num").select2({
+            theme: "bootstrap",
+            language: {
+                noResults: function () {
+                    return $("#_lan_no_results_found").val();
+                }
+            }
+        }
+    );
+
+
     $("#cats").select2({
             theme: "bootstrap",
             language: {
@@ -208,7 +220,7 @@ $(document).ready(function () {
 
             account: $('#account').val(),
             date: $('#date').val(),
-
+            vehicle_num:$('#vehicle_num').val(),
             amount: $('#amount').val(),
             cats: $('#cats').val(),
             description: $('#description').val(),

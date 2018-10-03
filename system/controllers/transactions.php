@@ -31,6 +31,9 @@ switch ($action) {
         Event::trigger('transactions/deposit/');
         $d = ORM::for_table('sys_accounts')->find_many();
 
+        $vehicles=ORM::for_table('sys_vehicles')->order_by_asc('id')->find_array();
+        $ui->assign('vehicles',$vehicles);  
+
         // $p = ORM::for_table('sys_payers')->find_many();
 
         $p = ORM::for_table('crm_accounts')->find_many();
@@ -94,7 +97,6 @@ switch ($action) {
         $payerid = _post('payer');
         $vehicle_num=_post('vehicle_num');
 
-
         $ref = _post('ref');
 
         if($ref != ''){
@@ -108,14 +110,9 @@ switch ($action) {
 
         }
 
-
-
-
-
-
         $pmethod = _post('pmethod');
         $cat = _post('cats');
-
+        
         $category = TransactionCategory::where('type', 'Income')->where('name', $cat)->first();
         if ($category) {
             $current_total_amount = $category->total_amount;
@@ -916,36 +913,35 @@ switch ($action) {
     case 'vehicle_transactions_list':
 
         Event::trigger('transactions/vehicle_transactions_list/');
-        $cid = route(2);
-        if ($cid == '' || $cid == '0') {
-            $ui->assign('p_cid', '');
+        
+        $vehicle_num=route(2);
+        if($vehicle_num==''){
+            $ui->assign('vehicle_num', '');
+        } else {
+            $ui->assign('vehicle_num', $vehicle_num);
         }
-        else {
-            $ui->assign('p_cid', $cid);
-        }
-
+        
         $tr_type = route(3);
         if ($tr_type == 'income') {
             $tr_type = 'Income';
-        }
-        elseif ($tr_type == 'expense') {
+        } elseif ($tr_type == 'expense') {
             $tr_type = 'Expense';
-        }
-        else {
+        } else {
             $tr_type = '';
         }
-
-        $parent_menu = route(4);
-        if ($parent_menu == 'reports') {
-            $ui->assign('_application_menu', 'reports');
-        }
-
-        $account = route(3);
+        
+        $account = route(4);
         if ($account == '' || $account == '0') {
             $ui->assign('p_account', '');
-        }
-        else {
+        } else {
             $ui->assign('p_account', $account);
+        }
+        
+        $cid = route(5);
+        if ($cid == '' || $cid == '0') {
+            $ui->assign('p_cid', '');
+        } else {
+            $ui->assign('p_cid', $cid);
         }
 
         $c = ORM::for_table('crm_accounts')->select('id')->select('account')->select('company')->select('email')->order_by_desc('id')->find_many();

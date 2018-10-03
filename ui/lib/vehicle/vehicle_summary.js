@@ -74,6 +74,8 @@ $(document).ready(function () {
 
     });
     
+    
+    
     $('.insurance_renew').on('click', function (e) {
         var id = this.id;
         e.preventDefault();
@@ -87,6 +89,22 @@ $(document).ready(function () {
 
         });
 
+
+    });
+
+    $('.view_transaction_expense').on('click', function (e) {
+        var vehicle_num = this.id;
+        e.preventDefault();
+        view_path = _url + 'transactions/vehicle_transactions_list' + '/' + vehicle_num + '/expense';
+        window.location.href=view_path;
+    });
+
+
+    $('.view_transaction_income').on('click', function (e) {
+        var vehicle_num = this.id;
+        e.preventDefault();
+        view_path = _url + 'transactions/vehicle_transactions_list'+'/'+vehicle_num+'/income';
+        window.location.href=view_path;
 
     });
 

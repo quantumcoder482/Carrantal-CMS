@@ -370,7 +370,7 @@
                                 <td>
                                     <div class="div-title">
                                         <h4>{$_L['Recent Vehicle Sales']}</h4>
-                                        <a href="#" class="btn btn-primary btn-sm">{$_L['View Vehicle Income']}</a>
+                                        <a href="#" id="{$vehicle['vehicle_num']}" class="btn btn-primary btn-sm view_transaction_income">{$_L['View Vehicle Income']}</a>
                                     </div>
                                 </td>
 
@@ -411,7 +411,7 @@
                                 <td>
                                     <div class="div-title">
                                         <h4>{$_L['Recent Vehicle Expense']}</h4>
-                                        <a href="#" class="btn btn-primary btn-sm">{$_L['View Vehicle Expense']}</a>
+                                        <a href="#" id="{$vehicle['vehicle_num']}" class="btn btn-primary btn-sm view_transaction_expense">{$_L['View Vehicle Expense']}</a>
                                     </div>
                                 </td>
                             </tr>

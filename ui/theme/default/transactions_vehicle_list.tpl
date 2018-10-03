@@ -22,7 +22,7 @@
                                         <select id="vehicle_num" name="vehicle_num" class="form-control">
                                             <option value="" selected>{$_L['All']}</option>
                                             {foreach $vehicles as $vehicle}
-                                            <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']} - {$vehicle['vehicle_type']}</option>
+                                            <option value="{$vehicle['vehicle_num']}" {if $vehicle_num eq $vehicle['vehicle_num']}selected{/if}>{$vehicle['vehicle_num']} - {$vehicle['vehicle_type']}</option>
                                             {/foreach}
                                         </select>
                                 </div>

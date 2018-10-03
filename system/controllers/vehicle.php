@@ -867,12 +867,17 @@ switch ($action) {
         $expiry_date=$vehicle_info->expiry_date;
 
         $today=date('Y-m-d');
-
+        if($today>=$expiry_date){
+            $remain_day=0;
+        } else {
+            $remain_day=date_diff(date_create($expiry_date),date_create($today));
+            $remain_day=intval($remain_day->format("%a"));
+        }
+       
         $expiry_remain_days=date_diff(date_create($expiry_date),date_create($purchase_date));
         $expiry_remain_days=intval($expiry_remain_days->format("%a"));
+        
 
-        $remain_day=date_diff(date_create($expiry_date),date_create($today));
-        $remain_day=intval($remain_day->format("%a"));
 
         $ui->assign('remain_day', $remain_day);
         $ui->assign('expiry_remain_days',$expiry_remain_days);

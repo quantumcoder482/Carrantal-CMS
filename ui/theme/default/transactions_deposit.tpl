@@ -22,15 +22,26 @@
                                     {foreach $d as $ds}
                                         <option value="{$ds['account']}">{$ds['account']}</option>
                                     {/foreach}
-
-
                                 </select>
                             </div>
                         </div>
+                        
                         <div class="form-group">
                             <label for="date" class="col-sm-3 control-label">{$_L['Date']}</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control"  value="{$mdate}" name="date" id="date" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="vehicle_num">{$_L['Vehicle No']}</label>
+                            <div class="col-md-9">
+                                <select id="vehicle_num" name="vehicle_num" class="form-control" style="width:100%">
+                                    <option value="" selected>{$_L['Select vehicle number']}</option>
+                                    {foreach $vehicles as $vehicle}
+                                    <option value="{$vehicle['vehicle_num']}">{$vehicle['vehicle_num']} - {$vehicle['vehicle_type']}</option>
+                                    {/foreach}
+                                </select>
                             </div>
                         </div>
 
