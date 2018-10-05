@@ -535,7 +535,6 @@ switch ($action) {
 
         $baseUrl=APP_URL;
 
-
         $total_items = ORM::for_table('sys_vehicle_loan');
 
         $total_items = $total_items->count();
@@ -549,11 +548,12 @@ switch ($action) {
 
         $pay_status_string=array();
         $next_duedate=array();
-        $expire_date=array();
+        // $expire_date=array();
         foreach($d as $data){
 
             // Expiry status calculation
             $expiry_id=$data['id'];
+            $expire_date=$data['expire_date'];
             $expiry_todate=$data['expiry_todate'];
             $pay_status=$data['pay_status'];
             $loan_duration=$data['loan_duration'];
@@ -561,30 +561,23 @@ switch ($action) {
 
             switch ($repay_cycle_type) {
                 case 'weekly':
-                    $expire_date_interval=new DateInterval('P'.($loan_duration*7).'D');
                     $interval = new DateInterval('P'.(($pay_status+1)*7).'D');
                     break;
                 case 'monthly':
-                    $expire_date_interval=new DateInterval('P'.$loan_duration.'M');
-                    $interval = new DateInterval('P'.($pay_status+1).'M');
+                    $interval = new DateInterval('P'.(($pay_status+1)*30).'D');
                     break;
                 case 'yearly':
-                    $expire_date_interval=new DateInterval('P'.$loan_duration.'Y');
-                    $interval = new DateInterval('P'.($pay_status+1).'Y');
-                    break;
-                default:
+                    $interval = new DateInterval('P'.(($pay_status+1)*365).'D');
                     break;
             }
 
-            $expire_date[$expiry_id]=date_create($data['loan_date'])->add($expire_date_interval);
-            $expire_date[$expiry_id]=$expire_date[$expiry_id]->format('Y-m-d');
             $next_duedate[$expiry_id]=date_create($data['loan_date'])->add($interval);
             $next_duedate[$expiry_id]=$next_duedate[$expiry_id]->format('Y-m-d');
             
             $today = date("Y-m-d");
             $date1 = date_create($today);
             $date2 = date_create($next_duedate[$expiry_id]);
-            $date3 = date_create($expire_date[$expiry_id]);
+            $date3 = date_create($expire_date);
             $rest= date_diff($date1,$date3);
             $rest= intval($rest->format("%a"));
 
@@ -612,8 +605,8 @@ switch ($action) {
 
             
             // next due date overflow expire date
-            if($next_duedate[$expiry_id]>$expire_date[$expiry_id]) {
-                $next_duedate[$expiry_id]=$expire_date[$expiry_id];
+            if($next_duedate[$expiry_id]>$expire_date) {
+                $next_duedate[$expiry_id]=$expire_date;
                 $pay_status_string[$expiry_id]="Paid";
             }
 
@@ -634,7 +627,7 @@ switch ($action) {
         $ui->assign('view_type', $view_type);
         $ui->assign('d', $d);
         $ui->assign('next_duedate',$next_duedate);
-        $ui->assign('expire_date',$expire_date);
+        // $ui->assign('expire_date',$expire_date);
         $ui->assign('pay_status_string',$pay_status_string);
         $ui->assign('baseUrl',$baseUrl);
         $ui->assign('paginator', $paginator);
@@ -683,52 +676,51 @@ switch ($action) {
         ));
 
         $baseUrl=APP_URL;
-
+        $duration_count=0;
+        $end_paystatus_string="";
 
         $loan = ORM::for_table('sys_vehicle_loan')->where('id',$id)->find_one();
         $val=array();
         $val['id']=$id;
         $val['vehicle_num']=$loan['vehicle_num'];
         $val['date']=$loan['loan_date'];
+        $val['loan_type']=$loan['loan_type'];
         $val['duration']=$loan['loan_duration'];
-        $repay_cycle_type=$loan['repay_cycle_type'];
-        
-        // Expire Date
-        switch ($repay_cycle_type) {
-            case 'weekly':
-                $expire_date_interval=new DateInterval('P'.($val['duration']*7).'D');
-                break;
-            case 'monthly':
-                $expire_date_interval=new DateInterval('P'.$val['duration'].'M');
-                break;
-            case 'yearly':
-                $expire_date_interval=new DateInterval('P'.$val['duration'].'Y');
-                break;
-            default:
-                break;
+
+        if($val['duration']>floor($val['duration'])){
+            $duration_count=floor($val['duration'])+1;
+        } else {
+            $duration_count=floor($val['duration']);
         }
 
-        $val['expire_date']=date_create($val['date'])->add($expire_date_interval);
-        $val['expire_date']=$val['expire_date']->format('Y-m-d');
-        
+        $repay_cycle_type=$loan['repay_cycle_type'];
+        $val['expire_date']=$loan['expire_date'];              
         $val['repayment']=$loan['repay_cycle_type'];
         $val['amount']=$loan['principal_amount'];
         $val['rate']=$loan['interest_rate'];
-        $val['interest']=($val['amount']*$val['rate']*$val['duration'])/100;
+
+        // Calculate interest
+        $months=$loan['total_days']/30;
+        $val['interest']=($val['amount']*$val['rate']*$months)/100;
+
+        if($val['loan_type'] == "HP"){
+            $val['interest'] =$val['interest']/12;
+        }
+
         $val['total_due']=$val['amount']+$val['interest'];
         
         $next_duedate=array();
 
-        for($i=1;$i<=$val['duration'];$i++){
+        for($i=1;$i<=floor($val['duration']);$i++){
             switch ($repay_cycle_type) {
                 case 'weekly':
                     $interval = new DateInterval('P'.($i*7).'D');
                     break;
                 case 'monthly':
-                    $interval = new DateInterval('P'.$i.'M');
+                    $interval = new DateInterval('P'.($i*30).'D');
                     break;
                 case 'yearly':
-                    $interval = new DateInterval('P'.$i.'Y');
+                    $interval = new DateInterval('P'.($i*365).'D');
                     break;
                 default:
                     break;
@@ -745,7 +737,7 @@ switch ($action) {
         $loan_balance=array();
         $loan_balance[0]=$val['amount'];
 
-        for($i=1;$i<=$val['duration'];$i++){
+        for($i=1;$i<=floor($val['duration']);$i++){
             $loan_balance[$i]=$loan_balance[$i-1]-$val['loan_amount'];
         }
 
@@ -763,7 +755,7 @@ switch ($action) {
         
         // Expiry Status
 
-        for($i=1;$i<=$val['duration'];$i++){
+        for($i=1;$i<=floor($val['duration']);$i++){
 
             if($loan_log_count != 0){
                 
@@ -792,12 +784,29 @@ switch ($action) {
 
         }
 
+        if($duration_count>floor($val['duration'])){
+            if($loan_log_count>0){
+                $end_paystatus_string="Paid";
+            } else {
+                $today = date("Y-m-d");
+                $date1 = date_create($today);
+                $date2 = date_create($val['expire_date']);
+                $rest= date_diff($date1,$date2);
+                $rest= intval($rest->format("%a"));
+                if($date1>=$date2 || $rest>$val['expiry_todate']){
+                    $end_paystatus_string="unPaid";
+                }else{
+                    $end_paystatus_string=$rest." - Day Due";
+                }
+            }
+
+            $ui->assign('end_paystatus_string', $end_paystatus_string);
+        
+        }
 
         $transactions=ORM::for_table('sys_transactions')->select('sys_transactions.*')
         ->inner_join('sys_vehicle_loanlog',array('sys_vehicle_loanlog.transaction_id','=','sys_transactions.id'))
         ->where('sys_vehicle_loanlog.loan_id',$id)->order_by_desc('id')->find_many();
-
-
         
         if(!$transactions){
             $transactions="";
@@ -814,6 +823,7 @@ switch ($action) {
         $ui->assign('view_type',$view_type);
         $ui->assign('next_duedate',$next_duedate);
         $ui->assign('loan_balance',$loan_balance);
+        $ui->assign('duration_count', $duration_count);
         $ui->assign('pay_status_string',$pay_status_string);
         $ui->assign('baseUrl',$baseUrl);
         $ui->assign('paginator', $paginator);
@@ -1010,31 +1020,41 @@ switch ($action) {
             $loan_date=$loan->loan_date;
             $pay_status=$loan->pay_status;
             $expiry_todate=$loan->expiry_todate;
-    
+            $expire_date=$loan->expire_date;
+            $loan_type=$loan->loan_type;
            
+
             switch ($repay_cycle_type) {
                 case 'weekly':
-                    $expire_date_interval=new DateInterval('P'.($loan_duration*7).'D');
                      $interval = new DateInterval('P'.(($pay_status+1)*7).'D');
                     break;
                 case 'monthly':
-                    $expire_date_interval=new DateInterval('P'. $loan_duration.'M');
-                    $interval = new DateInterval('P'.($pay_status+1).'M');
+                    $interval = new DateInterval('P'.(($pay_status+1)*30).'D');
                     break;
                 case 'yearly':
-                    $expire_date_interval=new DateInterval('P'. $loan_duration.'Y');
-                    $interval = new DateInterval('P'.($pay_status+1).'Y');
+                    $interval = new DateInterval('P'.(($pay_status+1)*365).'D');
                     break;
                 default:
                     break;
             }
     
-            $expire_date=date_create($loan_date)->add($expire_date_interval);
-            $expire_date=$expire_date->format('Y-m-d');
             $next_duedate=date_create($loan_date)->add($interval);
             $next_duedate=$next_duedate->format('Y-m-d');
             
-    
+
+            // if($loan_type=="HP"){
+            //     $total_amount=$principal_amount+$principal_amount*($interest_rate/100)*($total_days/30)/12;
+            // } else {
+            //     $total_amount=$principal_amount+$principal_amount*($interest_rate/100)*($total_days/30);
+            // }
+            // $recycle_amount=$total_amount/$loan_duration;
+
+            // if($index == floor($loan_duration)+1){
+            //     $val['amount']=$total_amount-floor($loan_duration)*$recycle_amount;
+            // } else {
+            //     $val['amount']=$recycle_amount;
+            // }
+
             $loan_amount=$principal_amount/$loan_duration;
             $interest_amount=($principal_amount*$interest_rate)/100;
             $loan_amount=$loan_amount+$interest_amount;
@@ -1299,6 +1319,8 @@ switch ($action) {
             $val['id']=$id;
             $val['vehicle_num']=$loan->vehicle_num;
             $val['principal_amount']=$loan->principal_amount;
+            $val['loan_type']=$loan->loan_type;
+            $val['total_days']=$loan->total_days;
             $val['interest_rate']=$loan->interest_rate;
             $val['loan_duration']=$loan->loan_duration;
             $val['repay_cycle_type']=$loan->repay_cycle_type;
@@ -1312,6 +1334,8 @@ switch ($action) {
             $val['id']=" ";
             $val['vehicle_num']=" ";
             $val['principal_amount']=" ";
+            $val['loan_type']=" ";
+            $val['total_days']=" ";
             $val['interest_rate']=" ";
             $val['loan_duration']=" ";
             $val['repay_cycle_type']=" "; 
@@ -1520,9 +1544,11 @@ switch ($action) {
 
         break;
 
-    case 'modal_loan_expense':
+    case 'modal_loan_expense':  
         
         $id=$routes['2'];
+        $index=@$routes['3'];
+
         $loan=false;
         if($id != ''){
             $loan=ORM::for_table('sys_vehicle_loan')->find_one($id);
@@ -1537,8 +1563,22 @@ switch ($action) {
             $principal_amount=$loan->principal_amount;
             $interest_rate=$loan->interest_rate;
             $loan_duration=$loan->loan_duration;
+            $total_days=$loan->total_days;
+            $loan_type=$loan->loan_type;
 
-            $val['amount']=$principal_amount/$loan_duration+$principal_amount*$interest_rate/100;
+            if($loan_type=="HP"){
+                $total_amount=$principal_amount+$principal_amount*($interest_rate/100)*($total_days/30)/12;
+            } else {
+                $total_amount=$principal_amount+$principal_amount*($interest_rate/100)*($total_days/30);
+            }
+            $recycle_amount=$total_amount/$loan_duration;
+
+            if($index == floor($loan_duration)+1){
+                $val['amount']=$total_amount-floor($loan_duration)*$recycle_amount;
+            } else {
+                $val['amount']=$recycle_amount;
+            }
+
             $val['category']="Vehicle Loan";
 
         }else{
@@ -1784,10 +1824,13 @@ switch ($action) {
     
         $principal_amount=_post('principal_amount','0.00');
         $principal_amount = Finance::amount_fix($principal_amount);
+        $loan_type=_post('loan_type');
         $interest_rate=_post('interest_rate');
-        $loan_duration=_post('loan_duration');
-        $repay_cycle_type=_post('repay_cycle_type');
+        // $loan_duration=_post('loan_duration');
         $loan_date=_post('loan_date');
+        $expire_date=_post('expire_date');
+        $total_days=_post('total_days');
+        $repay_cycle_type=_post('repay_cycle_type');
         $expiry_todate=_post('expiry_todate');
         $description=_post('description');
         $ref_img=_post('ref_img');
@@ -1802,17 +1845,20 @@ switch ($action) {
         if($principal_amount == ''){
            $msg .= 'Principal Amount is required <br>';
         }
+        if($loan_type == ''){
+            $msg.= 'Loan Type is required <br>';
+        }
         if($interest_rate == ''){
            $msg .= 'Interest Rate is required <br>';
-        }
-        if($loan_duration == ''){
-           $msg .= 'Loan Duration is required <br>';
         }
         if($repay_cycle_type == ''){
            $msg .= 'Repayment Cycle is required <br>';
         }
         if($loan_date == ''){
-           $msg .= 'Loan Date is required <br>';
+           $msg .= 'Start Date is required <br>';
+        }
+        if($expire_date == ''){
+           $msg .= 'End Date is required <br>';
         }
         if($expiry_todate == ''){
            $msg .= 'Expiry To Date is required <br>';
@@ -1821,9 +1867,9 @@ switch ($action) {
 
         if($msg == ''){
             
-            $interval = new DateInterval('P'.$loan_duration.'M');
-            $expire_date=date_create($loan_date)->add($interval);
-            $expire_date=$expire_date->format('Y-m-d');
+            // $interval = new DateInterval('P'.$loan_duration.'M');
+            // $expire_date=date_create($loan_date)->add($interval);
+            // $expire_date=$expire_date->format('Y-m-d');
 
             if($id == ''){
                 _msglog('s',$_L['Item Added Successfully']);
@@ -1833,22 +1879,36 @@ switch ($action) {
                 $d = ORM::for_table('sys_vehicle_loan')->find_one($id);
             }
 
+            switch ($repay_cycle_type) {
+                case 'weekly':
+                    $loan_duration=$total_days/7;     
+                    break;
+                case 'monthly':
+                    $loan_duration=$total_days/30;  
+                    break;
+                case 'yearly':
+                    $loan_duration=$total_days/365;  
+                    break;
+                default:
+                    $loan_duration=0;
+                    break;
+               
+            }
+
             $d->vehicle_num = $vehicle_num;
             $d->principal_amount = $principal_amount;
+            $d->loan_type=$loan_type;
             $d->interest_rate = $interest_rate;
             $d->loan_duration = $loan_duration;
             $d->repay_cycle_type=$repay_cycle_type;
             $d->loan_date=$loan_date;
             $d->expire_date=$expire_date;
+            $d->total_days=$total_days;
             $d->expiry_todate = $expiry_todate;
             $d->description = $description;
             $d->ref_img =$ref_img;
 
-
             $d->save();
-
-
-
             echo $d->id();
         }
         else{

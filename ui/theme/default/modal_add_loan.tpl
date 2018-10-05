@@ -38,6 +38,7 @@
                                                                    
                             </div>
                         </div>  
+
                         <div class="form-group">
                             <label class="col-md-4 control-label" for="principal_amount">{$_L['Principal Amount']}<small class="red">*</small></label>
 
@@ -46,6 +47,20 @@
                                     data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}" data-d-group="2" value="{$val['principal_amount']}">
 
                             </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="loan_type">{$_L['Loan Type']}<small class="red">*</small></label>
+
+                            <div class="col-md-8">
+
+                                <select class="form-control" style="width:100%" id="loan_type" name="loan_type">
+                                    <option value="" selected></option>
+                                    <option value="Flooring" {if $val['loan_type'] eq 'Flooring'} selected {/if}>Flooring</option>
+                                    <option value="HP" {if $val['loan_type'] eq 'HP'} selected {/if}>HP</option>
+                                </select>
+                            </div>
+
                         </div>
 
                         <div class="form-group">
@@ -58,10 +73,26 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label" for="loan_duration">{$_L['Loan Duration']}<small class="red">*</small></label>
+                            <label for="date" class="col-md-4 control-label">{$_L['Start Date']}<small class="red">*</small></label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control datepicker" value="{$val['loan_date']}" name="loan_date" id="loan_date"
+                                    datepicker data-date-format="yyyy-mm-dd" data-auto-close="true">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="date" class="col-md-4 control-label">{$_L['End Date']}<small class="red">*</small></label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control datepicker" value="{$val['expire_date']}" name="expire_date" id="expire_date"
+                                    datepicker data-date-format="yyyy-mm-dd" data-auto-close="true">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="total_days">{$_L['Total in Days']}</label>
                         
                             <div class="col-md-8">
-                                <input type="text" id="loan_duration" name="loan_duration" class="form-control" value="{$val['loan_duration']}">
+                                <input type="text" id="total_days" name="total_days" class="form-control" value="{$val['total_days']}" disabled>
                         
                             </div>
                         </div>
@@ -82,15 +113,6 @@
                         
                         </div>
 
-                        <div class="form-group">
-                            <label for="date" class="col-md-4 control-label">{$_L['Loan Date']}<small class="red">*</small></label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control datepicker" value="{$val['loan_date']}" name="loan_date" id="loan_date" datepicker data-date-format="yyyy-mm-dd"
-                                    data-auto-close="true">
-                            </div>
-                        </div>
-
-    
                         <div class="form-group">
                             <label class="col-md-4 control-label" for="expiry_todate">{$_L['Expiry To Date']}<small class="red">*</small></label>
     
@@ -121,7 +143,6 @@
     
     
                         <input type="hidden" name="rid" id="rid" value="{$val['id']}">
-                        <input type="hidden" name="expire_date" id="rid" value="{$val['expire_date']}">
                         <input type="hidden" name="ref_img" id="ref_img" value="{$val['ref_img']}">
 
                     </form>
@@ -196,6 +217,9 @@
         );
 
         var $vehicle_num = $('#vehicle_num');
+        var $start_date = $('#loan_date');
+        var $end_date = $('#expire_date');
+        var $total_days = $('#total_days');
             
         $vehicle_num.select2({
 
@@ -209,6 +233,32 @@
 
         $('#repay_cycle_type').select2({
             theme:"bootstrap"
+        });
+
+        $start_date.on("change", function () {
+            var start_date =new Date($start_date.val());
+            var end_date =new Date($end_date.val());
+            if($end_date.val() != ''){
+                date_diff= parseInt((end_date.getTime()-start_date.getTime())/(24*3600*1000));
+                if(!isNaN(date_diff)){
+                    $total_days.val(date_diff);
+                    console.log(date_diff);
+                }
+            }
+
+        });
+
+        $end_date.on("change", function () {
+            var start_date =new Date($start_date.val());
+            var end_date =new Date($end_date.val());
+            if($start_date.val() != ''){
+                date_diff= parseInt((end_date.getTime()-start_date.getTime())/(24*3600*1000));
+                if(!isNaN(date_diff)){
+                   $total_days.val(date_diff);
+                }
+                
+            }
+
         });
 
         

@@ -48,6 +48,7 @@
                         <tr>
                             <th>#</th>
                             <th>{$_L['Vehicle No']}</th>
+                            <th>{$_L['Loan Type']}</th>
                             <th>{$_L['Amount']}</th>
                             <th>{$_L['Duration']}</th>
                             <th>{$_L['Loan Date']}</th>
@@ -64,19 +65,24 @@
                             <td data-value="{$ds['id']}">
                                 {$ds['id']}
                             </td>
-
-                            <td class="edit_loan" data-value="{$ds['vehicle_num']}" id="{$ds['id']}">
+                            <td class="loan_view" data-value="{$ds['vehicle_num']}" id="{$ds['id']}">
                                 <a href="#">{$ds['vehicle_num']}</a>
+                            </td>
+                            <td data-value="{$ds['loan_type']}">
+                                {$ds['loan_type']}
                             </td>
                             <td class="amount" data-value="{$ds['principal_amount']}" data-a-sign="{if $ds['currency_symbol'] eq ''} {$config['currency_code']} {else} {$ds['currency_symbol']}{/if} ">{$ds['principal_amount']}</td>
                             <td data-value="{$ds['loan_duration']}">
-                                {$ds['loan_duration']}  {$ds['repay_cycle_type']}
+                                {round($ds['loan_duration'],2)} 
+                                {if $ds['repay_cycle_type'] eq 'weekly'} week {/if}
+                                {if $ds['repay_cycle_type'] eq 'monthly'} month {/if}
+                                {if $ds['repay_cycle_type'] eq 'yearly'} year {/if}
                             </td>
                             <td data-value="{strtotime($ds['loan_date'])}">
                                 {date( $config['df'], strtotime($ds['loan_date']))}
                             </td>
-                            <td data-value="{strtotime($expire_date[$ds['id']])}">
-                                {date( $config['df'], strtotime($expire_date[$ds['id']]))}
+                            <td data-value="{strtotime($ds['expire_date'])}">
+                                {date( $config['df'], strtotime($ds['expire_date']))}
                             </td>
                             <td data-value="{strtotime($next_duedate[$ds['id']])}">
                                 {date( $config['df'], strtotime($next_duedate[$ds['id']]))}
@@ -112,7 +118,7 @@
                     {if $view_type == 'filter'}
                     <tfoot>
                         <tr>
-                            <td style="text-align: left;" colspan="9">
+                            <td style="text-align: left;" colspan="10">
                                 <ul class="pagination">
                                 </ul>
                             </td>

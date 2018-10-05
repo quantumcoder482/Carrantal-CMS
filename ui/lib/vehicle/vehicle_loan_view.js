@@ -31,13 +31,13 @@ $(document).ready(function () {
 
     $('.add_expense').on('click', function (e) {
 
-        var id = this.id;
-
+        var id = $('#loan_id').val();
+        var index = this.id;
         e.preventDefault();
 
         $('body').modalmanager('loading');
 
-        $modal.load(_url + 'vehicle/modal_loan_expense/' + id, '', function () {
+        $modal.load(_url + 'vehicle/modal_loan_expense/' + id + '/'+index, '', function () {
 
             $modal.modal();
 
@@ -47,7 +47,7 @@ $(document).ready(function () {
 
 
     $modal.on('click', '.modal_submit', function (e) {
-
+        $('#total_days').prop('disabled', false);
         e.preventDefault();
 
         $modal.modal('loading');
@@ -59,9 +59,7 @@ $(document).ready(function () {
 
                     window.location = base_url + 'vehicle/loans/';
 
-                }
-
-                else {
+                } else {
                     $modal.modal('loading');
                     toastr.error(data);
                 }

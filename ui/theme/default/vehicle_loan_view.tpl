@@ -22,12 +22,14 @@
         <div class="ibox float-e-margins">
             <div class="ibox-title">
                <h5>{$_L['Vehicle No']}  {$val['vehicle_num']}</h5>
+               <input type="hidden" name="loan_id" id="loan_id" value="{$val['id']}" />
             </div>
 
             <div class="ibox-content">
                 <table class="table table-bordered table-hover sys_table ">
                     <thead>
                         <tr>
+                            <th>{$_L['Loan Type']}</th>
                             <th>{$_L['Date']}</th>
                             <th>{$_L['Expire Date']}</th>
                             <th>{$_L['Duration']}</th>
@@ -40,9 +42,10 @@
                     </thead>
                     <tbody>
                         <tr>
+                            <td>{$val['loan_type']}</td>
                             <td>{$val['date']}</td>
                             <td>{$val['expire_date']}</td>
-                            <td>{$val['duration']}</td>
+                            <td>{round($val['duration'],2)}</td>
                             <td>{$val['repayment']}</td>
                             <td class="amount" data-value="{$val['amount']}" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}" data-a-sep="{$config['thousands_sep']}"                             
                             data-d-group="2">{$val['amount']}</td>
@@ -72,7 +75,7 @@
                     </thead>
                     <tbody>
 
-                     {for $i=1 to $val['duration']}
+                     {for $i=1 to floor($val['duration'])}
                         <tr>
                             <td>{$i}</td>
                             <td>{$next_duedate[$i]}</td>
@@ -105,7 +108,7 @@
                                     {$_L['Add Expense']}
                                 </a>
                                 {else}
-                                <a href="#" class="btn btn-warning btn-xs add_expense" id="{$val['id']}" style="background-color:#FFA500; border-color:#FFA500; color:#eeeeee"
+                                <a href="#" class="btn btn-warning btn-xs add_expense" id="{$i}" style="background-color:#FFA500; border-color:#FFA500; color:#eeeeee"
                                     data-toggle="tooltip" data-placement="top" title="{$_L['View']}">
                                     {$_L['Add Expense']}
                                 </a>
@@ -115,6 +118,50 @@
                         </tr>
 
                     {/for}
+
+                    {if $duration_count neq floor($val['duration'])}
+                    <tr>
+                        <td>{$duration_count}</td>
+                        <td>{$val['expire_date']}</td>
+
+                        <td class="amount" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}"
+                            data-a-sep="{$config['thousands_sep']}" data-d-group="2">{$val['amount']-$val['loan_amount']*floor($val['duration'])}</td>
+                        <td class="amount" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}"
+                            data-a-sep="{$config['thousands_sep']}" data-d-group="2">{$val['interest']-$val['interest_amount']*floor($val['duration'])}</td>
+                        <td class="amount" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}"
+                            data-a-sep="{$config['thousands_sep']}" data-d-group="2">{$val['total_due']-$val['due_amount']*floor($val['duration'])}</td>
+                        <td class="amount" autocomplete="off" data-a-sign="{$config['currency_code']} " data-a-dec="{$config['dec_point']}"
+                            data-a-sep="{$config['thousands_sep']}" data-d-group="2">0</td>
+                        <td>
+                            {if $end_paystatus_string eq 'Paid'}
+                            <div class="label-success" style="margin:0 auto;font-size:85%;width:85px">
+                                {$end_paystatus_string}</div>
+                            {elseif $end_paystatus_string eq 'unPaid'}
+                            <div class="label-danger" style="color:#ff2222;margin:0 auto;font-size:85%;width:85px">
+                                {$end_paystatus_string}</div>
+                            {else}
+                            <div class="label-warning" style="border-color:#ffa500;color: #f7931e;margin:0 auto;font-size:85%;width:85px;">
+                                {$end_paystatus_string}</div>
+                            {/if}
+                        </td>
+                        <td class="text-center">
+
+                            {if $end_paystatus_string eq 'Paid'}
+                            <a href="#" class="btn btn-xs" id="{$duration_count}" style="background-color:#A9A9A9; border-color:#A9A9A9; color:#eeeeee"
+                                disabled data-toggle="tooltip" data-placement="top" title="{$_L['View']}">
+                                {$_L['Add Expense']}
+                            </a>
+                            {else}
+                            <a href="#" class="btn btn-warning btn-xs add_expense" id="{$duration_count}" style="background-color:#FFA500; border-color:#FFA500; color:#eeeeee"
+                                data-toggle="tooltip" data-placement="top" title="{$_L['View']}">
+                                {$_L['Add Expense']}
+                            </a>
+                            {/if}
+
+                        </td>
+                    </tr>
+
+                    {/if}
 
                     <tr>
                         <td colspan="2" style="font-weight:600">{$_L['Total']}</td>

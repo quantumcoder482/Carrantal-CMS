@@ -90,7 +90,7 @@ $(document).ready(function () {
 
 
     $modal.on('click', '.modal_submit', function (e) {
-
+        $('#total_days').prop('disabled', false);
         e.preventDefault();
 
         $modal.modal('loading');
