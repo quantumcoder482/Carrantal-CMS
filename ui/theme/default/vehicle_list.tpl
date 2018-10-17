@@ -36,12 +36,14 @@
                             <th>{$_L['Image']}</th>
                             <th>{$_L['Vehicle No']}</th>
                             <th>{$_L['Make s Model']}</th>
+                            <th>{$_L['Engine No']}</th>
+                            <th>{$_L['Chassis No']}</th>
                             <th>{$_L['Purchase Price']}</th>
                             <th>{$_L['Purchase Date']}</th>
                             <th>{$_L['Expiry Date']}</th>
                             <th>{$_L['Status']}</th>
-                            <th>{$_L['Certificate']}</th>
-                            <th class="text-right" width="120px;">{$_L['Manage']}</th>
+                            <th>{$_L['Cert']}</th>
+                            <th class="text-right" width="95px">{$_L['Manage']}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -67,6 +69,8 @@
                             <td data-value="{$ds['vehicle_type']}">
                                 {$ds['vehicle_type']}
                             </td>
+                            <td data-value="{$ds['engine_num']}">{$ds['engine_num']}</td>
+                            <td data_value="{$ds['chassis_num']}">{$ds['chassis_num']}</td>
                             <td class="amount" data-value="{$ds['purchase_price']}" data-a-sign="{if $ds['currency_symbol'] eq ''} {$config['currency_code']} {else} {$ds['currency_symbol']}{/if} ">{$ds['purchase_price']}</td>
                             <td data-value="{strtotime($ds['purchase_date'])}">
                                 {date( $config['df'], strtotime($ds['purchase_date']))}
@@ -75,25 +79,25 @@
                                 {date( $config['df'], strtotime($ds['expiry_date']))}
                             </td>
                             <td>
-                                <!-- {if $ex_status[$ds['id']] eq 'Active'}
-                                <span class="label label-success">
-                                     {$ex_status[$ds['id']]}</span>
-                                {elseif $ex_status[$ds['id']] eq 'Expired'}
-                                <span class="label label-danger" style="color:#ff2222">
-                                     {$ex_status[$ds['id']]}</span>
-                                {else}
-                                <span class="label label-warning" style="color: #f7931e">
-                                     {$ex_status[$ds['id']]}</span>
-                                {/if} -->
+                                    <!-- {if $ex_status[$ds['id']] eq 'Active'}
+                                    <span class="label label-success">
+                                        {$ex_status[$ds['id']]}</span>
+                                    {elseif $ex_status[$ds['id']] eq 'Expired'}
+                                    <span class="label label-danger" style="color:#ff2222">
+                                        {$ex_status[$ds['id']]}</span>
+                                    {else}
+                                    <span class="label label-warning" style="color: #f7931e">
+                                        {$ex_status[$ds['id']]}</span>
+                                    {/if} -->
                                 
                                 {if $ex_status[$ds['id']] eq 'Active'}
-                                <div class="label-success" style="margin:0 auto;font-size:85%;width:95px">
+                                <div class="label-success" style="margin:0 auto;font-size:85%;width:65px">
                                     {$ex_status[$ds['id']]}</div>
                                 {elseif $ex_status[$ds['id']] eq 'Expired'}
-                                <div class="label-danger" style="color:#ff2222;margin:0 auto;font-size:85%;width:95px">
+                                <div class="label-danger" style="color:#ff2222;margin:0 auto;font-size:85%;width:65px">
                                     {$ex_status[$ds['id']]}</div>
                                 {else}
-                                <div class="label-warning" style="border-color:#ffa500;color: #f7931e;margin:0 auto;font-size:85%;width:95px;">
+                                <div class="label-warning" style="border-color:#ffa500;color: #f7931e;margin:0 auto;font-size:85%;width:65px;">
                                     {$ex_status[$ds['id']]}</div>
                                 {/if} 
 
@@ -126,7 +130,7 @@
                     {if $view_type == 'filter'}
                     <tfoot>
                         <tr>
-                            <td style="text-align: left;" colspan="10">
+                            <td style="text-align: left;" colspan="12">
                                 <ul class="pagination">
                                 </ul>
                             </td>

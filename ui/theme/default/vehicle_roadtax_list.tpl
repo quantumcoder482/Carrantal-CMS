@@ -48,7 +48,7 @@
                         <tr>
                             <th>#</th>
                             <th>{$_L['Vehicle No']}</th>
-                            <th>{$_L['Amount']}({$_L['Rebate']})</th>
+                            <th>{$_L['Amount']} ({$_L['Rebate']})</th>
                             <th>{$_L['Total']}</th>
                             <th>{$_L['Road Tax Date']}</th>
                             <th>{$_L['Due Date']}</th>

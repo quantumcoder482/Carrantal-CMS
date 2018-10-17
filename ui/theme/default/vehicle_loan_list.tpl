@@ -72,8 +72,8 @@
                                 {$ds['loan_type']}
                             </td>
                             <td class="amount" data-value="{$ds['principal_amount']}" data-a-sign="{if $ds['currency_symbol'] eq ''} {$config['currency_code']} {else} {$ds['currency_symbol']}{/if} ">{$ds['principal_amount']}</td>
-                            <td data-value="{$ds['loan_duration']}">
-                                {round($ds['loan_duration'],2)} 
+                            <td data-value="{$duration_count[$ds['id']]}">
+                                {round($duration_count[$ds['id']],2)} 
                                 {if $ds['repay_cycle_type'] eq 'weekly'} week {/if}
                                 {if $ds['repay_cycle_type'] eq 'monthly'} month {/if}
                                 {if $ds['repay_cycle_type'] eq 'yearly'} year {/if}

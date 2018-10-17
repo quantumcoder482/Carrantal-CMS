@@ -86,10 +86,4 @@ $(document).ready(function () {
     });
 
    
-
-
-
-
-
-
 });

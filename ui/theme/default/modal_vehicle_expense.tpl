@@ -100,8 +100,6 @@
                         {* End Custom Requirements Section *}
 
 
-
-
                         <div class="form-group">
                             <label for="cats" class="col-md-3 control-label">{$_L['Category']}</label>
                             <div class="col-md-9">
@@ -185,6 +183,7 @@
                         </div>
                         <input type="hidden" name="attachments" id="attachments" value="" />
                         <input type="hidden" name="eid" id="eid" value="{$val['id']}" />
+                        <input type="hidden" name="principal_pay" id="principal_pay" value="{$principal_pay}" />
                     </form>
 
                 </div>

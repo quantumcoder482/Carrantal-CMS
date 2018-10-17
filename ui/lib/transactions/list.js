@@ -26,7 +26,7 @@ $(document).ready(function() {
         theme:"bootstrap"
     });
 
-
+    var _url = $("#_url").val();
 
     var start = moment().subtract(29, 'days');
     var end = moment();
@@ -55,10 +55,6 @@ $(document).ready(function() {
 
     cb(start, end);
 
-
-
-
-
     var ib_dt = $('#ib_dt').DataTable( {
 
         "serverSide": true,
@@ -69,6 +65,7 @@ $(document).ready(function() {
 
                  d.tr_type = $('#tr_type').val();
                  d.ex_category=$('#ex_category').val();
+                 d.in_category = $('#in_category').val();
                  d.vehicle_num=$('#vehicle_num').val();
                  d.reportrange = $reportrange.val();
                  d.cid = $cid.val();
@@ -126,7 +123,7 @@ $(document).ready(function() {
             }
         ],
         "columnDefs": [
-            { "orderable": false, "targets":10 }
+            { "orderable": false, "targets":11 }
         ],
         "order": [[ 0, 'desc' ]],
         "scrollX": true,
@@ -135,12 +132,36 @@ $(document).ready(function() {
         }
     } );
 
+    var init_data = function () {
+        $.post(_url + "transactions/get_tr_searchdata/", $("#frm_search").serialize())
+            .done(function (data) {
+                if (data) {
+                    // console.log(data);
+                    $('#total_entries').html(data.total_records);
+                    $('#debit').html(data.total_dr);
+                    $('#credit').html(data.total_cr);
+                }
+
+            });
+    };
+
+    init_data();
+
+
     var $ib_filter = $("#ib_filter");
-
-
 
     $ib_filter.on('click', function(e) {
         e.preventDefault();
+
+        $.post(_url + "transactions/get_tr_searchdata/", $("#frm_search").serialize())
+            .done(function (data) {
+                if (data) {
+                    // console.log(data);
+                    $('#total_entries').html(data.total_records);
+                    $('#debit').html(data.total_dr);
+                    $('#credit').html(data.total_cr);
+                }
+            });
 
         $ib_data_panel.block({ message:block_msg });
 

@@ -8,7 +8,7 @@
         <div class="panel panel-default">
             <div class="panel-body">
 
-                <a href="#" class="btn btn-primary add_make_model waves-effect waves-light" id="add_company">
+                <a href="#" class="btn btn-primary add_make_model waves-effect waves-light" id="add_make_model">
                     <i class="fa fa-plus"></i> {$_L['Add New Make s Model']}</a>
 
 
@@ -52,6 +52,7 @@
                             <th>{$_L['Engine Capacity']}</th>
                             <th>{$_L['Transmission']}</th>
                             <th>{$_L['Fuel Type']}</th>
+                            <th>{$_L['Color']}</th>
                             <th class="text-right" width="120px;">{$_L['Manage']}</th>
                         </tr>
                     </thead>
@@ -66,6 +67,7 @@
                             <td data-value="{$ds['engine_capacity']}">{$ds['engine_capacity']}</td>
                             <td data-value="{$ds['transmission']}">{$ds['transmission']}</td>
                             <td data-value="{$ds['fuel_type']}">{$ds['fuel_type']}</td>
+                            <td data-value="{$ds['color']}">{$ds['color']}</td>
                             <td class="text-right">
                                 <a href="#" class="btn btn-info btn-xs edit_make_model" id="{$ds['id']}" data-toggle="tooltip" data-placement="top" title="{$_L['Edit']}">
                                     <i class="fa fa-pencil"></i>

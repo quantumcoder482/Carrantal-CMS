@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 3.1.32, created on 2018-09-03 13:12:40
+/* Smarty version 3.1.32, created on 2018-10-16 10:17:39
   from 'D:\xampp\htdocs\demo1\ui\theme\default\contacts_add.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '3.1.32',
-  'unifunc' => 'content_5b8d6b889a8c59_11756127',
+  'unifunc' => 'content_5bc5f303ee0679_15390575',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -20,19 +20,19 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_5b8d6b889a8c59_11756127 (Smarty_Internal_Template $_smarty_tpl) {
+function content_5bc5f303ee0679_15390575 (Smarty_Internal_Template $_smarty_tpl) {
 $_smarty_tpl->_loadInheritance();
 $_smarty_tpl->inheritance->init($_smarty_tpl, true);
 ?>
 
 
 <?php 
-$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_6197619965b8d6b8897ddd8_47097030', "content");
+$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_16968994325bc5f303ea1d69_00558624', "content");
 ?>
 
 
 <?php 
-$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_3397459495b8d6b889a6255_41888856', "script");
+$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_5536767795bc5f303eda404_19009922', "script");
 ?>
 
 
@@ -40,12 +40,12 @@ $_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_3397459495b8d6b889
 <?php $_smarty_tpl->inheritance->endChild($_smarty_tpl, ((string)$_smarty_tpl->tpl_vars['layouts_admin']->value));
 }
 /* {block "content"} */
-class Block_6197619965b8d6b8897ddd8_47097030 extends Smarty_Internal_Block
+class Block_16968994325bc5f303ea1d69_00558624 extends Smarty_Internal_Block
 {
 public $subBlocks = array (
   'content' => 
   array (
-    0 => 'Block_6197619965b8d6b8897ddd8_47097030',
+    0 => 'Block_16968994325bc5f303ea1d69_00558624',
   ),
 );
 public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
@@ -516,12 +516,12 @@ contacts/list/"><?php echo $_smarty_tpl->tpl_vars['_L']->value['Or Cancel'];?>
 }
 /* {/block "content"} */
 /* {block "script"} */
-class Block_3397459495b8d6b889a6255_41888856 extends Smarty_Internal_Block
+class Block_5536767795bc5f303eda404_19009922 extends Smarty_Internal_Block
 {
 public $subBlocks = array (
   'script' => 
   array (
-    0 => 'Block_3397459495b8d6b889a6255_41888856',
+    0 => 'Block_5536767795bc5f303eda404_19009922',
   ),
 );
 public function callBlock(Smarty_Internal_Template $_smarty_tpl) {

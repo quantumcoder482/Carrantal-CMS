@@ -176,10 +176,13 @@ switch ($action) {
         if($customer_id){
             $selected_customer=ORM::for_table('crm_accounts')->find_one($customer_id);
             
-            $d1=ORM::for_table('sys_vehicle_deposit')->where('customerid', $customer_id)->select('vehicle_num')->find_array();
+            // $d1=ORM::for_table('sys_vehicle_deposit')->where('customerid', $customer_id)->select('vehicle_num')->find_array();
+            $d1=ORM::for_table('sys_transactions')->where('payerid', $customer_id)->select('vehicle_num')->find_array();
             if($d1){
                 foreach ($d1 as $ds) {
-                    array_push($v_i, $ds['vehicle_num']); // $vehicles.push($ds['vehicle_num']);
+                    if($ds['vehicle_num'] != ''){ 
+                        array_push($v_i, $ds['vehicle_num']); // $vehicles.push($ds['vehicle_num']);
+                    }
                 }
                 $v_i=array_unique($v_i);
                 foreach ($v_i as $value) {

@@ -12,6 +12,16 @@ $(document).ready(function () {
             }
         }
     });
+
+    $("#vehicle_num").select2({
+        theme: "bootstrap",
+        language: {
+            noResults: function () {
+                return $("#_lan_no_results_found").val();
+            }
+        }
+    });
+
     $("#cats").select2({
         theme: "bootstrap",
         language: {
@@ -75,7 +85,7 @@ $(document).ready(function () {
             cats: $('#cats').val(),
             description: $('#description').val(),
             tags: $('#tags').val(),
-
+            vehicle_num: $('#vehicle_num').val(),
             pmethod: $('#pmethod').val(),
             payee: $('#payee').val(),
             payer: $('#payer').val(),

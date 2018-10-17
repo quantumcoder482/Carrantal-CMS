@@ -26,21 +26,37 @@
                         </div>
     
                         <div class="form-group">
-                            <label class="col-md-3 control-label" for="vehicle_type">{$_L['Make s Model']}</label>
+                            <label class="col-md-3 control-label" for="vehicle_type_id">{$_L['Make s Model']}</label>
     
                             <div class="col-md-9">
     
-                                <select id="vehicle_type" name="vehicle_type" style="width:100%" class="form-control">
-                                    <option value="{$val['vehicle_type']}" selected>{$val['vehicle_type']}</option>
-                                    {foreach $v_types as $v_type}
-                                    <option value="{$v_type}">{$v_type}</option>
+                                <select id="vehicle_type_id" name="vehicle_type_id" style="width:100%" class="form-control">
+                                        <option value="">&nbsp;</option>
+                                    {foreach $vehicle_types as $v}
+                                        <option value="{$v['id']}" {if $v['id'] eq $val['type_id']} selected {/if}>{$v_types[$v['id']]}</option>
                                     {/foreach}
                                 </select>
-                                
+                                                                    
                                                                    
                             </div>
                         </div>
-    
+                            
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="engine_num">{$_L['Engine No']}</label>
+                            
+                            <div class="col-md-9"><input type="text" id="engine_num" name="engine_num" class="form-control" autocomplete="off" value="{$val['engine_num']}">
+                                
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="chassis_num">{$_L['Chassis No']}</label>
+                            
+                            <div class="col-md-9"><input type="text" id="chassis_num" name="chassis_num" class="form-control" autocomplete="off" value="{$val['chassis_num']}">
+                                
+                            </div>
+                        </div>
+                        
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="purchase_price">{$_L['Purchase Price']}</label>
     
@@ -49,12 +65,12 @@
     
                             </div>
                         </div>
-    
+
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="parf_cost">{$_L['PARF Cost']}</label>
-    
+                            
                             <div class="col-md-9">
-    
+                                
                                 <input type="text" id="parf_cost" name="parf_cost" class="form-control amount"  value="{$val['parf_cost']}">
     
                             </div>

@@ -16,7 +16,25 @@
 td .title{
     font-weight: 600;
     background-color: #f9f9f9;	
+    text-align: center;
+}
+
+th .title {
+    font-weight: 600;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+td .title-info {
+    font-weight: 600;
+    background-color: #f9f9f9;
 }
 .table-p-info span{
     margin-left:30px;
+}
+td .title-total {
+    font-weight: 600;
+    text-align: right;
+    border-left-style:hidden !important;
+    border-bottom-style: hidden !important;
 }

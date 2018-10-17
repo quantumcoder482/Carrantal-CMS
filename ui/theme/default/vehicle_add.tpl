@@ -26,19 +26,35 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-lg-2 control-label" for="vehicle_type">{$_L['Make s Model']}</label>
+                            <label class="col-lg-2 control-label" for="vehicle_type_id">{$_L['Make s Model']}</label>
                         
                             <div class="col-lg-10">
                         
-                                <select id="vehicle_type" name="vehicle_type" class="form-control" style="width:100%">
+                                <select id="vehicle_type_id" name="vehicle_type_id" class="form-control" style="width:100%">
                                     <option value="0">{$_L['Select Make s Model']}</option>
-                                    {foreach $v_types as $v_type}
-                                     <option value="{$v_type}" >{$v_type}</option>
+                                    {foreach $vehicle_types as $v}
+                                     <option value="{$v['id']}" >{$v_types[$v['id']]}</option>
                                     {/foreach}
                                 </select>
                                 <span class="help-block"><a href="#" class="add_make_model"><i class="fa fa-plus"></i> {$_L['New Make s Model']}</a>
                                 </span>
                         
+                            </div>
+                        </div>
+
+                        <div class="form-group"><label class="col-lg-2 control-label" for="engine_num">{$_L['Engine No']}</label>
+
+                            <div class="col-lg-10"><input type="text" id="engine_num" name="engine_num" class="form-control"
+                                    autocomplete="off" >
+
+                            </div>
+                        </div>
+
+                        <div class="form-group"><label class="col-lg-2 control-label" for="chassis_num">{$_L['Chassis No']}</label>
+
+                            <div class="col-lg-10"><input type="text" id="chassis_num" name="chassis_num" class="form-control"
+                                    autocomplete="off" >
+
                             </div>
                         </div>
 

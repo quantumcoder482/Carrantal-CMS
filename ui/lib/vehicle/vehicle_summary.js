@@ -9,9 +9,26 @@ $(document).ready(function () {
     
     $.fn.modal.defaults.width = '850px';
     
+    
     var $modal = $('#ajax-modal');
 
     $('[data-toggle="tooltip"]').tooltip();
+
+
+    $('.vehicle_expense').on('click', function (e) {
+        
+        var amount= this.id;
+        var vehicle_num=$('#vehicle_number').val();
+        e.preventDefault();
+
+        $('body').modalmanager('loading');
+        $modal.load(_url + 'vehicle/modal_vehicle_expense/' + vehicle_num +'/'+amount, '', function () {
+
+            $modal.modal();
+
+        });
+    });
+    
 
     $('.roadtax_expense').on('click', function (e) {
         
@@ -45,17 +62,34 @@ $(document).ready(function () {
 
     $('.loan_expense').on('click', function (e) {
 
-        var id = this.id;
+        var amount = this.id;
+        var id=$('#loan_id').val();
 
         e.preventDefault();
 
         $('body').modalmanager('loading');
 
-        $modal.load(_url + 'vehicle/modal_loan_expense/' + id, '', function () {
+        $modal.load(_url + 'vehicle/modal_loan_expense/' + id + '/'+amount, '', function () {
 
             $modal.modal();
 
         });
+    });
+
+    $('.principal_expense').on('click', function (e) {
+
+        var id = $('#loan_id').val();
+        var amount = this.id;
+        e.preventDefault();
+
+        $('body').modalmanager('loading');
+
+        $modal.load(_url + 'vehicle/modal_loan_expense/' + id + '/' + amount + '/1', '', function () {
+
+            $modal.modal();
+
+        });
+
     });
 
     $('.roadtax_renew').on('click', function(e){
@@ -129,6 +163,7 @@ $(document).ready(function () {
     $modal.on('click', '.modal_submit', function (e) {
 
         $('#roadtax_total').prop('disabled', false);
+        $('#insurance_total').prop('disabled', false);
         
         e.preventDefault();
 
@@ -176,6 +211,34 @@ $(document).ready(function () {
             });
 
     });
+    $.fn.dataTable.ext.classes.sPageButton = 'button button-primary';
+    $.fn.DataTable.ext.pager.numbers_length = 5;
 
+    $('#ib_dt_floor').DataTable({
+        "processing": true,
+        "paging": true,
+        "pageLength": 3,
+        "bFilter": false,
+        "bInfo": false,
+        "bLengthChange": false,
+        "order": [[0, "asc"]],
+        "pagingType": "simple_numbers",
+        "responsive": true,
+        // "serverSide": true,
+    });
 
+    $('#ib_dt_hp').DataTable({
+        "processing": true,
+        "paging": true,
+        "pageLength": 5,
+        "bFilter": false,
+        "bInfo": false,
+        "bLengthChange": false,
+        "order": [
+            [0, "asc"]
+        ],
+        "pagingType": "simple_numbers",
+        "responsive": true,
+        // "serverSide": true,
+    });
 });

@@ -32,12 +32,28 @@ $(document).ready(function () {
     $('.add_expense').on('click', function (e) {
 
         var id = $('#loan_id').val();
-        var index = this.id;
+        var amount = this.id;
         e.preventDefault();
 
         $('body').modalmanager('loading');
 
-        $modal.load(_url + 'vehicle/modal_loan_expense/' + id + '/'+index, '', function () {
+        $modal.load(_url + 'vehicle/modal_loan_expense/' + id + '/'+amount, '', function () {
+
+            $modal.modal();
+
+        });
+
+    });
+    
+    $('.principal_expense').on('click', function (e) {
+
+        var id = $('#loan_id').val();
+        var amount = this.id;
+        e.preventDefault();
+
+        $('body').modalmanager('loading');
+
+        $modal.load(_url + 'vehicle/modal_loan_expense/' + id + '/' + amount + '/1' , '', function () {
 
             $modal.modal();
 
@@ -46,6 +62,7 @@ $(document).ready(function () {
     });
 
 
+    
     $modal.on('click', '.modal_submit', function (e) {
         $('#total_days').prop('disabled', false);
         e.preventDefault();

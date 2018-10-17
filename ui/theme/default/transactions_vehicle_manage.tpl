@@ -16,7 +16,7 @@
                         <div class="form-group">
                             <label for="account" class="col-sm-3 control-label">{$_L['Account']}</label>
                             <div class="col-sm-9">
-                                <select id="account" name="account" class="form-control" disabled>
+                                <select id="account" name="account" class="form-control" style="width:100%" disabled>
                                     {foreach $d as $ds}
                                         <option value="{$ds['account']}" {if $ds['account'] eq $t['account']}selected="selected" {/if}>{$ds['account']}</option>
                                     {/foreach}
@@ -27,8 +27,13 @@
                         </div>
                         <div class="form-group">
                             <label for="vehicle_num" class="col-sm-3 control-label">{$_L['Vehicle']}</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" value="{$vehicle_num}" name="vehicle_num" id="vehicle_num">
+                               <div class="col-sm-9">
+                                <select id="vehicle_num" name="vehicle_num" class="form-control" style="width:100%">
+                                    <option value="" selected>{$_L['Select vehicle number']}</option>
+                                    {foreach $vehicles as $vehicle}
+                                    <option value="{$vehicle['vehicle_num']}" {if $vehicle_num eq $vehicle['vehicle_num']} selected {/if}>{$vehicle['vehicle_num']} - {$vehicle['vehicle_type']}</option>
+                                    {/foreach}
+                                </select>
                             </div>
                         </div>
                         <div class="form-group">
@@ -56,7 +61,7 @@
                             <div class="form-group">
                                 <label for="cats" class="col-sm-3 control-label">{$_L['Category']}</label>
                                 <div class="col-sm-9">
-                                    <select id="cats" name="cats" class="form-control">
+                                    <select id="cats" name="cats" class="form-control" style="width:100%">
                                         <option value="Uncategorized">{$_L['Uncategorized']}</option>
                                         {foreach $cats as $cat}
                                             <option value="{$cat['name']}" {if $cat['name'] eq $t['category']}selected="selected" {/if}>{$cat['name']}</option>
@@ -75,7 +80,7 @@
                         <div class="form-group">
                             <label for="tags" class="col-sm-3 control-label">{$_L['Tags']}</label>
                             <div class="col-sm-9">
-                                <select name="tags[]" id="tags"  class="form-control" multiple="multiple">
+                                <select name="tags[]" id="tags"  class="form-control" multiple="multiple" style="width:100%">
                                     {foreach $tags as $tag}
                                         <option value="{$tag['text']}" {if in_array($tag['text'],$dtags)}selected="selected"{/if}>{$tag['text']}</option>
                                     {/foreach}

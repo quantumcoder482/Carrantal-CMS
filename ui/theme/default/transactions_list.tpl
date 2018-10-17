@@ -11,7 +11,7 @@
                     <div class="row">
                         <div class="col-md-3 col-sm-6">
 
-                            <form>
+                            <form id="frm_search">
                                 <div class="form-group">
                                     <label for="reportrange">{$_L['Date Range']}</label>
                                     <input type="text" name="reportrange" class="form-control" id="reportrange">
@@ -43,6 +43,16 @@
                                         <option value="">{$_L['All']}</option>
                                         {foreach $expense_categories as $expense_category}
                                             <option value="{$expense_category['name']}">{$expense_category['name']}</option>
+                                        {/foreach}
+                                    </select>
+                                </div>
+
+                                <div class="form-group" id="block_income_type">
+                                    <label for="in_category"> {$_L['Income Category']}</label>
+                                    <select id="in_category" name="in_category" class="form-control" style="width:100%">
+                                        <option value="">{$_L['All']}</option>
+                                        {foreach $income_categories as $income_category}
+                                        <option value="{$income_category['name']}">{$income_category['name']}</option>
                                         {/foreach}
                                     </select>
                                 </div>
@@ -79,42 +89,89 @@
                         </div>
                         <div class="col-md-9 col-sm-6 ib_right_panel">
 
+                            <div class="row">
 
-                            <div class="table-responsive" id="ib_data_panel">
+                                <div class="col-md-3">
+                                    <a class="dashboard-stat blue" href="#">
+                                        <div class="visual">
+                                            <i class="fa fa-calculator"></i>
+                                        </div>
+                                        <div class="details">
+                                            <div class="number" id="total_entries">
+                                                0
+                                            </div>
+                                            <div class="desc text-right"> {$_L['Total Entries']} </div>
+                                        </div>
+                                    </a>
+                                </div>
 
-
-                                <table class="table table-bordered table-hover display" id="ib_dt">
-                                    <thead>
-                                    <tr class="heading">
-                                        <th>{$_L['ID']}</th>
-                                        <th>{$_L['Date']}</th>
-                                        <th>{$_L['Account']}</th>
-                                        <th>{$_L['Type']}</th>
-                                        <th class="text-right">{$_L['Amount']}</th>
-                                        <th>{$_L['Category']}</th>
-                                        <th>{$_L['Description']}</th>
-                                        <th class="text-right">{$_L['Dr']}</th>
-                                        <th class="text-right">{$_L['Cr']}</th>
-                                        <th class="text-right">{$_L['Balance']}</th>
-                                        <th>{$_L['Manage']}</th>
-                                    </tr>
-                                    </thead>
-
-
-
-
-                                </table>
+                                <div class="col-md-3">
+                                    <a class="dashboard-stat blue" href="#">
+                                        <div class="visual">
+                                            <i class="fa fa-calculator"></i>
+                                        </div>
+                                        <div class="details">
+                                            <div class="number">
+                                                <span class="amount" id="debit" data-a-sign="{$config['currency_code']}">0</span>
+                                            </div>
+                                            <div class="desc text-right"> {$_L['Total Debit']} </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a class="dashboard-stat blue" href="#">
+                                        <div class="visual">
+                                            <i class="fa fa-calculator"></i>
+                                        </div>
+                                        <div class="details">
+                                            <div class="number">
+                                                <span class="amount" id="credit" data-a-sign="{$config['currency_code']}">0</span>
+                                            </div>
+                                            <div class="desc text-right"> {$_L['Total Credit']} </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a class="dashboard-stat blue" href="#">
+                                        <div class="visual">
+                                            <i class="fa fa-calculator"></i>
+                                        </div>
+                                        <div class="details">
+                                            <div class=" number">
+                                                <span class="amount" id="current_balance" data-a-sign="{$config['currency_code']} ">{$total_balance}</span>
+                                            </div>
+                                            <div class="desc text-right"> {$_L['Current Balance']} </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive" id="ib_data_panel">
+                                        <table class="table table-bordered table-hover display" id="ib_dt">
+                                            <thead>
+                                            <tr class="heading">
+                                                <th>{$_L['ID']}</th>
+                                                <th>{$_L['Date']}</th>
+                                                <th>{$_L['Vehicle']}</th>
+                                                <th>{$_L['Account']}</th>
+                                                <th>{$_L['Type']}</th>
+                                                <th class="text-right">{$_L['Amount']}</th>
+                                                <th>{$_L['Category']}</th>
+                                                <th>{$_L['Description']}</th>
+                                                <th class="text-right">{$_L['Dr']}</th>
+                                                <th class="text-right">{$_L['Cr']}</th>
+                                                <th class="text-right">{$_L['Balance']}</th>
+                                                <th>{$_L['Manage']}</th>
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
 
                         </div>
                     </div>
-
-
-
-
-
-
-
 
                 </div>
             </div>
@@ -134,18 +191,28 @@
         $(function () {
             var $block_expense_type = $("#block_expense_type");
             $block_expense_type.hide();
+            var $block_income_type = $("#block_income_type");
+            $block_income_type.hide();
 
             $("#tr_type").on('change',function () {
                 
                 $('#ex_category').select2({
                     theme: "bootstrap"
                 });
+                $('#in_category').select2({
+                    theme: "bootstrap"
+                });
 
                 if($(this).val() == 'Expense'){
                     $block_expense_type.show('slow');
-                }
-                else{
+                } else {
                     $block_expense_type.hide('slow');
+                }
+                
+                if ($(this).val() == 'Income') {
+                    $block_income_type.show('slow');
+                } else {
+                    $block_income_type.hide('slow');
                 }
             })
         })

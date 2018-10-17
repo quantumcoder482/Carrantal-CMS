@@ -241,11 +241,10 @@
             if($end_date.val() != ''){
                 date_diff= parseInt((end_date.getTime()-start_date.getTime())/(24*3600*1000));
                 if(!isNaN(date_diff)){
-                    $total_days.val(date_diff);
-                    console.log(date_diff);
+                    $total_days.val(date_diff.toLocaleString('en'));
+                    // console.log(date_diff);
                 }
             }
-
         });
 
         $end_date.on("change", function () {
@@ -254,11 +253,10 @@
             if($start_date.val() != ''){
                 date_diff= parseInt((end_date.getTime()-start_date.getTime())/(24*3600*1000));
                 if(!isNaN(date_diff)){
-                   $total_days.val(date_diff);
+                   $total_days.val(date_diff.toLocaleString('en'));
                 }
                 
             }
-
         });
 
         
@@ -304,9 +302,15 @@
 
         });
 
-        var $amount = $("#amount");
-
-
+        // init
+        function total_day(){
+           if(total_date=$total_days.val()){
+                total_date=Number(total_date);
+                $total_days.val(total_date.toLocaleString('en'));
+                console.log(total_date);
+            }
+        }
+        total_day();
         function ib_autonumeric() {
             $('.amount').autoNumeric('init', {
 
@@ -319,8 +323,7 @@
                 vMax: '9999999999999999.00',
                 vMin: '-9999999999999999.00'
 
-            });
-
+            }); 
         }
 
 

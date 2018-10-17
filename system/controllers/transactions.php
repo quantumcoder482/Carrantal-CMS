@@ -370,6 +370,7 @@ switch ($action) {
         Event::trigger('transactions/expense-post/');
         
         $eid=_post('eid');
+        $principal_pay=_post('principal_pay');
 
         $account = _post('account');
         $date = _post('date');
@@ -589,7 +590,47 @@ switch ($action) {
                         $vehicle_loanlog->transaction_amount=$amount;
                         $vehicle_loanlog->save();
                         break;
-                        
+
+                     case 'Vehicle HP Loan':
+                        $vehicle_loan=ORM::for_table('sys_vehicle_loan')->where('id', $eid)->find_one();
+                        $vehicle_loan->pay_status+=1;
+                        $vehicle_loan->save();
+                       
+                        $vehicle_loanlog=ORM::for_table('sys_vehicle_loanlog')->create();
+                        $vehicle_loanlog->loan_id=$eid;
+                        $vehicle_loanlog->transaction_date=$date;
+                        $vehicle_loanlog->transaction_id=$tid;
+                        $vehicle_loanlog->transaction_amount=$amount;
+                        $vehicle_loanlog->save();
+                        break;
+
+                     case 'Vehicle Flooring Loan':
+                        // $vehicle_loan=ORM::for_table('sys_vehicle_loan')->where('id', $eid)->find_one();
+                        // $vehicle_loan->pay_status+=1;
+                        // $vehicle_loan->save();
+                       
+                        $vehicle_loanlog=ORM::for_table('sys_vehicle_loanlog')->create();
+                        $vehicle_loanlog->loan_id=$eid;
+                        $vehicle_loanlog->transaction_date=$date;
+                        $vehicle_loanlog->transaction_id=$tid;
+                        $vehicle_loanlog->transaction_amount=$amount;
+                        $vehicle_loanlog->principal_pay=1;
+                        $vehicle_loanlog->save();
+                        break;
+                    
+                     case 'Vehicle Flooring Interest':
+                        $vehicle_loan=ORM::for_table('sys_vehicle_loan')->where('id', $eid)->find_one();
+                        $vehicle_loan->pay_status+=1;
+                        $vehicle_loan->save();
+                       
+                        $vehicle_loanlog=ORM::for_table('sys_vehicle_loanlog')->create();
+                        $vehicle_loanlog->loan_id=$eid;
+                        $vehicle_loanlog->transaction_date=$date;
+                        $vehicle_loanlog->transaction_id=$tid;
+                        $vehicle_loanlog->transaction_amount=$amount;
+                        $vehicle_loanlog->save();
+                        break;
+
                     default:
                         break;
                 }
@@ -851,6 +892,7 @@ switch ($action) {
         break;
 
     case 'list':
+
         Event::trigger('transactions/list/');
         $cid = route(2);
         if ($cid == '' || $cid == '0') {
@@ -884,27 +926,45 @@ switch ($action) {
             $ui->assign('p_account', $account);
         }
 
+        $a = ORM::for_table('sys_accounts')->find_one();
+        $account_id = $a->id;
+        $home_currency = Currency::where('iso_code', $config['home_currency'])->first();
+        $account_balance = Balance::where('account_id', $account_id)->where('currency_id', $home_currency->id)->first();
+        if ($account_balance) {
+            $total_balance = $account_balance->balance;
+        } else {
+            $total_balance = 0;
+        }
+
+        $ui->assign('total_balance', $total_balance);
+
+
         $c = ORM::for_table('crm_accounts')->select('id')->select('account')->select('company')->select('email')->order_by_desc('id')->find_many();
         $ui->assign('c', $c);
         $a = ORM::for_table('sys_accounts')->find_array();
         $ui->assign('a', $a);
         $vehicles=ORM::for_table('sys_vehicles')->find_array();
         $ui->assign('vehicles',$vehicles);
-        $ui->assign('xheader', Asset::css(array(
-            's2/css/select2.min',
-            'dt/dt',
-            'daterangepicker/daterangepicker'
-        )));
-        $ui->assign('xfooter', Asset::js(array(
-            's2/js/select2.min',
-            's2/js/i18n/' . lan() ,
-            'dt/dt',
-            'daterangepicker/daterangepicker',
-            'transactions/list'
-        )));
+        $ui->assign('xheader', Asset::css(array('s2/css/select2.min', 'dt/dt', 'fc/fc', 'fc/fc_ibilling', 'daterangepicker/daterangepicker')));
+        $ui->assign('xfooter', Asset::js(array('s2/js/select2.min', 's2/js/i18n/' . lan() , 'dt/dt', 'fc/fc', 'daterangepicker/daterangepicker','numeric', 'transactions/list')));
+        $ui->assign('xjq', '
+            $(\'.amount\').autoNumeric(\'init\', {
+            dGroup: ' . $config['thousand_separator_placement'] . ',
+            aPad: ' . $config['currency_decimal_digits'] . ',
+            pSign: \'' . $config['currency_symbol_position'] . '\',
+            aDec: \'' . $config['dec_point'] . '\',
+            aSep: \'' . $config['thousands_sep'] . '\',
+            vMax: \'9999999999999999.00\',
+                        vMin: \'-9999999999999999.00\'
+
+            });
+            $(\'[data-toggle="tooltip"]\').tooltip();
+
+        ');
         view('transactions_list', [
             'tr_type' => $tr_type,
-            'expense_categories' => ORM::for_table('sys_cats')->where('type','expense')->order_by_asc('sorder')->find_array()
+            'expense_categories' => ORM::for_table('sys_cats')->where('type','expense')->order_by_asc('sorder')->find_array(),
+            'income_categories' => ORM::for_table('sys_cats')->where('type','income')->order_by_asc('sorder')->find_array()
 
         ]);
         break;
@@ -944,27 +1004,45 @@ switch ($action) {
             $ui->assign('p_cid', $cid);
         }
 
+        $a = ORM::for_table('sys_accounts')->find_one();
+        $account_id = $a->id;
+        $home_currency = Currency::where('iso_code', $config['home_currency'])->first();
+        $account_balance = Balance::where('account_id', $account_id)->where('currency_id', $home_currency->id)->first();
+        if ($account_balance) {
+            $total_balance = $account_balance->balance;
+        } else {
+            $total_balance = 0;
+        }
+
+        $ui->assign('total_balance', $total_balance);
+
+
         $c = ORM::for_table('crm_accounts')->select('id')->select('account')->select('company')->select('email')->order_by_desc('id')->find_many();
         $ui->assign('c', $c);
         $a = ORM::for_table('sys_accounts')->find_array();
         $ui->assign('a', $a);
         $vehicles=ORM::for_table('sys_vehicles')->find_array();
         $ui->assign('vehicles',$vehicles);
-        $ui->assign('xheader', Asset::css(array(
-            's2/css/select2.min',
-            'dt/dt',
-            'daterangepicker/daterangepicker'
-        )));
-        $ui->assign('xfooter', Asset::js(array(
-            's2/js/select2.min',
-            's2/js/i18n/' . lan() ,
-            'dt/dt',
-            'daterangepicker/daterangepicker',
-            'transactions/vehicle_list'
-        )));
+        $ui->assign('xheader', Asset::css(array('s2/css/select2.min', 'dt/dt', 'fc/fc', 'fc/fc_ibilling', 'daterangepicker/daterangepicker')));
+        $ui->assign('xfooter', Asset::js(array('s2/js/select2.min', 's2/js/i18n/' . lan() , 'dt/dt', 'fc/fc', 'daterangepicker/daterangepicker','numeric', 'transactions/vehicle_list')));
+        $ui->assign('xjq', '
+            $(\'.amount\').autoNumeric(\'init\', {
+            dGroup: ' . $config['thousand_separator_placement'] . ',
+            aPad: ' . $config['currency_decimal_digits'] . ',
+            pSign: \'' . $config['currency_symbol_position'] . '\',
+            aDec: \'' . $config['dec_point'] . '\',
+            aSep: \'' . $config['thousands_sep'] . '\',
+            vMax: \'9999999999999999.00\',
+                        vMin: \'-9999999999999999.00\'
+
+            });
+            $(\'[data-toggle="tooltip"]\').tooltip();
+
+        ');
         view('transactions_vehicle_list', [
             'tr_type' => $tr_type,
-            'expense_categories' => ORM::for_table('sys_cats')->where('type','expense')->order_by_asc('sorder')->find_array()
+            'expense_categories' => ORM::for_table('sys_cats')->where('type','expense')->order_by_asc('sorder')->find_array(),
+            'income_categories' => ORM::for_table('sys_cats')->where('type','income')->order_by_asc('sorder')->find_array()
 
         ]);
         break;
@@ -1208,6 +1286,11 @@ switch ($action) {
                 $tags = Tags::get_all('Transfer');
             }
 
+            $vehicle_num=$t->vehicle_num;
+            $vehicles=ORM::for_table('sys_vehicles')->order_by_asc('id')->find_array();
+            // $vehicle_num=$vehicle_num." - ".$vehicle->vehicle_type;
+            $ui->assign('vehicle_num',$vehicle_num);
+            $ui->assign('vehicles', $vehicles);
             $ui->assign('tags', $tags);
             $dtags = explode(',', $t['tags']);
             $ui->assign('dtags', $dtags);
@@ -1264,9 +1347,9 @@ switch ($action) {
             }
 
             $vehicle_num=$t->vehicle_num;
-            $vehicle=ORM::for_table('sys_vehicles')->where('vehicle_num',$vehicle_num)->find_one();
-            $vehicle_num=$vehicle_num." - ".$vehicle->vehicle_type;
+            $vehicles=ORM::for_table('sys_vehicles')->order_by_asc('id')->find_array();
             $ui->assign('vehicle_num',$vehicle_num);
+            $ui->assign('vehicles', $vehicles);
             $ui->assign('tags', $tags);
             $dtags = explode(',', $t['tags']);
             $ui->assign('dtags', $dtags);
@@ -1303,6 +1386,7 @@ switch ($action) {
             $cat = _post('cats');
             $pmethod = _post('pmethod');
             $ref = _post('ref');
+            $vehicle_num = _post('vehicle_num') ;
             $date = _post('date');
             $payer = _post('payer');
             $payee = _post('payee');
@@ -1331,6 +1415,7 @@ switch ($action) {
                 $d->payeeid = $payee;
                 $d->method = $pmethod;
                 $d->ref = $ref;
+                $d->vehicle_num = $vehicle_num;
                 $d->tags = Arr::arr_to_str($tags);
                 $d->description = $description;
                 $d->date = $date;
@@ -1486,6 +1571,7 @@ switch ($action) {
                 $columns = array();
                 $columns[] = 'id';
                 $columns[] = 'date';
+                $columns[] = 'vehicle_num';
                 $columns[] = 'account';
                 $columns[] = 'type';
                 $columns[] = 'amount';
@@ -1499,11 +1585,13 @@ switch ($action) {
                 $o_c_id = $order_by[0]['column'];
                 $o_type = $order_by[0]['dir'];
                 $a_order_by = $columns[$o_c_id];
+
                 $d = ORM::for_table('sys_transactions');
                 $d->select('id');
                 $d->select('account');
                 $d->select('type');
                 $d->select('date');
+                $d->select('vehicle_num');
                 $d->select('amount');
                 $d->select('category');
                 $d->select('description');
@@ -1515,12 +1603,21 @@ switch ($action) {
                 if ($tr_type != '') {
                     $d->where('type', $tr_type);
                 }
-                
-                $ex_category=_post('ex_category');
-                if($ex_category != ''){
-                    $d->where('category',$ex_category);
+
+                if($tr_type == "Expense"){
+                    $ex_category=_post('ex_category');
+                    if($ex_category != ''){ 
+                        $d->where('category',$ex_category);
+                    }
                 }
-            
+
+                if($tr_type == "Income"){
+                    $in_category=_post('in_category');
+                    if($in_category != ''){ 
+                        $d->where('category',$in_category);
+                    }
+                }
+
                 $account = _post('account');
                 if ($account != '') {
                     $d->where('account', $account);
@@ -1607,14 +1704,15 @@ switch ($action) {
                     $records["data"][] = array(
                         '<a href="' . U . 'transactions/manage/' . $xs['id'] . '">' . $xs['id'] . '</a>',
                         $xs['date'],
+                        $xs['vehicle_num'],
                         htmlentities($xs['account']),
                         htmlentities($xs['type']),
-                        $xs['amount'], 
+                        $config['currency_code'].' '.number_format($xs['amount'], 2), 
                         $xs['category'],
                         htmlentities($xs['description']),
-                        $xs['dr'],
-                        $xs['cr'],
-                        $xs['bal'],
+                        $config['currency_code'].' '.number_format($xs['dr'], 2),
+                        $config['currency_code'].' '.number_format($xs['cr'], 2),
+                        $config['currency_code'].' '.number_format($xs['bal'], 2),
                         '<a href="' . U . 'transactions/manage/' . $xs['id'] . '" class="btn btn-primary btn-xs"><i class="fa fa-file-text-o"></i></a>',
                     );
                 }
@@ -1645,6 +1743,7 @@ switch ($action) {
                 $o_c_id = $order_by[0]['column'];
                 $o_type = $order_by[0]['dir'];
                 $a_order_by = $columns[$o_c_id];
+
                 $d = ORM::for_table('sys_transactions')->where_not_equal('vehicle_num'," ");
                 $d->select('id');
                 $d->select('account');
@@ -1663,9 +1762,18 @@ switch ($action) {
                     $d->where('type', $tr_type);
                 }
                 
-                $ex_category=_post('ex_category');
-                if($ex_category != ''){
-                    $d->where('category',$ex_category);
+                if($tr_type == "Expense"){
+                    $ex_category=_post('ex_category');
+                    if($ex_category != ''){ 
+                        $d->where('category',$ex_category);
+                    }
+                }
+
+                if($tr_type == "Income"){
+                    $in_category=_post('in_category');
+                    if($in_category != ''){ 
+                        $d->where('category',$in_category);
+                    }
                 }
             
                 $account = _post('account');
@@ -1730,6 +1838,7 @@ switch ($action) {
                 $d->offset($iDisplayStart);
                 $x = $d->find_array();
                 $i = $iDisplayStart;
+                
                 foreach($x as $xs) {
                     $records["data"][] = array(
                         '<a href="' . U . 'transactions/vehicle_manage/' . $xs['id'] . '">' . $xs['id'] . '</a>',
@@ -1737,12 +1846,12 @@ switch ($action) {
                         $xs['vehicle_num'],
                         htmlentities($xs['account']),
                         htmlentities($xs['type']),
-                        $xs['amount'], 
+                        '<span class="amount" data-a-sign="'.$config['currency_code'].'">'.$config['currency_code'].' '.number_format($xs['amount'], 2).'</span>',
                         $xs['category'],
                         htmlentities($xs['description']),
-                        $xs['dr'],
-                        $xs['cr'],
-                        $xs['bal'],
+                        '<span class="amount" data-a-sign="'.$config['currency_code'].'">'.$config['currency_code'].' '.number_format($xs['dr'], 2).'</span>',
+                        '<span class="amount" data-a-sign="'.$config['currency_code'].'">'.$config['currency_code'].' '.number_format($xs['cr'], 2).'</span>',
+                        '<span class="amount" data-a-sign="'.$config['currency_code'].'">'.$config['currency_code'].' '.number_format($xs['bal'], 2).'</span>',
                         '<a href="' . U . 'transactions/vehicle_manage/' . $xs['id'] . '" class="btn btn-primary btn-xs"><i class="fa fa-file-text-o"></i></a>',
                     );
                 }
@@ -1754,6 +1863,97 @@ switch ($action) {
 
         break;
 
+    case 'get_tr_searchdata':
+
+        $columns = array();
+        $vehicle_f=@$routes['2'];      
+        if($vehicle_f){
+            $d = ORM::for_table('sys_transactions')->where_not_equal('vehicle_num'," ");
+        } else {
+            $d = ORM::for_table('sys_transactions');
+        }
+        $d->select('amount');
+        $d->select('category');
+        $d->select('dr');
+        $d->select('cr');
+
+        $tr_type = _post('tr_type');
+        if ($tr_type != '') {
+            $d->where('type', $tr_type);
+        }
+        
+        if($tr_type == "Expense"){
+            $ex_category=_post('ex_category');
+            if($ex_category != ''){ 
+                $d->where('category',$ex_category);
+            }
+        }
+
+        if($tr_type == "Income"){
+            $in_category=_post('in_category');
+            if($in_category != ''){ 
+                $d->where('category',$in_category);
+            }
+        }
+    
+        $account = _post('account');
+        if ($account != '') {
+            $d->where('account', $account);
+        }
+
+        $cid = _post('cid');
+        if ($cid != '') {
+            $d->where_any_is(array(
+                array(
+                    'payerid' => $cid
+                ) ,
+                array(
+                    'payeeid' => $cid
+                )
+            ));
+        }
+        
+        $vehicle_num=_post('vehicle_num');
+        if($vehicle_num != ''){
+            $d->where('vehicle_num',$vehicle_num);
+        }
+
+        // 11/04/2016 - 12/03/2016
+
+        $reportrange = _post('reportrange');
+        if ($reportrange != '') {
+            $reportrange = explode('-', $reportrange);
+            $from_date = trim($reportrange[0]);
+            $to_date = trim($reportrange[1]);
+            $d->where_gte('date', $from_date);
+            $d->where_lte('date', $to_date);
+        }
+
+        if (!has_access($user->roleid, 'transactions', 'all_data')) {
+            $d->where('aid', $user->id);
+        }
+
+        $x = $d->find_array();
+
+        $total_records = $d->count();
+        $total_amount=0;
+        $total_cr=0;
+        $total_dr=0;
+
+        foreach($x as $xs){
+            $total_amount += $xs['amount'];
+            $total_cr += $xs['cr'];
+            $total_dr += $xs['dr'];
+        }
+
+        $columns=['total_records'=>$total_records,
+                'amount'=>$total_amount, 
+                'total_cr'=>$config['currency_code'].' '.number_format(round($total_cr,2), 2), 
+                'total_dr'=>$config['currency_code'].' '.number_format(round($total_dr,2), 2),
+            ];
+        api_response($columns);
+
+        break;
     case 'exchange':
                 $d = ORM::for_table('sys_accounts')->find_many();
                 $p = ORM::for_table('crm_accounts')->find_many();

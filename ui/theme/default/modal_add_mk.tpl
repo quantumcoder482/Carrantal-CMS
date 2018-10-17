@@ -82,6 +82,17 @@
                 
                 </div>
 
+                <div class="form-group">
+                    <label class="col-md-12" for="color">{$_L['Color']}</label>
+
+                    <div class="col-md-12">
+                        <input type="text" id="color" name="color" class="form-control" value="{$val['color']}">
+
+                    </div>
+
+
+                </div>
+
             </div>
         </div>
 
