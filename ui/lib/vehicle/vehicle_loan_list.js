@@ -70,6 +70,31 @@ $(document).ready(function () {
 
     });
 
+    $('.view_ref_img').on('click', function (e) {
+
+        var id = this.id;
+
+        e.preventDefault();
+
+        $('body').modalmanager('loading');
+
+        $modal.load(_url + 'vehicle/view_img/' + id + '/loan', '', function () {
+
+            $modal.modal();
+
+        });
+
+    });
+
+    $modal.on('click', '.view_submit', function (e) {
+
+        e.preventDefault();
+
+        $modal.modal('loading');
+
+        window.location = base_url + 'vehicle/loans/';
+
+    });
 
     $(".cdelete").click(function (e) {
 

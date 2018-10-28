@@ -233,13 +233,18 @@ switch($action){
         $ui->assign('companies_total',$companies_total);
 
 
-        $leads_total = ORM::for_table('crm_leads')->count();
+        // $leads_total = ORM::for_table('crm_leads')->count();
 
-        if($leads_total == ''){
-            $leads_total = '0';
+        // if($leads_total == ''){
+        //     $leads_total = '0';
+        // }
+        // $ui->assign('leads_total',$leads_total);
+
+        $vehicles_total = ORM::for_table('sys_vehicles')->count();
+        if($vehicles_total == ''){
+            $vehicles_total = '0';
         }
-
-        $ui->assign('leads_total',$leads_total);
+        $ui->assign('vehicles_total', $vehicles_total);
 
 
 

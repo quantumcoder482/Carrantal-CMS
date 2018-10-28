@@ -147,6 +147,7 @@
                                 <th>{$_L['Deposit']}</th>
                                 <th>{$_L['Invoice']}</th>
                                 <th>{$_L['Status']}</th>
+                                <th>{$_L['View']}</th>
                                 <th class="text-right" width="120px;">{$_L['Manage']}</th>
                             </tr>
                         </thead>
@@ -174,6 +175,16 @@
                                     <span class="btn btn-warning btn-xs" style="background-color:#FFA500; border-color:#FFA500; color:#f8f8f8; width:65px">Pending</span>
                                     {else}
                                     <span class="btn btn-success btn-xs" style="background-color:#00AA00; border-color:#00AA00; color:#f8f8f8; width:65px">Signed</span>
+                                    {/if}
+                                </td>
+                                <td>
+                                    {if $ds['status'] neq 0}
+                                    <a href="{$_url}client/contract_pdf/{$ds['id']}/view/" target="_blank" class="btn btn-primary btn-xs view_ref_img" style="background-color:#f7931e; border:none;" id="{$ds['id']}"
+                                        data-toggle="tooltip" data-placement="top" title="{$_L['View']}">
+                                        <i class="fa fa-paperclip"></i>
+                                    </a>
+                                    {else}
+                                    &nbsp;
                                     {/if}
                                 </td>
                                 <td class="text-right">

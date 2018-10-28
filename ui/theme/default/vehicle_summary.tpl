@@ -832,7 +832,7 @@
                                             </tr>
                                             {foreach $incomes as $income}
                                             <tr>
-                                                <td>{$income->id}</td>
+                                                <td><a href="{$_url}transactions/vehicle_manage/{$income->id}">{$income->id}</a></td>
                                                 <td>{$income->date}</td>
                                                 <td>{$customer[$income->id]}</td>
                                                 <td>{$income->category}</td>
@@ -873,7 +873,7 @@
                                             </tr>
                                             {foreach $recent_expenses as $t}
                                             <tr>
-                                                <td>{$t['id']}</td>
+                                                <td><a href="{$_url}transactions/vehicle_manage/{$t['id']}">{$t['id']}</a></td>
                                                 <td class="date">{$t['date']}</td>
                                                 <td>{$t['category']}</td>
                                                 <td class="amount" data-a-sign="{if $vehicle['currency_symbol'] eq ''} {$config['currency_code']} {else} {$vehicle['currency_symbol']}{/if}">{$t['amount']}</td>

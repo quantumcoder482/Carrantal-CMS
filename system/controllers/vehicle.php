@@ -541,64 +541,108 @@ switch ($action) {
             $pay_status=$data['pay_status'];
             $loan_duration=$data['loan_duration'];
             $total_days=$data['total_days'];
+            $loan_type=$data['loan_type'];
                       
             $repay_cycle_type=$data['repay_cycle_type'];
             $duration_int=0;
             switch ($repay_cycle_type) {
                 case 'weekly':
-                    $duration=$total_days/7;
-                    $duration_int=floor($duration);
-                    $interval = new DateInterval('P'.($duration_int*7).'D');
-                    $duration_int_date=date_create($loan_date)->add($interval);
-                    $duration_int_date=$duration_int_date->format('Y-m-d');
-                    $date1 = date_create($duration_int_date);
-                    $date2 = date_create($expire_date);
-                    $rest= date_diff($date1,$date2);
-                    $rest= intval($rest->format("%a"));
-
-                    $duration=$duration_int+1+$rest/7;
+                    if($loan_type == 'HP'){
+                        $duration=$total_days/7;
+                        $duration_int=floor($duration);
+                        $interval = new DateInterval('P'.($duration_int*7).'D');
+                        $duration_int_date=date_create($loan_date)->add($interval);
+                        $duration_int_date=$duration_int_date->format('Y-m-d');
+                        $date1 = date_create($duration_int_date);
+                        $date2 = date_create($expire_date);
+                        $rest= date_diff($date1,$date2);
+                        $rest= intval($rest->format("%a"));
+    
+                        $duration=$duration_int+1+$rest/7;
+                    } else {
+                        
+                        $duration=$total_days/7;
+                        $duration_int=floor($duration);
+                        $interval = new DateInterval('P'.($duration_int*7).'D');
+                        $duration_int_date=date_create($loan_date)->add($interval);
+                        $duration_int_date=$duration_int_date->format('Y-m-d');
+                        $date1 = date_create($duration_int_date);
+                        $date2 = date_create($expire_date);
+                        $rest= date_diff($date1,$date2);
+                        $rest= intval($rest->format("%a"));
+                        
+                        $duration=$duration_int+1+$rest/7;
+                    }
                     
                     break;
 
                 case 'monthly':
-                    // $duration=$total_days/30;
-                    // $duration_int=floor($duration);
-                    $d1 = new DateTime($loan_date);
-                    $d2 = new DateTime($expire_date);
-                    $d1->add(new \DateInterval('P1M'));
-                    while ($d1 <= $d2){
-                        $duration_int++;
+                    if($loan_type == 'HP'){
+                        $d1 = new DateTime($loan_date);
+                        $d2 = new DateTime($expire_date);
                         $d1->add(new \DateInterval('P1M'));
+                        while ($d1 <= $d2){
+                            $duration_int++;
+                            $d1->add(new \DateInterval('P1M'));
+                        }
+    
+                        $interval = new DateInterval('P'.($duration_int).'M');
+                        $duration_int_date=date_create($loan_date)->add($interval);
+                        $duration_int_date=$duration_int_date->format('Y-m-d');
+                        $date1 = date_create($duration_int_date);
+                        $date2 = date_create($expire_date);
+                        $rest= date_diff($date1,$date2);
+                        $rest= intval($rest->format("%a"));
+                        if($rest==31){
+                            $rest=30;
+                        }
+                        $duration=$duration_int+1+$rest/30;
+                        $months=$duration;
+                    }else {
+                        $duration=$total_days/30;
+                        $duration_int=floor($duration);
+                        $interval = new DateInterval('P'.($duration_int*30).'D');
+                        $duration_int_date=date_create($loan_date)->add($interval);
+                        $duration_int_date=$duration_int_date->format('Y-m-d');
+                        $date1 = date_create($duration_int_date);
+                        $date2 = date_create($expire_date);
+                        $rest= date_diff($date1,$date2);
+                        $rest= intval($rest->format("%a"));
+                        
+                        $duration=$duration_int+1+$rest/30;
+                        $months=$duration;
                     }
-
-                    $interval = new DateInterval('P'.($duration_int).'M');
-                    $duration_int_date=date_create($loan_date)->add($interval);
-                    $duration_int_date=$duration_int_date->format('Y-m-d');
-                    $date1 = date_create($duration_int_date);
-                    $date2 = date_create($expire_date);
-                    $rest= date_diff($date1,$date2);
-                    $rest= intval($rest->format("%a"));
-                    if($rest==31){
-                        $rest=30;
-                    }
-                    $duration=$duration_int+1+$rest/30;
-                    $months=$duration;
                     
                     break;
 
                 case 'yearly':
-                    $duration=$total_days/365;
-                    $duration_int=floor($duration);
-                    $interval = new DateInterval('P'.($duration_int).'Y');
-                    $duration_int_date=date_create($loan_date)->add($interval);
-                    $duration_int_date=$duration_int_date->format('Y-m-d');
-                    $date1 = date_create($duration_int_date);
-                    $date2 = date_create($expire_date);
-                    $rest= date_diff($date1,$date2);
-                    $rest= intval($rest->format("%a"));
-                    
-                    $duration=$duration_int+1+$rest/365;
-                    $months=$duration*365/30;
+                    if($loan_type == 'HP'){
+                        $duration=$total_days/365;
+                        $duration_int=floor($duration);
+                        $interval = new DateInterval('P'.($duration_int).'Y');
+                        $duration_int_date=date_create($loan_date)->add($interval);
+                        $duration_int_date=$duration_int_date->format('Y-m-d');
+                        $date1 = date_create($duration_int_date);
+                        $date2 = date_create($expire_date);
+                        $rest= date_diff($date1,$date2);
+                        $rest= intval($rest->format("%a"));
+                        
+                        $duration=$duration_int+1+$rest/365;
+                        $months=$duration*365/30;
+                    }else {
+                        $duration=$total_days/365;
+                        $duration_int=floor($duration);
+                        $interval = new DateInterval('P'.($duration_int*365).'D');
+                        $duration_int_date=date_create($loan_date)->add($interval);
+                        $duration_int_date=$duration_int_date->format('Y-m-d');
+                        $date1 = date_create($duration_int_date);
+                        $date2 = date_create($expire_date);
+                        $rest= date_diff($date1,$date2);
+                        $rest= intval($rest->format("%a"));
+                        
+                        $duration=$duration_int+1+$rest/365;
+                        $months=$duration*365/30;
+                    }
 
                     break;
                 default:
@@ -609,13 +653,25 @@ switch ($action) {
 
             switch ($repay_cycle_type) {
                 case 'weekly':
-                    $interval = new DateInterval('P'.(($pay_status)*7).'D');
+                    if($loan_type == 'HP'){
+                        $interval = new DateInterval('P'.($pay_status*7).'D');
+                    }else {
+                        $interval = new DateInterval('P'.($pay_status*7).'D');
+                    }
                     break;
                 case 'monthly':
-                    $interval = new DateInterval('P'.($pay_status).'M');
+                    if($loan_type == 'HP'){
+                        $interval = new DateInterval('P'.($pay_status).'M');
+                    }else {
+                        $interval = new DateInterval('P'.($pay_status*30).'D');
+                    }
                     break;
                 case 'yearly':
-                    $interval = new DateInterval('P'.($pay_status).'Y');
+                    if($loan_type == 'HP'){
+                        $interval = new DateInterval('P'.($pay_status).'Y');
+                    }else {
+                        $interval = new DateInterval('P'.($pay_status*365).'D');
+                    }
                     break;
             }
 
@@ -650,8 +706,6 @@ switch ($action) {
             // $principal_amount=$data['principal_amount'];
             // $interest_rate=$data['interest_rate'];
             // $loan_duration=$data['loan_duration'];
-
-            
             // next due date overflow expire date
             if($next_duedate[$expiry_id]>$expire_date) {
                 $next_duedate[$expiry_id]=$expire_date;
@@ -749,62 +803,161 @@ switch ($action) {
         $repay_cycle_type=$loan['repay_cycle_type'];
         
         switch ($repay_cycle_type) {
-            case 'weekly':
-                $duration=$total_days/7;
-                $duration_int=floor($duration);
-                $interval = new DateInterval('P'.($duration_int*7).'D');
-                $duration_int_date=date_create($loan_date)->add($interval);
-                $duration_int_date=$duration_int_date->format('Y-m-d');
-                $date1 = date_create($duration_int_date);
-                $date2 = date_create($expire_date);
-                $rest= date_diff($date1,$date2);
-                $rest= intval($rest->format("%a"));
+            // case 'weekly':
+            //     $duration=$total_days/7;
+            //     $duration_int=floor($duration);
+            //     $interval = new DateInterval('P'.($duration_int*7).'D');
+            //     $duration_int_date=date_create($loan_date)->add($interval);
+            //     $duration_int_date=$duration_int_date->format('Y-m-d');
+            //     $date1 = date_create($duration_int_date);
+            //     $date2 = date_create($expire_date);
+            //     $rest= date_diff($date1,$date2);
+            //     $rest= intval($rest->format("%a"));
 
-                $duration=$duration_int+1+$rest/7;
-                $months=$duration*7/30;
+            //     $duration=$duration_int+1+$rest/7;
+            //     $months=$duration*7/30;
+                
+            //     break;
+
+            // case 'monthly':
+            //     // $duration=$total_days/30;
+            //     // $duration_int=floor($duration);
+
+            //     $d1 = new DateTime($loan_date);
+            //     $d2 = new DateTime($expire_date);
+            //     $d1->add(new \DateInterval('P1M'));
+            //     while ($d1 <= $d2){
+            //         $duration_int++;
+            //         $d1->add(new \DateInterval('P1M'));
+            //     }
+
+            //     $interval = new DateInterval('P'.($duration_int).'M');
+            //     $duration_int_date=date_create($loan_date)->add($interval);
+            //     $duration_int_date=$duration_int_date->format('Y-m-d');
+            //     $date1 = date_create($duration_int_date);
+            //     $date2 = date_create($expire_date);
+            //     $rest= date_diff($date1,$date2);
+            //     $rest= intval($rest->format("%a"));
+            //     if($rest==31){
+            //         $rest=30;
+            //     }
+            //     $duration=$duration_int+1+$rest/30;
+            //     $months=$duration;
+               
+            //     break;
+
+            // case 'yearly':
+            //     $duration=$total_days/365;
+            //     $duration_int=floor($duration);
+            //     $interval = new DateInterval('P'.($duration_int).'Y');
+            //     $duration_int_date=date_create($loan_date)->add($interval);
+            //     $duration_int_date=$duration_int_date->format('Y-m-d');
+            //     $date1 = date_create($duration_int_date);
+            //     $date2 = date_create($expire_date);
+            //     $rest= date_diff($date1,$date2);
+            //     $rest= intval($rest->format("%a"));
+                
+            //     $duration=$duration_int+1+$rest/365;
+            //     $months=$duration*365/30;
+
+            //     break;
+             case 'weekly':
+                if($val['loan_type'] == 'HP'){
+                    $duration=$total_days/7;
+                    $duration_int=floor($duration);
+                    $interval = new DateInterval('P'.($duration_int*7).'D');
+                    $duration_int_date=date_create($loan_date)->add($interval);
+                    $duration_int_date=$duration_int_date->format('Y-m-d');
+                    $date1 = date_create($duration_int_date);
+                    $date2 = date_create($expire_date);
+                    $rest= date_diff($date1,$date2);
+                    $rest= intval($rest->format("%a"));
+
+                    $duration=$duration_int+1+$rest/7;
+                } else {
+                    
+                    $duration=$total_days/7;
+                    $duration_int=floor($duration);
+                    $interval = new DateInterval('P'.($duration_int*7).'D');
+                    $duration_int_date=date_create($loan_date)->add($interval);
+                    $duration_int_date=$duration_int_date->format('Y-m-d');
+                    $date1 = date_create($duration_int_date);
+                    $date2 = date_create($expire_date);
+                    $rest= date_diff($date1,$date2);
+                    $rest= intval($rest->format("%a"));
+                    
+                    $duration=$duration_int+1+$rest/7;
+                }
                 
                 break;
 
             case 'monthly':
-                // $duration=$total_days/30;
-                // $duration_int=floor($duration);
-
-                $d1 = new DateTime($loan_date);
-                $d2 = new DateTime($expire_date);
-                $d1->add(new \DateInterval('P1M'));
-                while ($d1 <= $d2){
-                    $duration_int++;
+                if($val['loan_type'] == 'HP'){
+                    $d1 = new DateTime($loan_date);
+                    $d2 = new DateTime($expire_date);
                     $d1->add(new \DateInterval('P1M'));
-                }
+                    while ($d1 <= $d2){
+                        $duration_int++;
+                        $d1->add(new \DateInterval('P1M'));
+                    }
 
-                $interval = new DateInterval('P'.($duration_int).'M');
-                $duration_int_date=date_create($loan_date)->add($interval);
-                $duration_int_date=$duration_int_date->format('Y-m-d');
-                $date1 = date_create($duration_int_date);
-                $date2 = date_create($expire_date);
-                $rest= date_diff($date1,$date2);
-                $rest= intval($rest->format("%a"));
-                if($rest==31){
-                    $rest=30;
+                    $interval = new DateInterval('P'.($duration_int).'M');
+                    $duration_int_date=date_create($loan_date)->add($interval);
+                    $duration_int_date=$duration_int_date->format('Y-m-d');
+                    $date1 = date_create($duration_int_date);
+                    $date2 = date_create($expire_date);
+                    $rest= date_diff($date1,$date2);
+                    $rest= intval($rest->format("%a"));
+                    if($rest==31){
+                        $rest=30;
+                    }
+                    $duration=$duration_int+1+$rest/30;
+                    $months=$duration;
+                }else {
+                    $duration=$total_days/30;
+                    $duration_int=floor($duration);
+                    $interval = new DateInterval('P'.($duration_int*30).'D');
+                    $duration_int_date=date_create($loan_date)->add($interval);
+                    $duration_int_date=$duration_int_date->format('Y-m-d');
+                    $date1 = date_create($duration_int_date);
+                    $date2 = date_create($expire_date);
+                    $rest= date_diff($date1,$date2);
+                    $rest= intval($rest->format("%a"));
+                    
+                    $duration=$duration_int+1+$rest/30;
+                    $months=$duration;
                 }
-                $duration=$duration_int+1+$rest/30;
-                $months=$duration;
-               
+                
                 break;
 
             case 'yearly':
-                $duration=$total_days/365;
-                $duration_int=floor($duration);
-                $interval = new DateInterval('P'.($duration_int).'Y');
-                $duration_int_date=date_create($loan_date)->add($interval);
-                $duration_int_date=$duration_int_date->format('Y-m-d');
-                $date1 = date_create($duration_int_date);
-                $date2 = date_create($expire_date);
-                $rest= date_diff($date1,$date2);
-                $rest= intval($rest->format("%a"));
-                
-                $duration=$duration_int+1+$rest/365;
-                $months=$duration*365/30;
+                if($val['loan_type'] == 'HP'){
+                    $duration=$total_days/365;
+                    $duration_int=floor($duration);
+                    $interval = new DateInterval('P'.($duration_int).'Y');
+                    $duration_int_date=date_create($loan_date)->add($interval);
+                    $duration_int_date=$duration_int_date->format('Y-m-d');
+                    $date1 = date_create($duration_int_date);
+                    $date2 = date_create($expire_date);
+                    $rest= date_diff($date1,$date2);
+                    $rest= intval($rest->format("%a"));
+                    
+                    $duration=$duration_int+1+$rest/365;
+                    $months=$duration*365/30;
+                }else {
+                    $duration=$total_days/365;
+                    $duration_int=floor($duration);
+                    $interval = new DateInterval('P'.($duration_int*365).'D');
+                    $duration_int_date=date_create($loan_date)->add($interval);
+                    $duration_int_date=$duration_int_date->format('Y-m-d');
+                    $date1 = date_create($duration_int_date);
+                    $date2 = date_create($expire_date);
+                    $rest= date_diff($date1,$date2);
+                    $rest= intval($rest->format("%a"));
+                    
+                    $duration=$duration_int+1+$rest/365;
+                    $months=$duration*365/30;
+                }
 
                 break;
             default:
@@ -831,13 +984,25 @@ switch ($action) {
         for($i=0;$i<=$duration_count-1;$i++){
             switch ($repay_cycle_type) {
                 case 'weekly':
-                    $interval = new DateInterval('P'.($i*7).'D');
+                    if($val['loan_type'] == 'HP'){
+                        $interval = new DateInterval('P'.($i*7).'D');
+                    }else {
+                        $interval = new DateInterval('P'.($i*7).'D');
+                    }
                     break;
                 case 'monthly':
-                    $interval = new DateInterval('P'.$i.'M');
+                    if($val['loan_type'] == 'HP'){
+                        $interval = new DateInterval('P'.($i).'M');
+                    }else {
+                        $interval = new DateInterval('P'.($i*30).'D');
+                    }
                     break;
                 case 'yearly':
-                    $interval = new DateInterval('P'.$i.'Y');
+                    if($val['loan_type'] == 'HP'){
+                        $interval = new DateInterval('P'.($i).'Y');
+                    }else {
+                        $interval = new DateInterval('P'.($i*365).'D');
+                    }
                     break;
                 default:
                     break;
@@ -848,8 +1013,8 @@ switch ($action) {
         }
         $next_duedate[$duration_count]=$val['expire_date'];
 
-        $val['loan_amount']=floor($val['amount']/$duration);
-        $val['interest_amount']=floor($val['interest']/$duration);
+        $val['loan_amount']=ceil($val['amount']/$duration);
+        $val['interest_amount']=ceil($val['interest']/$duration);
         $val['due_amount']=$val['loan_amount']+$val['interest_amount'];
 
         $loan_balance=array();
@@ -1222,60 +1387,102 @@ switch ($action) {
             
             switch ($repay_cycle_type) {
                 case 'weekly':
-                    $duration=$total_days/7;
-                    $duration_int=floor($duration);
-                    $interval = new DateInterval('P'.($duration_int*7).'D');
-                    $duration_int_date=date_create($loan_date)->add($interval);
-                    $duration_int_date=$duration_int_date->format('Y-m-d');
-                    $date1 = date_create($duration_int_date);
-                    $date2 = date_create($expire_date);
-                    $rest= date_diff($date1,$date2);
-                    $rest= intval($rest->format("%a"));
+                    if($loan_val['loan_type'] == 'HP'){
+                        $duration=$total_days/7;
+                        $duration_int=floor($duration);
+                        $interval = new DateInterval('P'.($duration_int*7).'D');
+                        $duration_int_date=date_create($loan_date)->add($interval);
+                        $duration_int_date=$duration_int_date->format('Y-m-d');
+                        $date1 = date_create($duration_int_date);
+                        $date2 = date_create($expire_date);
+                        $rest= date_diff($date1,$date2);
+                        $rest= intval($rest->format("%a"));
 
-                    $duration=$duration_int+1+$rest/7;
-                    $months=$duration*7/30;
+                        $duration=$duration_int+1+$rest/7;
+                    } else {
+                        
+                        $duration=$total_days/7;
+                        $duration_int=floor($duration);
+                        $interval = new DateInterval('P'.($duration_int*7).'D');
+                        $duration_int_date=date_create($loan_date)->add($interval);
+                        $duration_int_date=$duration_int_date->format('Y-m-d');
+                        $date1 = date_create($duration_int_date);
+                        $date2 = date_create($expire_date);
+                        $rest= date_diff($date1,$date2);
+                        $rest= intval($rest->format("%a"));
+                        
+                        $duration=$duration_int+1+$rest/7;
+                    }
                     
                     break;
 
                 case 'monthly':
-                    // $duration=$total_days/30;
-                    // $duration_int=floor($duration);
-                    $d1 = new DateTime($loan_date);
-                    $d2 = new DateTime($expire_date);
-                    $d1->add(new \DateInterval('P1M'));
-                    while ($d1 <= $d2){
-                        $duration_int++;
+                    if($loan_val['loan_type'] == 'HP'){
+                        $d1 = new DateTime($loan_date);
+                        $d2 = new DateTime($expire_date);
                         $d1->add(new \DateInterval('P1M'));
-                    }
+                        while ($d1 <= $d2){
+                            $duration_int++;
+                            $d1->add(new \DateInterval('P1M'));
+                        }
 
-                    $interval = new DateInterval('P'.($duration_int).'M');
-                    $duration_int_date=date_create($loan_date)->add($interval);
-                    $duration_int_date=$duration_int_date->format('Y-m-d');
-                    $date1 = date_create($duration_int_date);
-                    $date2 = date_create($expire_date);
-                    $rest = date_diff($date1,$date2);
-                    $rest = intval($rest->format("%a"));
-                    if($rest == 31){
-                        $rest = 30;
+                        $interval = new DateInterval('P'.($duration_int).'M');
+                        $duration_int_date=date_create($loan_date)->add($interval);
+                        $duration_int_date=$duration_int_date->format('Y-m-d');
+                        $date1 = date_create($duration_int_date);
+                        $date2 = date_create($expire_date);
+                        $rest= date_diff($date1,$date2);
+                        $rest= intval($rest->format("%a"));
+                        if($rest==31){
+                            $rest=30;
+                        }
+                        $duration=$duration_int+1+$rest/30;
+                        $months=$duration;
+                    }else {
+                        $duration=$total_days/30;
+                        $duration_int=floor($duration);
+                        $interval = new DateInterval('P'.($duration_int*30).'D');
+                        $duration_int_date=date_create($loan_date)->add($interval);
+                        $duration_int_date=$duration_int_date->format('Y-m-d');
+                        $date1 = date_create($duration_int_date);
+                        $date2 = date_create($expire_date);
+                        $rest= date_diff($date1,$date2);
+                        $rest= intval($rest->format("%a"));
+                        
+                        $duration=$duration_int+1+$rest/30;
+                        $months=$duration;
                     }
-                    $duration=$duration_int+1+$rest/30;
-                    $months=$duration;
                     
                     break;
 
                 case 'yearly':
-                    $duration=$total_days/365;
-                    $duration_int=floor($duration);
-                    $interval = new DateInterval('P'.($duration_int).'Y');
-                    $duration_int_date=date_create($loan_date)->add($interval);
-                    $duration_int_date=$duration_int_date->format('Y-m-d');
-                    $date1 = date_create($duration_int_date);
-                    $date2 = date_create($expire_date);
-                    $rest= date_diff($date1,$date2);
-                    $rest= intval($rest->format("%a"));
-                    
-                    $duration=$duration_int+1+$rest/365;
-                    $months=$duration*365/30;
+                    if($loan_val['loan_type'] == 'HP'){
+                        $duration=$total_days/365;
+                        $duration_int=floor($duration);
+                        $interval = new DateInterval('P'.($duration_int).'Y');
+                        $duration_int_date=date_create($loan_date)->add($interval);
+                        $duration_int_date=$duration_int_date->format('Y-m-d');
+                        $date1 = date_create($duration_int_date);
+                        $date2 = date_create($expire_date);
+                        $rest= date_diff($date1,$date2);
+                        $rest= intval($rest->format("%a"));
+                        
+                        $duration=$duration_int+1+$rest/365;
+                        $months=$duration*365/30;
+                    }else {
+                        $duration=$total_days/365;
+                        $duration_int=floor($duration);
+                        $interval = new DateInterval('P'.($duration_int*365).'D');
+                        $duration_int_date=date_create($loan_date)->add($interval);
+                        $duration_int_date=$duration_int_date->format('Y-m-d');
+                        $date1 = date_create($duration_int_date);
+                        $date2 = date_create($expire_date);
+                        $rest= date_diff($date1,$date2);
+                        $rest= intval($rest->format("%a"));
+                        
+                        $duration=$duration_int+1+$rest/365;
+                        $months=$duration*365/30;
+                    }
 
                     break;
                 default:
@@ -1301,16 +1508,28 @@ switch ($action) {
             for($i=0;$i<=$duration_count-1;$i++){
                 switch ($repay_cycle_type) {
                     case 'weekly':
-                    $interval = new DateInterval('P'.($i*7).'D');
-                    break;
+                        if($loan_val['loan_type'] == 'HP'){
+                            $interval = new DateInterval('P'.($i*7).'D');
+                        }else {
+                            $interval = new DateInterval('P'.($i*7).'D');
+                        }
+                        break;
                     case 'monthly':
-                    $interval = new DateInterval('P'.$i.'M');
-                    break;
+                        if($loan_val['loan_type'] == 'HP'){
+                            $interval = new DateInterval('P'.($i).'M');
+                        }else {
+                            $interval = new DateInterval('P'.($i*30).'D');
+                        }
+                        break;
                     case 'yearly':
-                    $interval = new DateInterval('P'.$i.'Y');
-                    break;
+                        if($loan_val['loan_type'] == 'HP'){
+                            $interval = new DateInterval('P'.($i).'Y');
+                        }else {
+                            $interval = new DateInterval('P'.($i*365).'D');
+                        }
+                        break;
                     default:
-                    break;
+                        break;
                 }
                 
                 $next_duedate[$i] = date_create($loan['loan_date'])->add($interval);
@@ -1318,8 +1537,8 @@ switch ($action) {
             }
             $next_duedate[$duration_count] = $loan_val['expire_date'];
             
-            $loan_val['loan_amount'] = floor($loan_val['amount']/$duration);
-            $loan_val['interest_amount'] = floor($loan_val['interest']/$duration);
+            $loan_val['loan_amount'] = ceil($loan_val['amount']/$duration);
+            $loan_val['interest_amount'] = ceil($loan_val['interest']/$duration);
             $loan_val['due_amount'] = $loan_val['loan_amount']+$loan_val['interest_amount'];
             
             
@@ -2682,6 +2901,40 @@ switch ($action) {
 
         $ui->assign('cert_img_path',$cert_img_path);
         view('modal_cert_vehicle');
+
+        break;
+
+    case 'view_img':
+      // Ajax post datas
+        $id = $routes['2'];
+        $tr_type = $routes['3'];
+        $table_name = "";
+        if($tr_type){
+            switch ($tr_type) {
+                case 'roadtax':
+                    $table_name = 'sys_vehicle_roadtax';
+                    break;
+                case 'insurance':
+                    $table_name = 'sys_vehicle_insurance';
+                    break;
+                case 'loan':
+                    $table_name = 'sys_vehicle_loan';
+                    break;
+                default:
+                    
+                    break;
+            }
+        }
+        if($id){
+            $d=ORM::for_table($table_name)->find_one($id);
+        }
+        
+        if($d){
+            $img_path=APP_URL."/storage/items/".$d['ref_img'];
+        }
+
+        $ui->assign('img_path',$img_path);
+        view('modal_img_view');
 
         break;
 

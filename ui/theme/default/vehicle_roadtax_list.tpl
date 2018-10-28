@@ -53,6 +53,7 @@
                             <th>{$_L['Road Tax Date']}</th>
                             <th>{$_L['Due Date']}</th>
                             <th>{$_L['Status']}</th>
+                            <th>{$_L['Ref_img']}</th>
                             <th class="text-right" width="210px">{$_L['Manage']}</th>
                         </tr>
                     </thead>
@@ -96,7 +97,14 @@
                                      {$pay_status_string[$ds['id']]}</div>
                                 {/if}
                             </td>
-
+                            <td>
+                                {if {$ds['ref_img']} neq ''}
+                                <a href="#" class="btn btn-primary btn-xs view_ref_img" style="background-color:#f7931e; border:none;" id="{$ds['id']}"
+                                    data-toggle="tooltip" data-placement="top" title="{$_L['View']}">
+                                    <i class="fa fa-paperclip"></i>
+                                </a>
+                                {/if}
+                            </td>
                             <td class="text-right">
                                 {if $ds['pay_status'] neq 0 && $ds['expired'] neq 1}
                                 <a href="#" class="btn btn-xs renew" id="{$ds['id']}" style="background-color:#4B0082; border-color:#4B0082; color:#f8f8f8"
@@ -137,7 +145,7 @@
                     {if $view_type == 'filter'}
                     <tfoot>
                         <tr>
-                            <td style="text-align: left;" colspan="8">
+                            <td style="text-align: left;" colspan="9">
                                 <ul class="pagination">
                                 </ul>
                             </td>
@@ -169,7 +177,7 @@
                         {foreach $transactions as $t}
                         {if $transactions neq ''}
                         <tr>
-                            <td>{$t['id']}</td>
+                            <td><a href="{$_url}transactions/vehicle_manage/{$t['id']}">{$t['id']}</a></td>
                             <td> {date( $config['df'], strtotime($t['date']))}</td>
                             <td>{$t['account']}</td>
                             <td><a href="#">{$t['vehicle_num']}</a></td>

@@ -147,15 +147,15 @@
                                 </div>
                             </a>
 
-                            <a class="dashboard-stat blue" href="{$_url}leads/">
+                            <a class="dashboard-stat blue" href="{$_url}vehicle/list_vehicle/">
                                 <div class="visual">
                                     <i class="fa fa-globe"></i>
                                 </div>
                                 <div class="details">
                                     <div class="number">
-                                        <span data-counter="counterup" data-value="{$leads_total}">{$leads_total}</span>
+                                        <span data-counter="counterup" data-value="{$vehicles_total}">{$vehicles_total}</span>
                                     </div>
-                                    <div class="desc text-right"> {$_L['Leads']} </div>
+                                    <div class="desc text-right"> {$_L['Vehicles']} </div>
                                 </div>
                             </a>
 

@@ -168,11 +168,13 @@ switch ($action) {
         //$vehicles=ORM::for_table('sys_vehicles')->order_by_asc('id')->find_many();
         $deposits=ORM::for_table('sys_vehicle_deposit');
         $invoices=ORM::for_table('sys_invoices');
+        $transaction_deposits=ORM::for_table('sys_transactions');
        
         $selected_customer=null;
         $selected_vehicle=null;
         $vehicles=array();
         $v_i=array();
+
         if($customer_id){
             $selected_customer=ORM::for_table('crm_accounts')->find_one($customer_id);
             
@@ -192,6 +194,7 @@ switch ($action) {
             }
                        
             $deposits=$deposits->where('customerid', $customer_id);
+            // $transaction_deposits=$transaction_deposits->where
             $invoices=$invoices->where('userid', $customer_id);
         }
         if($vehicle_id){
@@ -944,6 +947,33 @@ switch ($action) {
         break;
 
     
+    case 'view_img':
+      // Ajax post datas
+        $id = $routes['2'];
+        $tr_type = $routes['3'];
+        $table_name = "";
+        if($tr_type){
+            switch ($tr_type) {
+                case 'deposit':
+                    $table_name = 'sys_vehicle_deposit';
+                    break;
+                default:
+                    break;
+            }
+        }
+        if($id){
+            $d=ORM::for_table($table_name)->find_one($id);
+        }
+        
+        if($d){
+            $img_path=APP_URL."/storage/items/".$d['ref_img'];
+        }
+
+        $ui->assign('img_path',$img_path);
+        view('modal_img_view');
+
+        break;
+
     case 'modal_deposit':
         
         $id=$routes['2'];

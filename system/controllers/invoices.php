@@ -127,31 +127,31 @@ switch ($action) {
         Event::trigger('add_invoice_rendering_form');
         $ui->assign('xheader', Asset::css($css_arr) . '<style>
         .redactor-toolbar {
-  border: 1px solid #aaa;
-  border-bottom: none;
-}
-.redactor-editor {
-  border: 1px solid #aaa;
-}
+            border: 1px solid #aaa;
+            border-bottom: none;
+            }
+            .redactor-editor {
+            border: 1px solid #aaa;
+            }
         </style>');
         $ui->assign('xfooter', Asset::js($js_arr));
         $ui->assign('xjq', '
 
- $(\'.amount\').autoNumeric(\'init\', {
+        $(\'.amount\').autoNumeric(\'init\', {
 
-    aSign: \'' . $config['currency_code'] . ' \',
-    dGroup: ' . $config['thousand_separator_placement'] . ',
-    aPad: ' . $config['currency_decimal_digits'] . ',
-    pSign: \'' . $config['currency_symbol_position'] . '\',
-    aDec: \'' . $config['dec_point'] . '\',
-    aSep: \'' . $config['thousands_sep'] . '\',
-    vMax: \'9999999999999999.00\',
-                vMin: \'-9999999999999999.00\'
+            aSign: \'' . $config['currency_code'] . ' \',
+            dGroup: ' . $config['thousand_separator_placement'] . ',
+            aPad: ' . $config['currency_decimal_digits'] . ',
+            pSign: \'' . $config['currency_symbol_position'] . '\',
+            aDec: \'' . $config['dec_point'] . '\',
+            aSep: \'' . $config['thousands_sep'] . '\',
+            vMax: \'9999999999999999.00\',
+                        vMin: \'-9999999999999999.00\'
 
-    });
+            });
 
 
- ' . $extra_jq);
+        ' . $extra_jq);
 
 
 
@@ -219,14 +219,14 @@ switch ($action) {
                     'dp/dist/datepicker.min',
                     'redactor/redactor'
                 )) . '<style>
-        .redactor-toolbar {
-  border: 1px solid #aaa;
-  border-bottom: none;
-}
-.redactor-editor {
-  border: 1px solid #aaa;
-}
-        </style>');
+                            .redactor-toolbar {
+                    border: 1px solid #aaa;
+                    border-bottom: none;
+                    }
+                    .redactor-editor {
+                    border: 1px solid #aaa;
+                    }
+                </style>');
             $ui->assign('xfooter', Asset::js(array(
                 'redactor/redactor.min',
                 's2/js/select2.min',
@@ -238,20 +238,20 @@ switch ($action) {
             )));
             $ui->assign('xjq', '
 
- $(\'.amount\').autoNumeric(\'init\', {
+            $(\'.amount\').autoNumeric(\'init\', {
 
-    aSign: \'' . $d->currency_symbol . ' \',
-    dGroup: ' . $config['thousand_separator_placement'] . ',
-    aPad: ' . $config['currency_decimal_digits'] . ',
-    pSign: \'' . $config['currency_symbol_position'] . '\',
-    aDec: \'' . $config['dec_point'] . '\',
-    aSep: \'' . $config['thousands_sep'] . '\',
-    vMax: \'9999999999999999.00\',
-                vMin: \'-9999999999999999.00\'
+                aSign: \'' . $d->currency_symbol . ' \',
+                dGroup: ' . $config['thousand_separator_placement'] . ',
+                aPad: ' . $config['currency_decimal_digits'] . ',
+                pSign: \'' . $config['currency_symbol_position'] . '\',
+                aDec: \'' . $config['dec_point'] . '\',
+                aSep: \'' . $config['thousands_sep'] . '\',
+                vMax: \'9999999999999999.00\',
+                            vMin: \'-9999999999999999.00\'
 
-    });
+                });
 
- ');
+            ');
 
             $tax_default = ORM::for_table('sys_tax')->where('is_default',1)->find_one();
 
@@ -274,9 +274,6 @@ switch ($action) {
         $extraHtml = '';
         $id = $routes['2'];
         $app->emit('invoices_view',[&$id]);
-
-
-
 
 
 
@@ -346,14 +343,14 @@ switch ($action) {
             $ui->assign('x_html', $x_html);
             $ui->assign('xjq', ' $(\'.amount\').autoNumeric(\'init\', {
 
-   
-    dGroup: ' . $config['thousand_separator_placement'] . ',
-    aPad: ' . $config['currency_decimal_digits'] . ',
-    pSign: \'' . $config['currency_symbol_position'] . '\',
-    aDec: \'' . $config['dec_point'] . '\',
-    aSep: \'' . $config['thousands_sep'] . '\'
+        
+            dGroup: ' . $config['thousand_separator_placement'] . ',
+            aPad: ' . $config['currency_decimal_digits'] . ',
+            pSign: \'' . $config['currency_symbol_position'] . '\',
+            aDec: \'' . $config['dec_point'] . '\',
+            aSep: \'' . $config['thousands_sep'] . '\'
 
-    });');
+            });');
             $upload_max_size = ini_get('upload_max_filesize');
             $post_max_size = ini_get('post_max_size');
             $ui->assign('upload_max_size', $upload_max_size);
@@ -1661,8 +1658,6 @@ $(".cdelete").click(function (e) {
                     $vehicle_num=$item_name[0];
                 }
             }
-
-
             
             $itotal = $d['total'];
             $ic = $d['credit'];
@@ -1693,36 +1688,33 @@ $(".cdelete").click(function (e) {
 
             $currency_opt = '';
             $currencies = Currency::all();
-//            foreach($currencies as $currency) {
-//
-//                // $currency_opt .= '<option value="' . $currency['iso_code'] . '">' . $currency['iso_code'] . '</option>';
-//
-//                $currency_opt.= '<div class="form-group">
-//    <label for="amount_' . $currency->iso_code . '" class="col-sm-3 control-label">' . $_L['Amount'] . ' [' . $currency->iso_code . ']</label>
-//    <div class="col-sm-9">
-//      <input type="text" id="amount_' . $currency->iso_code . '" name="amount_' . $currency->iso_code . '" class="form-control amount"   data-a-sign="' . $currency->symbol . ' " data-a-dec="' . $config['dec_point'] . '" data-a-sep="' . $config['thousands_sep'] . '"
-//data-d-group="2" value="">
-//
-//    </div>
-//  </div>';
-//            }
+            //            foreach($currencies as $currency) {
+            //
+            //                // $currency_opt .= '<option value="' . $currency['iso_code'] . '">' . $currency['iso_code'] . '</option>';
+            //
+            //                $currency_opt.= '<div class="form-group">
+            //    <label for="amount_' . $currency->iso_code . '" class="col-sm-3 control-label">' . $_L['Amount'] . ' [' . $currency->iso_code . ']</label>
+            //    <div class="col-sm-9">
+            //      <input type="text" id="amount_' . $currency->iso_code . '" name="amount_' . $currency->iso_code . '" class="form-control amount"   data-a-sign="' . $currency->symbol . ' " data-a-dec="' . $config['dec_point'] . '" data-a-sep="' . $config['thousands_sep'] . '"
+            //data-d-group="2" value="">
+            //
+            //    </div>
+            //  </div>';
+            //            }
 
 
 
 
-            $currency_opt = '<div class="form-group">
-    <label for="amount" class="col-sm-3 control-label">' . $_L['Amount'] . '</label>
-    <div class="col-sm-9">
-      <input type="text" id="amount" name="amount" class="form-control amount"   data-a-sign="' . $config['currency_code'] . ' " data-a-dec="' . $config['dec_point'] . '" data-a-sep="' . $config['thousands_sep'] . '"
-data-d-group="2" value="">
-
-    </div>
-  </div>';
+            $currency_opt = 
+                    '<div class="form-group">
+                        <label for="amount" class="col-sm-3 control-label">' . $_L['Amount'] . '</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="amount" name="amount" class="form-control amount"   data-a-sign="' . $config['currency_code'] . ' " data-a-dec="' . $config['dec_point'] . '" data-a-sep="' . $config['thousands_sep'] . '" data-d-group="2" value="">
+                        </div>
+                    </div>';
 
             if($config['edition'] == 'iqm'){
                 $currency_opt .= '<h4 style="border-bottom: 1px solid #eee; padding-bottom: 8px;">Paid As</h4>
-
-
 
                             <div class="form-group">
                                 <label for="c1_amount" class="col-sm-3 control-label">$</label>
@@ -1752,97 +1744,97 @@ data-d-group="2" value="">
             }
 
             echo '
-<div class="modal-header">
-	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	<h3>' . $_L['Invoice'] . ' #' . $d['id'] . '</h3>
-</div>
-<div class="modal-body">
-<h3>' . $_L['Invoice Total'] . ': <span class="amount" data-a-sign="' . $invoice_currency . ' ">' . $d['total'] . '</span></h3>
-<hr>
-<form class="form-horizontal" role="form" id="form_add_payment" method="post">
-<div class="form-group">
-    <label for="subject" class="col-sm-3 control-label">' . $_L['Account'] . '</label>
-    <div class="col-sm-9">
-       <select id="account" name="account">
-                            <option value="">' . $_L['Choose an Account'] . '</option>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3>' . $_L['Invoice'] . ' #' . $d['id'] . '</h3>
+                </div>
+                <div class="modal-body">
+                <h3>' . $_L['Invoice Total'] . ': <span class="amount" data-a-sign="' . $invoice_currency . ' ">' . $d['total'] . '</span></h3>
+                <hr>
+                <form class="form-horizontal" role="form" id="form_add_payment" method="post">
+                <div class="form-group">
+                    <label for="subject" class="col-sm-3 control-label">' . $_L['Account'] . '</label>
+                    <div class="col-sm-9">
+                    <select id="account" name="account">
+                                            <option value="">' . $_L['Choose an Account'] . '</option>
 
-' . $a_opt . '
+                ' . $a_opt . '
 
-                        </select>
-    </div>
-  </div>
+                                        </select>
+                    </div>
+                </div>
 
-<div class="form-group">
-    <label for="date" class="col-sm-3 control-label">' . $_L['Date'] . '</label>
-    <div class="col-sm-9">
-      <input type="text" class="form-control datepicker"  value="' . date('Y-m-d') . '" name="date" id="date" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true">
-    </div>
-  </div>
+                <div class="form-group">
+                    <label for="date" class="col-sm-3 control-label">' . $_L['Date'] . '</label>
+                    <div class="col-sm-9">
+                    <input type="text" class="form-control datepicker"  value="' . date('Y-m-d') . '" name="date" id="date" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true">
+                    </div>
+                </div>
 
-<div class="form-group">
-    <label for="description" class="col-sm-3 control-label">' . $_L['Description'] . '</label>
-    <div class="col-sm-9">
-      <input type="text" id="description" name="description" class="form-control" value="' . $_L['Invoice'] . ' ' . $d['id'] . ' ' . $_L['Payment'] . '">
-    </div>
-  </div>
-  
-  
-' . $currency_opt . '
-
-
-
-  
-  
-<div class="form-group">
-    <label for="cats" class="col-sm-3 control-label">' . $_L['Category'] . '</label>
-    <div class="col-sm-9">
-       <select id="cats" name="cats">
-                             <option value="Uncategorized">' . $_L['Uncategorized'] . '</option>
-
-' . $cats_opt . '
-
-                        </select>
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="payer_name" class="col-sm-3 control-label">' . $_L['Payer'] . '</label>
-    <div class="col-sm-9">
-      <input type="text" id="payer_name" name="payer_name" class="form-control" value="' . $d['account'] . '" disabled>
-    </div>
-  </div>
-
-   <div class="form-group">
-    <label for="subject" class="col-sm-3 control-label">' . $_L['Method'] . '</label>
-    <div class="col-sm-9">
-      <select id="pmethod" name="pmethod">
-                                <option value="">' . $_L['Select Payment Method'] . '</option>
+                <div class="form-group">
+                    <label for="description" class="col-sm-3 control-label">' . $_L['Description'] . '</label>
+                    <div class="col-sm-9">
+                    <input type="text" id="description" name="description" class="form-control" value="' . $_L['Invoice'] . ' ' . $d['id'] . ' ' . $_L['Payment'] . '">
+                    </div>
+                </div>
+                
+                
+                ' . $currency_opt . '
 
 
-                                ' . $pms_opt . '
+
+                
+                
+                <div class="form-group">
+                    <label for="cats" class="col-sm-3 control-label">' . $_L['Category'] . '</label>
+                    <div class="col-sm-9">
+                    <select id="cats" name="cats">
+                                            <option value="Uncategorized">' . $_L['Uncategorized'] . '</option>
+
+                ' . $cats_opt . '
+
+                                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="payer_name" class="col-sm-3 control-label">' . $_L['Payer'] . '</label>
+                    <div class="col-sm-9">
+                    <input type="text" id="payer_name" name="payer_name" class="form-control" value="' . $d['account'] . '" disabled>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="subject" class="col-sm-3 control-label">' . $_L['Method'] . '</label>
+                    <div class="col-sm-9">
+                    <select id="pmethod" name="pmethod">
+                                                <option value="">' . $_L['Select Payment Method'] . '</option>
 
 
-                            </select>
-    </div>
-  </div>
+                                                ' . $pms_opt . '
 
-<input type="hidden" name="iid" value="' . $d['id'] . '">
-<input type="hidden" name="payer" value="' . $d['userid'] . '">
-<input type="hidden" name="vehicle_num" value="'.$vehicle_num.'">
-</form>
 
-</div>
-<div class="modal-footer">
-<input type="hidden" id="payer" name="payer" value="' . $d['userid'] . '">
-	<button id="save_payment" class="btn btn-primary">' . $_L['Save'] . '</button>
+                                            </select>
+                    </div>
+                </div>
 
-		<button type="button" data-dismiss="modal" class="btn">' . $_L['Close'] . '</button>
-</div>';
-        }
-        else {
-            exit('Invoice Not Found');
-        }
+                <input type="hidden" name="iid" value="' . $d['id'] . '">
+                <input type="hidden" name="payer" value="' . $d['userid'] . '">
+                <input type="hidden" name="vehicle_num" value="'.$vehicle_num.'">
+                </form>
 
-        break;
+                </div>
+                <div class="modal-footer">
+                <input type="hidden" id="payer" name="payer" value="' . $d['userid'] . '">
+                    <button id="save_payment" class="btn btn-primary">' . $_L['Save'] . '</button>
+
+                        <button type="button" data-dismiss="modal" class="btn">' . $_L['Close'] . '</button>
+                </div>';
+                        }
+                        else {
+                            exit('Invoice Not Found');
+                        }
+
+                        break;
 
 
     case 'add-payment-post':
