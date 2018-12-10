@@ -562,6 +562,9 @@
                     $("#account").select2({
                         theme: "bootstrap"
                     });
+                    $("#vehicle_num").select2({
+                        theme:"bootstrap"
+                    });
                     $("#cats").select2({
                         theme: "bootstrap"
                     });

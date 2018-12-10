@@ -1074,6 +1074,7 @@ $_L = [
     'New Make s Model' => 'New Make/Model',
     'Select Make s Model' => 'Select Make/Model',
     'Vehicle No' => 'Vehicle No.',
+    'Choose an Vehicle Number' => 'Choose an Vehicle Number',
     'Engine No' => 'Engine No.',
     'Chassis No' => 'Chassis No.',
     'Purchase Price' => 'Purchase Price',

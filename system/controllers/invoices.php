@@ -1648,14 +1648,15 @@ $(".cdelete").click(function (e) {
         if ($d) {
 
             //get invoice product item 
-            $invoice_item=ORM::for_table('sys_invoiceitems')->where('invoiceid',$d['id'])->find_one();
+            $vehicle_num = '';
+            $invoice_item = ORM::for_table('sys_invoiceitems')->where('invoiceid',$d['id'])->find_one();
             if($invoice_item['itemcode']){
               
-                $item=ORM::for_table('sys_items')->where('id',$invoice_item['itemcode'])->find_one();
-                $item_type=$item['type'];
+                $item = ORM::for_table('sys_items')->where('id',$invoice_item['itemcode'])->find_one();
+                $item_type = $item['type'];
                 if($item_type == 'Vehicle'){
-                    $item_name=explode(" ",$item['name']);
-                    $vehicle_num=$item_name[0];
+                    $item_name = explode(" ",$item['name']);
+                    $vehicle_num = $item_name[0];
                 }
             }
             
@@ -1670,6 +1671,17 @@ $(".cdelete").click(function (e) {
             foreach($a as $acs) {
                 $a_opt.= '<option value="' . $acs['account'] . '">' . $acs['account'] . '</option>';
             }
+
+            $v = ORM::for_table('sys_vehicles')->find_many();
+            $v_opt = '';
+            foreach($v as $vehicles){
+                if($vehicles['vehicle_num'] == $vehicle_num){
+                    $v_opt .= '<option value="' . $vehicles['vehicle_num'] . '" selected>' . $vehicles['vehicle_num'] .' - '.$vehicles['vehicle_type']. '</option>';    
+                } else{
+                    $v_opt .= '<option value="' . $vehicles['vehicle_num'] . '">' . $vehicles['vehicle_num'] .' - '.$vehicles['vehicle_type']. '</option>';
+                }
+            } 
+
 
             $pms_opt = '';
 
@@ -1703,13 +1715,11 @@ $(".cdelete").click(function (e) {
             //            }
 
 
-
-
             $currency_opt = 
                     '<div class="form-group">
                         <label for="amount" class="col-sm-3 control-label">' . $_L['Amount'] . '</label>
-                        <div class="col-sm-9">
-                            <input type="text" id="amount" name="amount" class="form-control amount"   data-a-sign="' . $config['currency_code'] . ' " data-a-dec="' . $config['dec_point'] . '" data-a-sep="' . $config['thousands_sep'] . '" data-d-group="2" value="">
+                        <div class="col-sm-8">
+                            <input type="text" id="amount" name="amount" class="form-control amount" data-a-sign="' . $config['currency_code'] . ' " data-a-dec="' . $config['dec_point'] . '" data-a-sep="' . $config['thousands_sep'] . '" data-d-group="2" value="">
                         </div>
                     </div>';
 
@@ -1718,7 +1728,7 @@ $(".cdelete").click(function (e) {
 
                             <div class="form-group">
                                 <label for="c1_amount" class="col-sm-3 control-label">$</label>
-                                <div class="col-sm-9">
+                                <div class="col-sm-8">
                                     <input type="text" class="form-control" id="c1_amount" name="c1_amount">
                                 </div>
                             </div>
@@ -1726,7 +1736,7 @@ $(".cdelete").click(function (e) {
 
                             <div class="form-group">
                                 <label for="c2_amount" class="col-sm-3 control-label">IQD</label>
-                                <div class="col-sm-9">
+                                <div class="col-sm-8">
                                     <input type="text" class="form-control" id="c2_amount" name="c2_amount">
                                 </div>
                             </div>
@@ -1754,72 +1764,67 @@ $(".cdelete").click(function (e) {
                 <form class="form-horizontal" role="form" id="form_add_payment" method="post">
                 <div class="form-group">
                     <label for="subject" class="col-sm-3 control-label">' . $_L['Account'] . '</label>
-                    <div class="col-sm-9">
-                    <select id="account" name="account">
-                                            <option value="">' . $_L['Choose an Account'] . '</option>
+                    <div class="col-sm-8">
+                    <select id="account" name="account" style="width:100%">
+                        <option value="">' . $_L['Choose an Account'] . '</option>
+                        ' . $a_opt . '
+                    </select>
+                    </div>
+                </div>
 
-                ' . $a_opt . '
-
-                                        </select>
+                <div class="form-group">
+                    <label for="subject" class="col-sm-3 control-label">' . $_L['Vehicle No'] . '</label>
+                    <div class="col-sm-8">
+                    <select id="vehicle_num" name="vehicle_num" style="width:100%">
+                        <option value="">' . $_L['Choose an Vehicle Number'] . '</option>
+                        ' . $v_opt . '
+                    </select>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="date" class="col-sm-3 control-label">' . $_L['Date'] . '</label>
-                    <div class="col-sm-9">
+                    <div class="col-sm-8">
                     <input type="text" class="form-control datepicker"  value="' . date('Y-m-d') . '" name="date" id="date" datepicker data-date-format="yyyy-mm-dd" data-auto-close="true">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="description" class="col-sm-3 control-label">' . $_L['Description'] . '</label>
-                    <div class="col-sm-9">
+                    <div class="col-sm-8">
                     <input type="text" id="description" name="description" class="form-control" value="' . $_L['Invoice'] . ' ' . $d['id'] . ' ' . $_L['Payment'] . '">
                     </div>
                 </div>
-                
-                
                 ' . $currency_opt . '
-
-
-
-                
                 
                 <div class="form-group">
                     <label for="cats" class="col-sm-3 control-label">' . $_L['Category'] . '</label>
-                    <div class="col-sm-9">
-                    <select id="cats" name="cats">
-                                            <option value="Uncategorized">' . $_L['Uncategorized'] . '</option>
-
-                ' . $cats_opt . '
-
-                                        </select>
+                    <div class="col-sm-8">
+                    <select id="cats" name="cats" style="width:100%">
+                        <option value="Uncategorized">' . $_L['Uncategorized'] . '</option>
+                        ' . $cats_opt . '
+                    </select>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="payer_name" class="col-sm-3 control-label">' . $_L['Payer'] . '</label>
-                    <div class="col-sm-9">
+                    <div class="col-sm-8">
                     <input type="text" id="payer_name" name="payer_name" class="form-control" value="' . $d['account'] . '" disabled>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="subject" class="col-sm-3 control-label">' . $_L['Method'] . '</label>
-                    <div class="col-sm-9">
-                    <select id="pmethod" name="pmethod">
-                                                <option value="">' . $_L['Select Payment Method'] . '</option>
-
-
-                                                ' . $pms_opt . '
-
-
-                                            </select>
+                    <div class="col-sm-8">
+                    <select id="pmethod" name="pmethod" style="width:100%">
+                        <option value="">' . $_L['Select Payment Method'] . '</option>
+                            ' . $pms_opt . '
+                    </select>
                     </div>
                 </div>
 
                 <input type="hidden" name="iid" value="' . $d['id'] . '">
                 <input type="hidden" name="payer" value="' . $d['userid'] . '">
-                <input type="hidden" name="vehicle_num" value="'.$vehicle_num.'">
                 </form>
 
                 </div>

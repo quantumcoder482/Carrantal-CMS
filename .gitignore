@@ -30,5 +30,10 @@ build/Release
 storage/compiled
 storage
 
+# new Plugins
+/apps/ide/
+/apps/notes-master/
+
+
 # gitignore
 .gitignore

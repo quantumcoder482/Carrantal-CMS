@@ -275,9 +275,9 @@
             }
         );
 
-        var $vehicle_type = $('#vehicle_type');
+        var $vehicle_type_id = $('#vehicle_type_id');
             
-        $vehicle_type.select2({
+        $vehicle_type_id.select2({
 
             theme: "bootstrap"
 

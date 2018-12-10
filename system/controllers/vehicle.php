@@ -19,7 +19,7 @@ switch ($action) {
 
     case 'add_vehicle': 
 
-        $vehicle_types=ORM::for_table('sys_vehicle_type')->order_by_asc('id')->find_array();
+        $vehicle_types=ORM::for_table('sys_vehicle_type')->order_by_asc('make')->find_array();
 
         $v_types=array();
 
@@ -527,9 +527,9 @@ switch ($action) {
 
         // Expiry Status
 
-        $pay_status_string=array();
-        $next_duedate=array();
-        $duration_count=array();
+        $pay_status_string = array();
+        $next_duedate = array();
+        $duration_count = array();
         // $expire_date=array();
         foreach($d as $data){
 
@@ -714,7 +714,12 @@ switch ($action) {
 
         }
 
-        $transactions=ORM::for_table('sys_transactions')->where('type','Expense')->where('category','Vehicle Loan')->order_by_desc('id')->find_many();
+        $loan_types = array(array('type'=>'Expense','category'=>'Vehicle Loan'),
+                            array('type'=>'Expense', 'category'=>'Vehicle HP Loan'),
+                            array('type'=>'Expense', 'category'=>'Vehicle Flooring Loan'),
+                            array('type'=>'Expense', 'category'=>'Vehicle Flooring Interest')
+                        ); 
+        $transactions = ORM::for_table('sys_transactions')->where_any_is($loan_types)->order_by_desc('id')->find_many();
         if(!$transactions){
             $transactions="";
         }
@@ -1024,7 +1029,7 @@ switch ($action) {
             $loan_balance[$i]=$loan_balance[$i-1]-$val['due_amount'];
         }
 
-        $loan_log=ORM::for_table('sys_vehicle_loanlog')->where('loan_id',$val['id'])->find_array();
+        $loan_log=ORM::for_table('sys_vehicle_loanlog')->where('loan_id',$val['id'])->where_not_equal('principal_pay','1')->find_array();
         if($loan_log){
             $loan_log_count=count($loan_log);
         }else{
@@ -1560,7 +1565,7 @@ switch ($action) {
                 $loan_balance[$i]=$loan_balance[$i-1]-$loan_val['due_amount'];
             }
             
-            $loan_log=ORM::for_table('sys_vehicle_loanlog')->where('loan_id',$loan_val['id'])->find_array();
+            $loan_log=ORM::for_table('sys_vehicle_loanlog')->where('loan_id',$loan_val['id'])->where_not_equal('principal_pay','1')->find_array();
             if($loan_log){
                 $loan_log_count=count($loan_log);
             }else{
@@ -2745,7 +2750,7 @@ switch ($action) {
 
         }
 
-        $vehicle_types=ORM::for_table('sys_vehicle_type')->order_by_asc('id')->find_array();
+        $vehicle_types=ORM::for_table('sys_vehicle_type')->order_by_asc('make')->find_array();
 
         $v_types=array();
 
